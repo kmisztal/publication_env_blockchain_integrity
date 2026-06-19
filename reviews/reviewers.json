@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "reviewers": [
+    {
+      "id": "reviewer_001",
+      "name": "KM",
+      "initials": "KM",
+      "role": "author"
+    }
+  ]
+}
