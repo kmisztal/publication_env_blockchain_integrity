@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-20 18:06:32 +02:00
+
+- Renamed `BLOCKCHAIN_PANTENT.md` to `BLOCKCHAIN_PATENT.md`.
+- Updated the opening note in `BLOCKCHAIN_PATENT.md` after correcting the filename.
+
+## 2026-06-20 18:05:04 +02:00
+
+- Reviewed blockchain patent-related PDF resources in `resources/`: `US11985227.pdf`, `Springer_Lecture_Notes_in_Computer_Science.pdf`, and `CISIM_presentaion.pdf`.
+- Created `BLOCKCHAIN_PANTENT.md` summarizing the patent approach and how it can inform the environmental monitoring article.
+- Identified semi-decentralized verification, summary blocks, signed transactions, permission chains, and central hash verification as reusable design concepts for the manuscript.
+
 ## 2026-06-20 01:38:26 +02:00
 
 - Added `resources/krzysztof_misztal_citations.bib` as author background context in `notes/paper_context.md`.
