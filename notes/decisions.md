@@ -46,11 +46,11 @@ The repository rule is to use TODO:CITATION_NEEDED, TODO:DATA_NEEDED, and TODO:E
 
 ### Decision 6: Position for an Infraeco-like venue
 
-The paper should be positioned around environmental infrastructure, monitoring reliability, rural deployment constraints, and data trustworthiness.
+The paper may remain potentially suitable for an Infraeco-like venue only if the venue accepts infrastructure informatics or trustworthy monitoring data systems. The primary positioning is no longer environmental engineering.
 
 Rationale:
 
-This framing is more suitable for an infrastructure/environmental venue than a manuscript focused mainly on blockchain mechanics.
+The strongest contribution is a computer science / information systems contribution: data integrity architecture, audit trails, threat coverage, provenance verification, and reproducible verification workflows.
 
 ### Decision 7: Treat `resources/krzysztof_misztal_citations.bib` as author background
 
@@ -60,11 +60,35 @@ Rationale:
 
 The file documents prior work that can support the author's positioning across computer vision, biometrics, mathematical modeling, data standardisation, biological or medical data analysis, and blockchain-supported laboratory data security. These entries should inform framing, but they should not be used as automatic evidence for environmental monitoring claims.
 
+### Decision 8: Position the paper as computer science / information systems
+
+The paper should be positioned primarily as a computer science and information systems paper. Environmental monitoring remains the application domain because it provides realistic distributed, time-series, multi-actor monitoring data with provenance and trust challenges.
+
+Rationale:
+
+The key research contribution is not pollutant interpretation, sensor calibration, environmental policy, or field deployment. The key contribution is the design and evaluation of integrity models, audit trail architecture, provenance/permission reconstruction, controlled tampering scenarios, and reproducible verification workflows.
+
+### Decision 9: Redesign MVP experiments around threat coverage
+
+The MVP experiments should compare four integrity models:
+
+1. Conventional storage only.
+2. Audit trail only.
+3. Audit trail plus hash chain.
+4. Audit trail plus hash chain plus provenance/permission reconstruction.
+
+The primary output should be a threat-coverage matrix and measured verification results after experiments are executed.
+
+Rationale:
+
+This design produces a clearer information-systems evaluation than demonstrating one architecture alone. It allows the paper to show which threats each model can and cannot detect without claiming environmental engineering results.
+
 ## Open Decisions
 
-1. Select the exact target venue and verify its scope. TODO:CITATION_NEEDED
+1. Select the exact target venue and verify whether computer science / information systems framing fits its scope. TODO:CITATION_NEEDED
 2. Select candidate public environmental datasets. TODO:DATA_NEEDED
-3. Decide whether the first manuscript is conceptual only or includes a small prototype evaluation. TODO:EXPERIMENT_NEEDED
-4. Choose blockchain platform assumptions only after defining the evaluation needs.
-5. Decide whether AI/ML anomaly detection belongs in the first version or should remain future work.
+3. Decide the exact public dataset slice for controlled tampering experiments. TODO:DATA_NEEDED
+4. Decide whether delayed synchronization is included in MVP or extended experiments.
+5. Decide whether signatures are represented as key identifiers or implemented cryptographically.
 6. Decide which prior author works from `resources/krzysztof_misztal_citations.bib` are scientifically appropriate to cite.
+7. Decide whether AI/ML anomaly detection remains fully out of scope.

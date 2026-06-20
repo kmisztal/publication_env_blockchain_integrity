@@ -4,9 +4,27 @@ Working title: Blockchain-Based Environmental Data Integrity for Rural Monitorin
 
 ## Scientific Direction
 
-This publication explores how data integrity concepts from regulated clinical systems can be transferred to environmental monitoring infrastructures, especially rural monitoring systems where sensor data may be sparse, geographically distributed, intermittently connected, or difficult to audit retrospectively.
+This publication is positioned primarily as a computer science and information systems paper. Environmental monitoring is the application domain because it provides realistic distributed, time-series, multi-actor data with provenance and trust challenges.
 
-The intended contribution is not to claim that blockchain improves environmental outcomes directly. The intended contribution is to define and evaluate an integrity-oriented architecture for environmental measurements, inspired by clinical audit trails, source data verification, hash verification, controlled data correction, and traceable data lifecycle governance.
+The intended contribution is not to claim environmental engineering outcomes, pollutant-specific insights, or field deployment performance. The intended contribution is to define and evaluate a lightweight data integrity and audit trail architecture for environmental monitoring data, inspired by regulated audit trails, hash verification, provenance verification, permission reconstruction, and controlled tampering analysis.
+
+Primary scientific emphasis:
+
+1. Data integrity.
+2. Audit trail architecture.
+3. Provenance verification.
+4. Threat model.
+5. Verification workflows.
+6. Controlled tampering scenarios.
+7. Reproducible proof-of-concept implementation.
+
+De-emphasized topics:
+
+1. Environmental engineering outcomes.
+2. Sensor calibration science.
+3. Pollutant-specific interpretation.
+4. Environmental policy impact.
+5. Field deployment claims.
 
 ## Author Background Context
 
@@ -23,74 +41,74 @@ Important boundary:
 
 ## Research Problem
 
-Environmental monitoring systems increasingly depend on distributed sensors and public or semi-public datasets. In rural contexts, monitoring infrastructure may face connectivity limitations, lower institutional supervision, harder physical access, and fragmented data custody. These conditions can make it difficult to prove whether a measurement record is original, complete, corrected, delayed, replayed, removed, or altered after collection.
+Environmental monitoring systems increasingly depend on distributed sensors and public or semi-public datasets. From an information systems perspective, these systems create a difficult integrity problem: records are time-series observations, produced by multiple stations or gateways, processed by multiple actors, and sometimes corrected, delayed, replayed, or republished.
 
-The research problem is how to provide verifiable environmental data integrity for rural monitoring systems without assuming continuous connectivity, centralized trust, or expensive infrastructure.
+The research problem is how to compare and evaluate lightweight integrity models for detecting and explaining threats to environmental monitoring records without assuming a production blockchain network, continuous connectivity, centralized trust, or environmental field deployment.
 
 ## Research Gap
 
-The working research gap is the lack of a clearly defined integrity framework that adapts regulated clinical data integrity and audit trail principles to environmental monitoring workflows.
+The working research gap is the lack of a clearly defined and experimentally testable information-systems framework that compares conventional storage, audit trails, hash chains, and provenance/permission reconstruction for environmental monitoring data.
 
 Candidate gap statement:
 
-Existing environmental sensor network work often addresses data collection, communication, calibration, analytics, or anomaly detection, while blockchain-based environmental systems often emphasize decentralization or transparency. However, there is limited treatment of environmental data integrity as a regulated-style lifecycle problem: source record identity, timestamped provenance, correction history, hash-based verification, audit trail review, and data custody across collection, validation, storage, publication, and reuse. TODO:CITATION_NEEDED
+Existing environmental sensor network work often addresses data collection, communication, calibration, analytics, or anomaly detection, while blockchain-based environmental systems often emphasize decentralization or transparency. However, there is limited comparative treatment of environmental data integrity as a threat-coverage problem: which architecture detects value modification, timestamp modification, record deletion, fake insertion, replay, unauthorized correction, broken provenance, revoked key usage, missing correction reasons, and delayed synchronization. TODO:CITATION_NEEDED
 
 ## Research Question
 
 Primary research question:
 
-How can clinical data integrity and audit trail concepts be adapted into a blockchain-supported architecture for preserving and verifying environmental sensor data integrity in rural monitoring systems?
+How do increasingly expressive integrity models compare in their ability to detect and explain threats to distributed environmental monitoring records?
 
 Supporting questions:
 
-1. Which clinical data integrity concepts are transferable to environmental monitoring contexts?
-2. Which environmental data lifecycle events should be recorded in an audit trail?
-3. What should be stored on-chain, off-chain, or in conventional databases?
-4. How can hash-based verification detect unauthorized alteration of environmental records?
-5. What rural deployment constraints limit the practicality of a blockchain-supported integrity layer?
+1. Which threats are detectable by conventional storage only?
+2. What additional threat coverage is provided by an append-only audit trail?
+3. What additional threat coverage is provided by combining audit trails with hash chains?
+4. What additional threat coverage is provided by provenance and permission reconstruction?
+5. How can these models be evaluated reproducibly using public environmental time-series data and controlled tampering scenarios?
 
 ## Research Objectives
 
-1. Define an environmental data integrity model inspired by clinical audit trail and source data verification principles.
-2. Identify the core lifecycle events that should be logged for environmental sensor records.
-3. Propose a blockchain-supported architecture that separates raw data storage, metadata, hashes, audit trail events, and verification logic.
-4. Specify integrity verification procedures for detecting record modification, deletion, replay, or unexplained correction.
-5. Define a future evaluation plan using public environmental data or simulated rural sensor streams. TODO:DATA_NEEDED
-6. Assess the suitability and limits of the proposed architecture for rural monitoring systems.
+1. Define a threat model for environmental monitoring data integrity.
+2. Define four comparable integrity models: conventional storage only, audit trail only, audit trail plus hash chain, and audit trail plus hash chain plus provenance/permission reconstruction.
+3. Specify verification workflows for value modification, timestamp modification, record deletion, fake insertion, replay, unauthorized correction, broken provenance, revoked actor key usage, missing correction reasons, and delayed synchronization.
+4. Build a lightweight reproducible proof-of-concept using Python, Pandas, and SQLite or JSON storage.
+5. Evaluate threat coverage using public environmental time-series data and controlled tampering scenarios. TODO:DATA_NEEDED TODO:EXPERIMENT_NEEDED
+6. Produce a threat-coverage matrix and measured verification outputs after experiments are executed. TODO:EXPERIMENT_NEEDED
 
 ## Hypotheses
 
-H1: A hash-based audit trail layer can improve the verifiability of environmental sensor records by enabling detection of unauthorized post-collection modification. TODO:EXPERIMENT_NEEDED
+H1: Audit trail plus hash-chain verification detects more integrity threats than conventional storage or audit trail alone. TODO:EXPERIMENT_NEEDED
 
-H2: Separating raw environmental measurements from blockchain-stored hashes and audit metadata can reduce storage burden while preserving integrity verification capabilities. TODO:EXPERIMENT_NEEDED
+H2: Adding provenance and permission reconstruction increases explanatory coverage for actor-related threats, including unauthorized correction and revoked key usage. TODO:EXPERIMENT_NEEDED
 
-H3: Clinical data integrity concepts such as attributable records, contemporaneous timestamps, audit trail review, controlled corrections, and traceable data custody can be meaningfully adapted to environmental monitoring workflows. TODO:CITATION_NEEDED
+H3: Threat-coverage matrices provide a clearer evaluation method for integrity architectures than architecture description alone. TODO:EXPERIMENT_NEEDED
 
-H4: Rural constraints such as intermittent connectivity, limited maintenance capacity, and distributed ownership require a hybrid architecture rather than fully on-chain environmental data storage. TODO:EXPERIMENT_NEEDED
+H4: A lightweight reproducible PoC can evaluate integrity threats without requiring a production blockchain deployment or field sensor deployment. TODO:EXPERIMENT_NEEDED
 
 ## Expected Contribution
 
-The expected contribution is a conceptual and architectural paper rather than a results-heavy empirical study unless suitable datasets and experiments are later added.
+The expected contribution is a computer science / information systems evaluation paper with a lightweight proof-of-concept. The paper should not be framed as measuring environmental outcomes.
 
 Expected contributions:
 
-1. A cross-domain mapping between clinical data integrity principles and environmental monitoring requirements.
-2. A proposed integrity architecture for rural environmental sensor networks.
-3. A data lifecycle model that identifies audit-relevant events for environmental measurements.
-4. A verification workflow based on hashes, timestamps, custody metadata, and correction records.
-5. A research agenda for future empirical validation using air quality, water quality, or rural sensor datasets. TODO:DATA_NEEDED
+1. A threat model for environmental monitoring data integrity.
+2. A comparison of four integrity models with increasing verification capability.
+3. A threat-coverage matrix covering data, audit, provenance, permission, and synchronization threats.
+4. A reproducible proof-of-concept implementation for controlled tampering experiments.
+5. Verification workflows and measured outputs once experiments are executed. TODO:EXPERIMENT_NEEDED
 
 ## Target Venue Suitability
 
-An Infraeco-like venue may be suitable if the manuscript is framed around environmental infrastructure, rural monitoring reliability, sustainable infrastructure governance, sensor network trustworthiness, and practical deployment constraints.
+An Infraeco-like venue may still be suitable if the venue accepts information systems, infrastructure informatics, monitoring data governance, or trustworthy data architecture papers. However, the primary positioning should be computer science / information systems rather than environmental engineering.
 
-The paper should avoid becoming a purely blockchain or enterprise systems manuscript. To fit an infrastructure and environmental venue, it should foreground:
+The paper should foreground:
 
-1. Rural monitoring needs.
-2. Environmental data trustworthiness.
-3. Infrastructure constraints.
-4. Operational verification workflows.
-5. Practical architecture rather than speculative tokenization.
+1. Data integrity and threat coverage.
+2. Audit trail architecture.
+3. Provenance and permission reconstruction.
+4. Reproducible verification workflows.
+5. Environmental monitoring as a realistic application domain.
 
 Venue fit still requires confirmation against the selected venue scope, topics, and recent accepted papers. TODO:CITATION_NEEDED
 
@@ -98,13 +116,14 @@ Venue fit still requires confirmation against the selected venue scope, topics, 
 
 In scope:
 
-1. Environmental data integrity and auditability.
-2. Rural air quality, water quality, and environmental sensor monitoring contexts.
-3. Hash verification, audit trail events, metadata integrity, and record provenance.
-4. Hybrid architecture using off-chain data storage and blockchain-anchored integrity evidence.
-5. Transfer of concepts from clinical audit trail, eCRF, CTMS, eTMF, GxP, and regulated data lifecycle practices.
-6. Author background in computer vision, biometrics, clustering, data standardisation, and blockchain-supported laboratory data security where it helps motivate the cross-domain approach.
-7. Conceptual architecture and future evaluation design.
+1. Information systems architecture for environmental data integrity.
+2. Audit trail models and verification workflows.
+3. Threat modeling for distributed environmental time-series records.
+4. Hash verification and tamper-evident event chains.
+5. Provenance verification and permission-state reconstruction.
+6. Controlled tampering experiments with public environmental data.
+7. Reproducible proof-of-concept implementation.
+8. Author background in data verification, regulated systems, and blockchain-supported laboratory data security where it helps motivate the cross-domain approach.
 
 ## Out-of-Scope Items
 
@@ -115,13 +134,18 @@ Out of scope for the initial manuscript:
 3. Cryptocurrency economics, token incentives, or market mechanisms.
 4. Full implementation of a production blockchain network.
 5. Claims of regulatory compliance for environmental systems without legal analysis.
-6. Sensor calibration science beyond integrity-relevant metadata.
-7. Machine learning model performance unless later connected to integrity verification or anomaly detection.
+6. Environmental engineering outcomes.
+7. Sensor calibration science beyond integrity-relevant metadata.
+8. Pollutant-specific interpretation.
+9. Environmental policy impact claims.
+10. Field deployment claims.
+11. Machine learning model performance unless later connected to integrity verification or anomaly detection.
 
 ## Evidence Still Needed
 
-1. Literature on environmental sensor network data integrity. TODO:CITATION_NEEDED
-2. Literature on blockchain for environmental monitoring. TODO:CITATION_NEEDED
-3. Literature or standards on clinical data integrity and audit trails. TODO:CITATION_NEEDED
-4. Candidate public air quality or water quality datasets. TODO:DATA_NEEDED
-5. Experiment design for tamper detection, delayed synchronization, correction handling, and storage overhead. TODO:EXPERIMENT_NEEDED
+1. Literature on information systems data integrity and provenance. TODO:CITATION_NEEDED
+2. Literature on audit trails, tamper-evident logs, and hash verification. TODO:CITATION_NEEDED
+3. Literature on blockchain-inspired data integrity architectures. TODO:CITATION_NEEDED
+4. Literature on environmental monitoring as distributed time-series data infrastructure. TODO:CITATION_NEEDED
+5. Candidate public air quality or water quality datasets. TODO:DATA_NEEDED
+6. Experiment execution for threat coverage and verification metrics. TODO:EXPERIMENT_NEEDED

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-06-20 18:54:20 +02:00
+
+- Updated scope across planning notes to position the paper primarily as a computer science / information systems contribution.
+- De-emphasized environmental engineering outcomes, sensor calibration science, pollutant-specific interpretation, environmental policy impact, and field deployment claims.
+- Redesigned the MVP experimental plan around threat coverage across four integrity models: conventional storage only, audit trail only, audit trail plus hash chain, and audit trail plus hash chain plus provenance/permission reconstruction.
+- Updated `notes/poc_architecture.md` to support model comparison, threat injection, model-specific verification, and threat-coverage matrix generation.
+- Updated `notes/outline.md`, `notes/paper_context.md`, and `notes/decisions.md` to align the manuscript with data integrity, audit trail architecture, provenance verification, threat modeling, controlled tampering, and reproducible proof-of-concept evaluation.
+
 ## 2026-06-20 18:37:51 +02:00
 
 - Drafted `sections/02_related_work.tex` as a structured literature review skeleton covering environmental monitoring systems, rural IoT monitoring, environmental sensor networks, data provenance, data integrity, blockchain for environmental systems, audit trails, hash verification, and literature gaps.

@@ -4,14 +4,37 @@ Working title: Blockchain-Based Environmental Data Integrity for Rural Monitorin
 
 This file defines executable experiments for the paper. It is not manuscript text. No results are reported here.
 
+## Strategic Positioning
+
+The experiments should support a computer science / information systems paper. Environmental monitoring is the application domain because it provides realistic distributed, time-series, multi-actor monitoring data with provenance and trust challenges.
+
+The experiments should emphasize:
+
+1. Data integrity.
+2. Audit trail architecture.
+3. Provenance verification.
+4. Threat model.
+5. Verification workflows.
+6. Controlled tampering scenarios.
+7. Reproducible proof-of-concept implementation.
+
+The experiments should de-emphasize:
+
+1. Environmental engineering outcomes.
+2. Sensor calibration science.
+3. Pollutant-specific interpretation.
+4. Environmental policy impact.
+5. Field deployment claims.
+
 ## Design Constraints
 
 1. The experiments should be executable within a few weeks.
 2. Use public environmental datasets whenever possible.
 3. Do not claim results until experiments are implemented and measured.
 4. Use controlled tampering scenarios so ground truth is known.
-5. Keep the blockchain component lightweight and reproducible: local hash chains, signed events, summary blocks, and verifier logic are enough for the first study.
-6. Avoid building a production blockchain network unless later needed.
+5. Compare integrity models rather than only demonstrating one architecture.
+6. Keep the implementation lightweight and reproducible.
+7. Avoid production blockchain frameworks, smart contracts, and field deployment dependencies.
 
 ## Verified Candidate Public Data Sources
 
@@ -20,560 +43,437 @@ These sources were checked as real public data candidates on 2026-06-20. Final d
 1. OpenAQ
    - Source: https://docs.openaq.org/
    - Data type: air quality measurements.
-   - Notes: API documentation describes querying measurements with filters such as location, parameter, and date range, plus geospatial filtering and pagination. It also notes access to the full OpenAQ archive through Open Data on AWS.
+   - Notes: Suitable for distributed time-series records with station, parameter, timestamp, and value fields.
 
 2. US EPA Air Quality System API
    - Source: https://aqs.epa.gov/aqsweb/documents/data_api.html
    - Data type: ambient air sample data, station metadata, quality-related sample information, and QA data.
-   - Notes: EPA describes AQS as row-level data from the Air Quality System database. It includes sample data, daily summary data, monitor metadata, QA blanks, collocated assessments, flow-rate checks, and related services. API key registration is required.
+   - Notes: Strong candidate where station metadata and quality-related records are useful for provenance experiments. API key registration is required.
 
 3. Water Quality Portal
    - Source: https://www.waterqualitydata.us/
    - Data type: water quality monitoring data.
-   - Notes: Candidate source for water quality measurements and station-based environmental records. Requires inspection of API export formats before final experiment selection.
+   - Notes: Candidate extended-domain dataset after the MVP.
 
 4. NOAA/NCEI Climate Data Online API
    - Source: https://www.ncei.noaa.gov/cdo-web/webservices/v2
    - Data type: climate and station datasets.
-   - Notes: API documentation defines datasets, stations, data categories, data types, locations, and data endpoints. Token registration may be required.
+   - Notes: Candidate fallback for station-based time-series records.
 
-## Dataset Selection Recommendation
+## Recommended MVP Dataset
 
-Recommended MVP dataset:
+Use OpenAQ or EPA AQS first. The chosen data slice should be small, reproducible, and sufficient to create station-based time-series records.
 
-OpenAQ or EPA AQS air quality data should be used first because air quality measurements naturally fit the rural sensor-network framing, are time-series records, and can be converted into measurement events for hash-chain and audit-trail experiments.
+Recommended properties:
 
-Fallback:
+1. One environmental domain, preferably air quality.
+2. One to three measured parameters.
+3. Multiple stations or locations.
+4. A bounded time window, for example 7 to 30 days.
+5. Enough records to support synthetic tampering and verification timing.
 
-If API access, rate limits, or data cleaning become a blocker, use a small downloaded CSV export from one verified public source and document the exact download path. TODO:DATA_NEEDED
+Final dataset extract: TODO:DATA_NEEDED
 
-Optional second domain:
+## Integrity Models Compared
 
-Water Quality Portal data can be added as an extended experiment to demonstrate that the integrity architecture is not pollutant-specific. TODO:DATA_NEEDED
+The MVP compares four integrity models on the same dataset and the same controlled threats.
 
-## Common Experimental Architecture
+### Model A: Conventional Storage Only
 
-The experiments should share one small reproducible prototype.
+Description:
 
-### Data Model
+Records are stored as ordinary rows in CSV, JSON, or SQLite. No append-only audit trail, hash chain, or permission reconstruction is used.
 
-Each environmental measurement event should include at minimum:
+Verification capability:
 
-1. `record_id`
-2. `source_dataset`
-3. `station_id`
-4. `sensor_or_parameter`
-5. `timestamp`
-6. `value`
-7. `unit`
-8. `latitude`
-9. `longitude`
-10. `ingested_at`
-11. `operator_or_gateway_id`
-12. `previous_hash`
-13. `record_hash`
-14. `event_type`
-15. `signature_or_key_id`
+1. Schema checks.
+2. Basic duplicate checks.
+3. Optional source row comparison if an untouched source copy is available.
 
-Optional fields:
+Expected role:
 
-1. quality flag,
-2. calibration metadata,
-3. data owner or agency,
-4. original source URL,
-5. correction reason,
-6. reviewer decision.
+Baseline model for showing what is not detectable when only conventional storage is used.
 
-### Event Types
+### Model B: Audit Trail Only
 
-Use a patent-inspired but environmental-specific event model:
+Description:
 
-1. `GENESIS_NETWORK`
-2. `INSERT_SENSOR_KEY`
-3. `REVOKE_SENSOR_KEY`
-4. `INSERT_MEASUREMENT`
-5. `CORRECT_MEASUREMENT`
-6. `INVALIDATE_MEASUREMENT`
-7. `SUMMARY_BLOCK`
-8. `VERIFY_BATCH`
-9. `PUBLISH_DATASET`
+Records are stored conventionally, but create, update, correction, deletion attempt, and publication events are logged in an append-only audit table or JSONL log. Events are not hash-linked.
 
-### Integrity Layers
+Verification capability:
 
-1. Off-chain raw dataset:
-   - original public measurements stored as CSV/JSON/Parquet.
+1. Checks whether events are present.
+2. Checks whether corrections have reasons.
+3. Checks whether actions are recorded in the audit trail.
+4. Detects some missing or inconsistent event histories if the audit trail itself is intact.
 
-2. Measurement integrity chain:
-   - one block per measurement, batch, or logical event.
+Expected role:
 
-3. Permission/provenance chain:
-   - station keys, operator keys, revocations, correction privileges.
+Shows the value and limits of audit trails without cryptographic linkage.
 
-4. Central verifier:
-   - recalculates hashes,
-   - checks previous-hash links,
-   - checks active keys,
-   - checks timestamps,
-   - reports tampering and provenance failures.
+### Model C: Audit Trail Plus Hash Chain
 
-### Tampering Scenarios
+Description:
 
-Use synthetic attacks with known labels:
+Audit events are serialized deterministically and linked with previous hashes. Measurement payload hashes and event block hashes are stored.
 
-1. Value modification:
-   - change pollutant or water-quality value.
+Verification capability:
 
-2. Timestamp modification:
-   - shift timestamp forward or backward.
+1. Recalculates payload hashes.
+2. Recalculates block hashes.
+3. Checks previous-hash links.
+4. Detects tampering in values, timestamps, event order, deletion, and insertion when the chain is verified.
 
-3. Record deletion:
-   - remove one or more events from the chain or off-chain data.
+Expected role:
 
-4. Record insertion:
-   - insert a fake measurement without valid provenance.
+Shows the additional threat coverage provided by tamper-evident audit trails.
 
-5. Replay:
-   - duplicate an old valid measurement under a new timestamp or station.
+### Model D: Audit Trail Plus Hash Chain Plus Provenance/Permission Reconstruction
 
-6. Unauthorized correction:
-   - create a correction event signed by a revoked or unknown key.
+Description:
 
-7. Broken provenance:
-   - change station ID, sensor ID, or source dataset metadata.
+Model C is extended with actor identities, sensor/gateway keys, permission events, revocation events, correction lineage, and provenance checks.
 
-8. Summary-block mismatch:
-   - alter records covered by a summary block without updating the summary.
+Verification capability:
 
-## Minimum Publishable Experiment Set
+1. All checks from Model C.
+2. Reconstructs active permissions at event time.
+3. Detects revoked actor key usage.
+4. Detects unauthorized correction.
+5. Detects missing correction reasons.
+6. Detects broken provenance references.
+7. Explains whether a hash-valid event is unauthorized or provenance-invalid.
 
-The MVP should include three experiments. Together they are enough for a concise, realistic paper: one architecture demonstration, one tampering-detection experiment, and one audit/provenance experiment.
+Expected role:
 
-## Experiment 1: Hash-Chain Integrity Baseline
+Primary proposed model and main architecture contribution.
+
+## Threat Model
+
+The experiments should evaluate the following threats:
+
+1. Value modification.
+2. Timestamp modification.
+3. Record deletion.
+4. Fake record insertion.
+5. Replay.
+6. Unauthorized correction.
+7. Broken provenance.
+8. Revoked actor key usage.
+9. Missing correction reason.
+10. Delayed synchronization.
+
+Each threat should have:
+
+1. A deterministic tampering procedure.
+2. A ground-truth label.
+3. An expected detectable/partially detectable/not detectable status for each model.
+4. Measured verification outputs after execution. TODO:EXPERIMENT_NEEDED
+
+## Primary MVP Output
+
+The primary output should be a threat-coverage matrix.
+
+Rows:
+
+1. Value modification.
+2. Timestamp modification.
+3. Record deletion.
+4. Fake record insertion.
+5. Replay.
+6. Unauthorized correction.
+7. Broken provenance.
+8. Revoked actor key usage.
+9. Missing correction reason.
+10. Delayed synchronization.
+
+Columns:
+
+1. Model A: Conventional storage only.
+2. Model B: Audit trail only.
+3. Model C: Audit trail plus hash chain.
+4. Model D: Audit trail plus hash chain plus provenance/permission reconstruction.
+
+Cell values:
+
+1. Detectable.
+2. Partially detectable.
+3. Not detectable.
+4. Requires external baseline.
+5. Not applicable.
+
+Final matrix values must be based on implemented verification behavior, not assumptions. TODO:EXPERIMENT_NEEDED
+
+## MVP Experiment 1: Baseline Dataset and Event Construction
 
 ### Objective
 
-Demonstrate that public environmental measurements can be transformed into an integrity-preserving event chain where unauthorized changes are detectable through hash verification.
+Create a reproducible environmental time-series dataset extract and transform it into a common event representation used by all four integrity models.
 
 ### Input Data
 
-Time-series environmental measurement records from one public source.
-
-Recommended first choice:
-
-OpenAQ air quality measurements for one pollutant, one region, and a short time window.
-
-Alternative:
-
-EPA AQS sample or daily summary data for one pollutant and a small set of stations.
+Public environmental monitoring records, preferably air quality time-series data.
 
 ### Dataset Source
 
-1. OpenAQ API documentation: https://docs.openaq.org/
-2. EPA AQS API documentation: https://aqs.epa.gov/aqsweb/documents/data_api.html
+Recommended:
+
+1. OpenAQ: https://docs.openaq.org/
+2. EPA AQS: https://aqs.epa.gov/aqsweb/documents/data_api.html
 
 Final dataset extract: TODO:DATA_NEEDED
 
 ### Required Preprocessing
 
-1. Download a bounded subset of records.
-2. Normalize timestamps to one consistent format.
-3. Sort by station, parameter, and timestamp.
-4. Remove exact duplicate records or flag them explicitly.
-5. Normalize numeric values and units.
+1. Download and freeze a bounded dataset extract.
+2. Normalize timestamps.
+3. Normalize station identifiers.
+4. Normalize parameter names and units.
+5. Normalize numeric values.
 6. Assign deterministic `record_id` values.
-7. Preserve the original source row or source URL for traceability.
+7. Preserve source rows as raw payloads.
+8. Sort records deterministically.
 
 ### Experimental Procedure
 
-1. Select a reproducible data slice, for example one pollutant, 5 to 20 stations, and 7 to 30 days.
-2. Convert each row into an `INSERT_MEASUREMENT` event.
-3. Create a genesis event for the monitoring network.
-4. Build a hash chain over ordered events.
-5. Store raw records off-chain and store hashes plus metadata in the integrity chain.
-6. Run a verifier that recalculates every hash and previous-hash link.
-7. Confirm only that the verifier produces a validation report; do not report performance or success rates until the experiment is executed.
+1. Select a small but non-trivial data slice.
+2. Create a dataset manifest with source URL, download date, query parameters, and file hashes.
+3. Convert records into canonical measurement events.
+4. Create synthetic actor identities for stations, gateways, operators, and reviewers.
+5. Initialize all four integrity models from the same baseline events.
 
 ### Evaluation Metrics
 
-1. Number of processed measurement records.
-2. Number of generated integrity events.
-3. Verification completion status.
-4. Chain completeness rate.
-5. Hash mismatch count.
-6. Runtime for chain construction. TODO:EXPERIMENT_NEEDED
-7. Runtime for verification. TODO:EXPERIMENT_NEEDED
-8. Storage overhead ratio. TODO:EXPERIMENT_NEEDED
+1. Number of records ingested.
+2. Number of canonical events generated.
+3. Schema completeness rate.
+4. Number of stations or sources represented.
+5. Preprocessing failures.
 
 ### Expected Outputs
 
-1. Cleaned dataset extract.
-2. Integrity event log.
-3. Hash-chain file.
-4. Verification report template.
-5. Reproducible script or notebook.
+1. Frozen raw dataset.
+2. Processed dataset.
+3. Dataset manifest.
+4. Canonical event log.
+5. Initial model stores for A, B, C, and D.
 
 ### Risks
 
-1. API access or rate limits may slow data collection.
-2. Public data fields may vary by source.
-3. Some data may lack complete station metadata.
-4. Hash-chain baseline may be too obvious unless connected to audit and provenance scenarios.
+1. Public data may have missing station metadata.
+2. API rate limits may slow data collection.
+3. Dataset heterogeneity may expand preprocessing scope.
 
-## Experiment 2: Controlled Tampering Detection
+## MVP Experiment 2: Threat Injection
 
 ### Objective
 
-Evaluate whether the integrity chain detects known synthetic tampering scenarios in environmental measurement records.
+Generate controlled tampering scenarios with known labels for all threats in the threat model.
 
 ### Input Data
 
-The verified chain from Experiment 1.
+Baseline dataset and model stores from MVP Experiment 1.
 
 ### Dataset Source
 
-Same dataset extract as Experiment 1. TODO:DATA_NEEDED
+Same dataset extract as MVP Experiment 1. TODO:DATA_NEEDED
 
 ### Required Preprocessing
 
-1. Freeze a clean baseline dataset.
-2. Save the baseline hash-chain state.
-3. Create labeled tampered copies of the dataset.
-4. Define attack labels for each modified record or event.
+1. Freeze baseline copies.
+2. Define deterministic random seed.
+3. Select target records and events for each threat.
+4. Define actor/key states for authorization threats.
 
 ### Experimental Procedure
 
-1. Create synthetic tampering scenarios:
-   - modify selected measurement values,
-   - delete selected records,
-   - insert fake records,
-   - modify timestamps,
-   - replay selected records,
-   - change station or parameter metadata.
-2. Apply each tampering scenario at controlled rates, for example 1%, 5%, and 10% of records.
-3. Run the verifier on each tampered dataset.
-4. Compare verifier alerts against known tampering labels.
-5. Record only measured outputs after execution; do not infer results in advance.
+1. Inject value modification.
+2. Inject timestamp modification.
+3. Inject record deletion.
+4. Inject fake record insertion.
+5. Inject replay.
+6. Inject unauthorized correction.
+7. Inject broken provenance.
+8. Inject revoked actor key usage.
+9. Inject missing correction reason.
+10. Inject delayed synchronization.
+11. Save tampered datasets, tampered logs, and label files.
 
 ### Evaluation Metrics
 
-1. Tampering detection rate.
-2. False positive rate.
-3. False negative rate.
-4. Precision.
-5. Recall.
-6. F1 score.
-7. Detection latency measured as number of events until detection.
-8. Attack-type-specific detection rate.
+1. Number of tampered records per threat.
+2. Number of tampered events per threat.
+3. Label completeness rate.
+4. Attack generation success rate.
+5. Reproducibility check using deterministic seed.
 
 ### Expected Outputs
 
-1. Tampered dataset variants.
-2. Ground-truth tampering label file.
-3. Verifier alert reports.
-4. Confusion matrix per attack type.
-5. Summary table of detection metrics. TODO:EXPERIMENT_NEEDED
+1. Tampered artifacts for each threat.
+2. Ground-truth label file.
+3. Scenario manifest.
+4. Mapping between labels and affected records/events.
 
 ### Risks
 
-1. Some attack types may be trivially detected by hash mismatch; the scientific value comes from comparing attack classes and audit interpretation.
-2. If the verifier only checks hashes, it may not detect semantically plausible but authorized-looking false data.
-3. Public datasets do not provide real tampering labels, so synthetic labels must be clearly described.
+1. Some threats target records while others target event logs or permission state.
+2. Delayed synchronization requires a simple gateway/central verifier model.
+3. Replay definitions must be precise to avoid ambiguity.
 
-## Experiment 3: Audit Trail and Provenance Verification
+## MVP Experiment 3: Model Verification
 
 ### Objective
 
-Demonstrate an audit-trail workflow for environmental data corrections, provenance changes, and permission checks using signed or key-identified events.
+Run each integrity model against each threat scenario and measure which threats are detected, partially detected, or not detected.
 
 ### Input Data
 
-Baseline dataset from Experiment 1 plus synthetic audit events.
+Baseline and tampered artifacts from MVP Experiments 1 and 2.
 
 ### Dataset Source
 
-Same source as Experiment 1. TODO:DATA_NEEDED
+Same dataset extract as MVP Experiment 1. TODO:DATA_NEEDED
 
 ### Required Preprocessing
 
-1. Define operator, gateway, reviewer, and administrator identities.
-2. Create key registry events:
-   - insert sensor key,
-   - insert operator key,
-   - revoke sensor key,
-   - revoke operator key.
-3. Select a small subset of records for correction and invalidation workflows.
-4. Define correction reasons and reviewer decisions.
+1. Prepare model-specific verifier inputs.
+2. Ensure each model receives equivalent baseline and tampered cases.
+3. Load ground-truth labels.
 
 ### Experimental Procedure
 
-1. Create a permission/provenance chain.
-2. Add valid measurement events from authorized station or gateway keys.
-3. Add valid correction events signed by authorized operators.
-4. Add invalid correction attempts:
-   - unknown key,
-   - revoked key,
-   - missing reason,
-   - correction without reference to original record.
-5. Add provenance changes:
-   - station metadata update,
-   - source dataset reference update,
-   - reviewer approval or rejection.
-6. Run an audit verifier that checks:
-   - active key at event time,
-   - event author,
-   - correction lineage,
-   - original record preservation,
-   - mandatory metadata fields,
-   - revocation effects.
+1. Run Model A verifier for all threats.
+2. Run Model B verifier for all threats.
+3. Run Model C verifier for all threats.
+4. Run Model D verifier for all threats.
+5. Export alert logs for each model and scenario.
+6. Compare alert logs with ground-truth labels.
+7. Generate threat-coverage matrix.
+8. Generate measured verification tables.
 
 ### Evaluation Metrics
 
-1. Percentage of events with complete provenance.
-2. Number of valid corrections accepted.
-3. Number of invalid corrections rejected.
-4. Unauthorized event detection rate.
-5. Missing metadata detection rate.
-6. Correction lineage completeness rate.
-7. Audit report completeness.
+1. Threat coverage status per model and threat.
+2. Detection rate.
+3. False positive rate.
+4. False negative rate.
+5. Precision.
+6. Recall.
+7. F1 score.
+8. Alert explainability category.
+9. Verification runtime.
+10. Storage overhead.
 
 ### Expected Outputs
 
-1. Audit event log.
-2. Permission/provenance chain.
-3. Correction lineage table.
-4. Rejected-event report.
-5. Audit-trail verification report.
+1. Threat-coverage matrix.
+2. Model-by-threat verification report.
+3. Detection metrics table.
+4. Runtime and storage overhead table.
+5. Alert logs.
+6. Reproducibility manifest.
 
 ### Risks
 
-1. Synthetic audit events must be presented as experimental design, not real environmental agency workflow.
-2. Permission rules may become too complex for the first paper.
-3. The experiment can drift into access-control engineering rather than environmental integrity if not kept focused.
+1. Some cells may be "not detectable" by design; this is acceptable if clearly explained.
+2. Model A may require an external baseline for some comparisons.
+3. Metrics must not be interpreted as environmental performance.
+4. Results must not be reported until experiments are actually executed.
 
-## Extended Experiment Set
-
-These experiments are valuable if time remains after the MVP.
-
-## Experiment 4: Summary-Block Verification Efficiency
+## Extended Experiment 4: Delayed Synchronization Detail
 
 ### Objective
 
-Evaluate whether summary blocks reduce verification work while preserving tampering detection for environmental measurement chains.
+Evaluate delayed synchronization as a deeper rural-monitoring information-systems scenario.
 
 ### Input Data
 
-Baseline integrity chain from Experiment 1 and tampered variants from Experiment 2.
+Station-partitioned baseline and tampered data.
 
 ### Dataset Source
 
-Same source as Experiment 1. TODO:DATA_NEEDED
+Same dataset extract as MVP Experiment 1. TODO:DATA_NEEDED
 
 ### Required Preprocessing
 
-1. Define summary-block intervals:
-   - fixed number of records,
-   - hourly blocks,
-   - daily blocks,
-   - synchronization batch blocks.
-2. Generate summary blocks containing:
-   - previous summary hash,
-   - hashes of covered measurement blocks,
-   - active key state digest,
-   - timestamp range.
+1. Partition records by station or gateway.
+2. Define offline windows.
+3. Define local and central verifier states.
+4. Define synchronization events.
 
 ### Experimental Procedure
 
-1. Build full-chain verification baseline.
-2. Build summary-block verification variants.
-3. Run verification on clean and tampered chains.
-4. Compare full verification against summary-assisted verification.
-5. Test tampering before and after summary block generation.
+1. Build local gateway event logs.
+2. Simulate offline periods.
+3. Inject threats during offline periods.
+4. Synchronize local summaries or full logs.
+5. Run central verification after synchronization.
+6. Compare detection behavior across Models A-D.
 
 ### Evaluation Metrics
 
-1. Verification runtime.
-2. Number of hashes recalculated.
-3. Storage overhead.
-4. Detection rate by attack type.
-5. Missed tampering count.
-6. Summary block size.
-7. Verification cost per 1,000 records.
+1. Detection after synchronization.
+2. Verification delay.
+3. Number of unresolved conflicts.
+4. Local versus central alert differences.
+5. Synchronization overhead.
 
 ### Expected Outputs
 
-1. Summary-block event logs.
-2. Runtime comparison table.
-3. Storage overhead table.
-4. Detection comparison table. TODO:EXPERIMENT_NEEDED
+1. Local gateway logs.
+2. Central verifier logs.
+3. Delayed synchronization threat-coverage table.
 
 ### Risks
 
-1. Small datasets may not show meaningful runtime differences.
-2. Summary blocks may complicate explanation.
-3. If implemented poorly, summary blocks may reduce audit granularity.
+1. This is a simulation, not a field deployment.
+2. Conflict-resolution rules may add complexity.
+3. Should remain extended unless MVP is stable.
 
-## Experiment 5: Intermittent Connectivity and Delayed Synchronization
-
-### Objective
-
-Model rural monitoring constraints by testing whether local chains can preserve integrity during offline periods and synchronize later with a central verifier.
-
-### Input Data
-
-Time-series environmental data split by station or simulated station groups.
-
-### Dataset Source
-
-OpenAQ, EPA AQS, or NOAA/NCEI station data. TODO:DATA_NEEDED
-
-### Required Preprocessing
-
-1. Partition records by station or region.
-2. Define simulated offline windows.
-3. Create local chain segments for each station or gateway.
-4. Define central synchronization intervals.
-
-### Experimental Procedure
-
-1. Assign records to local gateway chains.
-2. Simulate offline periods by preventing central synchronization.
-3. Continue local event generation during offline windows.
-4. Synchronize hashes and summary blocks after reconnection.
-5. Inject tampering during offline windows.
-6. Run central verification after synchronization.
-
-### Evaluation Metrics
-
-1. Offline records preserved.
-2. Synchronization success rate.
-3. Tampering detection after reconnection.
-4. Verification delay.
-5. Number of unresolved chain conflicts.
-6. Central verifier storage overhead.
-
-### Expected Outputs
-
-1. Local chain files per simulated gateway.
-2. Central verifier synchronization log.
-3. Offline-window tampering report.
-4. Connectivity scenario table.
-
-### Risks
-
-1. Connectivity is simulated, not measured in a real rural network.
-2. Conflict-resolution policy may require more design than expected.
-3. Reviewers may ask for real deployment evidence; position this as a controlled simulation.
-
-## Experiment 6: Cross-Domain Replication with Water Quality Data
+## Extended Experiment 5: Second-Domain Replication
 
 ### Objective
 
-Test whether the same integrity architecture can be applied to a second environmental domain.
+Check whether the same integrity-model comparison can be repeated on water quality or climate station data.
 
 ### Input Data
 
-Water quality records from a public source.
+Second public environmental dataset.
 
 ### Dataset Source
 
-Water Quality Portal: https://www.waterqualitydata.us/
-
-Final data extract: TODO:DATA_NEEDED
+Water Quality Portal or NOAA/NCEI CDO. TODO:DATA_NEEDED
 
 ### Required Preprocessing
 
-1. Identify a small set of stations and parameters.
-2. Normalize measurement fields.
-3. Normalize units and timestamps.
-4. Map water-quality metadata to the common event schema.
-5. Preserve source-specific fields separately.
+1. Map source fields to canonical event schema.
+2. Normalize station, timestamp, parameter, value, and unit fields.
+3. Preserve source-specific metadata.
 
 ### Experimental Procedure
 
-1. Repeat Experiment 1 on water quality records.
-2. Repeat a subset of Experiment 2 tampering attacks.
-3. Compare schema fit and preprocessing burden against air quality data.
+1. Repeat MVP Experiments 1-3 on the second dataset.
+2. Compare preprocessing burden and schema fit.
+3. Compare threat coverage qualitatively and quantitatively after execution.
 
 ### Evaluation Metrics
 
 1. Schema coverage rate.
 2. Missing metadata rate.
-3. Chain construction success rate.
-4. Tampering detection metrics for selected attacks.
-5. Preprocessing complexity, measured as number of source-specific transformations.
+3. Threat coverage matrix reproducibility.
+4. Source-specific preprocessing complexity.
 
 ### Expected Outputs
 
-1. Water-quality event schema mapping.
-2. Water-quality integrity chain.
-3. Cross-domain applicability notes.
-4. Comparison table against the air-quality MVP.
+1. Second-domain threat-coverage matrix.
+2. Cross-domain schema mapping notes.
+3. Dataset-specific limitations.
 
 ### Risks
 
-1. Water-quality data may have more heterogeneous parameters and units.
-2. Station metadata may require additional cleaning.
-3. This experiment may broaden the paper too much if the MVP is not complete.
-
-## Experiment 7: Provenance Graph Export
-
-### Objective
-
-Represent measurement, correction, station, operator, and verification relationships as a provenance graph for audit review.
-
-### Input Data
-
-Audit event log from Experiment 3.
-
-### Dataset Source
-
-Derived from MVP dataset plus synthetic audit events. TODO:DATA_NEEDED
-
-### Required Preprocessing
-
-1. Convert events into nodes and edges.
-2. Define node types:
-   - measurement,
-   - station,
-   - sensor key,
-   - operator,
-   - correction,
-   - verification report,
-   - summary block.
-3. Define edge types:
-   - authored_by,
-   - measured_at,
-   - corrects,
-   - verified_by,
-   - covered_by_summary,
-   - derived_from.
-
-### Experimental Procedure
-
-1. Generate a provenance graph from audit events.
-2. Query correction lineage for selected records.
-3. Query records affected by revoked keys.
-4. Query records covered by failed verification reports.
-5. Export graph summary for audit review.
-
-### Evaluation Metrics
-
-1. Number of nodes and edges.
-2. Correction lineage query success.
-3. Revoked-key impact query success.
-4. Failed-verification traceability.
-5. Graph generation runtime.
-
-### Expected Outputs
-
-1. Provenance graph file.
-2. Query examples.
-3. Audit traceability report.
-
-### Risks
-
-1. Graph modeling may distract from the core hash verification contribution.
-2. Requires careful explanation to avoid becoming a separate paper.
+1. This may broaden the paper too much.
+2. Water quality data may require more domain-specific cleaning.
+3. It should be deferred unless the MVP is complete.
 
 ## MVP Implementation Schedule
 
@@ -581,69 +481,51 @@ Target duration: 2 to 3 weeks.
 
 Week 1:
 
-1. Select one public dataset source.
-2. Download and freeze a small data extract.
-3. Implement preprocessing and event schema.
-4. Implement baseline hash-chain builder.
+1. Select and freeze dataset extract.
+2. Implement common event schema.
+3. Implement Model A and Model B.
+4. Implement basic threat injection.
 
 Week 2:
 
-1. Implement verifier.
-2. Implement controlled tampering generator.
-3. Implement detection metrics.
-4. Implement audit/provenance events.
+1. Implement Model C hash-chain verification.
+2. Implement Model D provenance/permission reconstruction.
+3. Complete threat injection for all ten threats.
+4. Generate ground-truth labels.
 
 Week 3:
 
-1. Clean scripts and outputs.
-2. Run MVP experiments.
-3. Produce tables and figures.
-4. Decide whether summary-block experiment can be included.
+1. Run model verification across all threats.
+2. Generate threat-coverage matrix.
+3. Export metrics-ready tables.
+4. Review outputs before interpreting results.
 
 ## Minimum Publishable Outputs
 
-1. Dataset extraction script and frozen dataset description. TODO:DATA_NEEDED
-2. Environmental integrity event schema.
-3. Hash-chain construction prototype.
-4. Tampering generator with ground truth labels.
-5. Verification engine.
-6. Audit/provenance event model.
-7. Tables for detection metrics and overhead after execution. TODO:EXPERIMENT_NEEDED
-8. Architecture figure based on semi-decentralized rural monitoring.
-
-## Recommended MVP Scope
-
-Use the following minimum set:
-
-1. Experiment 1: Hash-Chain Integrity Baseline.
-2. Experiment 2: Controlled Tampering Detection.
-3. Experiment 3: Audit Trail and Provenance Verification.
-
-This set is realistic because it requires one public dataset, one local prototype, and synthetic integrity attacks with known labels. It supports claims about feasibility and verification behavior, but it does not require a deployed blockchain network or real rural sensor infrastructure.
-
-## Recommended Extended Scope
-
-If time remains, add:
-
-1. Experiment 4: Summary-Block Verification Efficiency.
-2. Experiment 5: Intermittent Connectivity and Delayed Synchronization.
-
-Only add Experiment 6 or 7 if the paper needs broader generality or stronger audit-trail visualization.
+1. Frozen dataset manifest. TODO:DATA_NEEDED
+2. Common event schema.
+3. Four implemented integrity models.
+4. Controlled threat injection scripts.
+5. Model-specific verification workflows.
+6. Threat-coverage matrix. TODO:EXPERIMENT_NEEDED
+7. Measured verification results. TODO:EXPERIMENT_NEEDED
+8. Reproducibility package.
 
 ## What Not To Claim Yet
 
 1. Do not claim environmental deployment success.
-2. Do not claim real-world tampering detection without real tampering cases.
-3. Do not claim regulatory compliance.
-4. Do not claim blockchain superiority over all conventional databases.
-5. Do not claim rural operational robustness unless connectivity simulation is performed.
-6. Do not report any performance or detection results until the experiments are run.
+2. Do not claim pollutant-specific findings.
+3. Do not claim sensor calibration findings.
+4. Do not claim environmental policy impact.
+5. Do not claim real-world attack frequency.
+6. Do not claim blockchain superiority in general.
+7. Do not report threat-coverage values or metrics until experiments are run.
 
 ## Open Experimental Decisions
 
 1. Choose OpenAQ or EPA AQS as the MVP dataset. TODO:DATA_NEEDED
-2. Choose pollutant, region, and time window. TODO:DATA_NEEDED
-3. Decide whether to include signatures or key identifiers only in the MVP.
-4. Decide whether summary blocks are MVP or extended.
-5. Decide whether water-quality replication is needed for venue fit.
-6. Decide whether source code should be packaged as supplementary material.
+2. Choose exact stations, parameters, and time window. TODO:DATA_NEEDED
+3. Decide whether signatures are represented as key identifiers or cryptographic signatures.
+4. Decide whether delayed synchronization is included in MVP or extended experiments.
+5. Decide exact cell labels for the threat-coverage matrix.
+6. Decide whether second-domain replication is needed for venue fit.
