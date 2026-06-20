@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-06-20 20:26:08 +02:00
+
+- Added process-local OpenAQ request pacing with a default of 55 requests per minute.
+- Added `--rate-limit-per-minute` to the OpenAQ downloader CLI.
+- Updated `_api_get` to inspect rate-limit remaining/reset headers when OpenAQ returns them.
+- Updated documentation to recommend `--rate-limit-per-minute 55` as a conservative default below the commonly documented 60 requests per minute client limit.
+- Did not run a new data download in this step.
+
 ## 2026-06-20 20:14:16 +02:00
 
 - Added retry/backoff handling for OpenAQ API HTTP 429, 500, 502, 503, and 504 responses.

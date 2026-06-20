@@ -57,11 +57,12 @@ pdm run openaq-download `
   --measurements-per-sensor 5000 `
   --max-retries 6 `
   --retry-backoff-seconds 3 `
+  --rate-limit-per-minute 55 `
   --resume `
   --progress
 ```
 
-The downloader writes a state file next to the raw data file. If the process is interrupted, rerun the same command with `--resume`.
+The downloader writes a state file next to the raw data file. If the process is interrupted, rerun the same command with `--resume`. The default request pace is 55 requests per minute to stay below the commonly documented OpenAQ client default of about 60 requests per minute.
 
 ## Map Example
 

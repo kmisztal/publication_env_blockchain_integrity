@@ -59,6 +59,7 @@ def build_parser() -> argparse.ArgumentParser:
     download.add_argument("--progress", action="store_true")
     download.add_argument("--max-retries", type=int, default=4)
     download.add_argument("--retry-backoff-seconds", type=float, default=2.0)
+    download.add_argument("--rate-limit-per-minute", type=int, default=55)
 
     map_parser = subparsers.add_parser("map", help="Generate an HTML map from OpenAQ metadata.")
     map_parser.add_argument("--metadata-file", required=True, type=Path)
@@ -89,11 +90,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "download":
         from experiments.openaq.download import (
+            configure_rate_limit,
             download_capital_triangle_extract,
             download_openaq_extract,
             read_api_key_file,
         )
 
+        configure_rate_limit(args.rate_limit_per_minute)
         api_key = read_api_key_file(args.api_key_file) if args.api_key_file else None
         if args.selection_mode == "capital-triangles":
             summary = download_capital_triangle_extract(

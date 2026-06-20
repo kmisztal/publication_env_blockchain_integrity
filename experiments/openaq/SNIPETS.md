@@ -1,7 +1,7 @@
 Pobieranie danych z OpenAQ
 
 ```bash
-python -m experiments.openaq.cli download `
+python  -m experiments.openaq.cli download `
   --api-key-file experiments\openaq\API_KEY `
   --dataset-id openaq_mvp `
   --selection-mode capital-triangles `
@@ -19,6 +19,7 @@ python -m experiments.openaq.cli download `
   --measurements-per-sensor 5000 `
   --max-retries 6 `
   --retry-backoff-seconds 3 `
+  --rate-limit-per-minute 55 `
   --resume `
   --progress
 ```

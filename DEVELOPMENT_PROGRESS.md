@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-20 20:14:16 +02:00
+Last updated: 2026-06-20 20:26:08 +02:00
 
 ### Completed
 
@@ -30,6 +30,8 @@ Last updated: 2026-06-20 20:14:16 +02:00
 - Added text progress output for OpenAQ scoring and measurement download steps.
 - Proposed MVP time window: 2025-07-01 to 2025-12-31, subject to per-location data availability checks.
 - Added retry/backoff handling for OpenAQ HTTP 429, 500, 502, 503, and 504 responses.
+- Added configurable OpenAQ request pacing, defaulting to 55 requests per minute.
+- Added handling for rate-limit remaining/reset headers when OpenAQ returns them.
 - Added minimum inter-location distance for city selection.
 - Added static HTML map generation from OpenAQ selection metadata.
 
@@ -137,6 +139,7 @@ pdm run openaq-download `
   --measurements-per-sensor 5000 `
   --max-retries 6 `
   --retry-backoff-seconds 3 `
+  --rate-limit-per-minute 55 `
   --resume `
   --progress
 ```

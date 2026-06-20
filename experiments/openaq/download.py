@@ -20,6 +20,8 @@ from experiments.common.paths import RAW_DATA_DIR, ensure_experiment_dirs
 
 
 OPENAQ_API_BASE_URL = "https://api.openaq.org/v3"
+_RATE_LIMIT_PER_MINUTE = 55
+_LAST_REQUEST_MONOTONIC = 0.0
 
 CAPITAL_CITY_CENTERS = {
     "warsaw": {"display_name": "Warsaw", "iso": "PL", "latitude": 52.2297, "longitude": 21.0122},
@@ -27,6 +29,12 @@ CAPITAL_CITY_CENTERS = {
     "paris": {"display_name": "Paris", "iso": "FR", "latitude": 48.8566, "longitude": 2.3522},
     "madrid": {"display_name": "Madrid", "iso": "ES", "latitude": 40.4168, "longitude": -3.7038},
 }
+
+
+def configure_rate_limit(requests_per_minute: int) -> None:
+    """Configure process-local request pacing for OpenAQ calls."""
+    global _RATE_LIMIT_PER_MINUTE
+    _RATE_LIMIT_PER_MINUTE = max(1, int(requests_per_minute))
 
 
 @dataclass(frozen=True)
@@ -729,8 +737,11 @@ def _api_get(
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
+            _pace_request()
             with urlopen(request, timeout=60) as response:
-                return json.loads(response.read().decode("utf-8"))
+                payload = json.loads(response.read().decode("utf-8"))
+                _honor_rate_limit_headers(response.headers)
+                return payload
         except HTTPError as error:
             body = error.read().decode("utf-8", errors="replace")
             last_error = RuntimeError(f"OpenAQ request failed with HTTP {error.code}: {body}")
@@ -818,6 +829,65 @@ def _retry_delay(attempt: int, backoff_seconds: float, retry_after: str | None) 
         except ValueError:
             pass
     return max(0.0, backoff_seconds * (2 ** (attempt - 1)))
+
+
+def _pace_request() -> None:
+    global _LAST_REQUEST_MONOTONIC
+    minimum_interval = 60.0 / max(1, _RATE_LIMIT_PER_MINUTE)
+    now = time.monotonic()
+    elapsed = now - _LAST_REQUEST_MONOTONIC
+    if elapsed < minimum_interval:
+        time.sleep(minimum_interval - elapsed)
+    _LAST_REQUEST_MONOTONIC = time.monotonic()
+
+
+def _honor_rate_limit_headers(headers: Any) -> None:
+    remaining = _first_header_value(
+        headers,
+        [
+            "X-RateLimit-Remaining",
+            "x-ratelimit-remaining",
+            "RateLimit-Remaining",
+            "ratelimit-remaining",
+        ],
+    )
+    if remaining is None:
+        return
+    try:
+        remaining_count = int(float(remaining))
+    except ValueError:
+        return
+    if remaining_count > 0:
+        return
+
+    reset = _first_header_value(
+        headers,
+        [
+            "X-RateLimit-Reset",
+            "x-ratelimit-reset",
+            "RateLimit-Reset",
+            "ratelimit-reset",
+        ],
+    )
+    if reset is None:
+        return
+    try:
+        reset_value = float(reset)
+    except ValueError:
+        return
+    # Reset headers may be seconds-until-reset or epoch seconds.
+    now = time.time()
+    delay = reset_value - now if reset_value > now else reset_value
+    if delay > 0:
+        time.sleep(delay)
+
+
+def _first_header_value(headers: Any, names: list[str]) -> str | None:
+    for name in names:
+        value = headers.get(name)
+        if value is not None:
+            return str(value)
+    return None
 
 
 def _normalize_city_key(city: str) -> str:
