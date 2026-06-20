@@ -28,7 +28,22 @@ def build_parser() -> argparse.ArgumentParser:
     download.add_argument("--dataset-id", required=True)
     download.add_argument("--datetime-from", required=True)
     download.add_argument("--datetime-to", required=True)
+    download.add_argument(
+        "--selection-mode",
+        choices=["country-first", "capital-triangles"],
+        default="country-first",
+    )
     download.add_argument("--iso", default="PL")
+    download.add_argument(
+        "--city",
+        action="append",
+        help="City for capital-triangle selection. Can be passed more than once.",
+    )
+    download.add_argument("--locations-per-city", type=int, default=3)
+    download.add_argument("--sensors-per-location", type=int, default=3)
+    download.add_argument("--city-radius-meters", type=int, default=25000)
+    download.add_argument("--min-location-distance-meters", type=int, default=5000)
+    download.add_argument("--candidate-locations-per-city", type=int, default=50)
     download.add_argument(
         "--parameters-id",
         action="append",
@@ -40,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
     download.add_argument("--measurements-per-sensor", type=int, default=100)
     download.add_argument("--page-delay-seconds", type=float, default=0.25)
     download.add_argument("--api-key-file", type=Path)
+    download.add_argument("--resume", action="store_true")
+    download.add_argument("--progress", action="store_true")
+    download.add_argument("--max-retries", type=int, default=4)
+    download.add_argument("--retry-backoff-seconds", type=float, default=2.0)
+
+    map_parser = subparsers.add_parser("map", help="Generate an HTML map from OpenAQ metadata.")
+    map_parser.add_argument("--metadata-file", required=True, type=Path)
+    map_parser.add_argument("--output-file", type=Path)
     return parser
 
 
@@ -65,22 +88,60 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "download":
-        from experiments.openaq.download import download_openaq_extract, read_api_key_file
+        from experiments.openaq.download import (
+            download_capital_triangle_extract,
+            download_openaq_extract,
+            read_api_key_file,
+        )
 
         api_key = read_api_key_file(args.api_key_file) if args.api_key_file else None
-        summary = download_openaq_extract(
-            dataset_id=args.dataset_id,
-            datetime_from=args.datetime_from,
-            datetime_to=args.datetime_to,
-            api_key=api_key,
-            iso=args.iso,
-            parameters_id=args.parameters_id,
-            location_limit=args.location_limit,
-            sensor_limit=args.sensor_limit,
-            measurements_per_sensor=args.measurements_per_sensor,
-            page_delay_seconds=args.page_delay_seconds,
-        )
+        if args.selection_mode == "capital-triangles":
+            summary = download_capital_triangle_extract(
+                dataset_id=args.dataset_id,
+                datetime_from=args.datetime_from,
+                datetime_to=args.datetime_to,
+                api_key=api_key,
+                cities=args.city,
+                locations_per_city=args.locations_per_city,
+                sensors_per_location=args.sensors_per_location,
+                city_radius_meters=args.city_radius_meters,
+                min_location_distance_meters=args.min_location_distance_meters,
+                candidate_locations_per_city=args.candidate_locations_per_city,
+                measurements_per_sensor=args.measurements_per_sensor,
+                page_delay_seconds=args.page_delay_seconds,
+                resume=args.resume,
+                progress=args.progress,
+                max_retries=args.max_retries,
+                retry_backoff_seconds=args.retry_backoff_seconds,
+            )
+        else:
+            summary = download_openaq_extract(
+                dataset_id=args.dataset_id,
+                datetime_from=args.datetime_from,
+                datetime_to=args.datetime_to,
+                api_key=api_key,
+                iso=args.iso,
+                parameters_id=args.parameters_id,
+                location_limit=args.location_limit,
+                sensor_limit=args.sensor_limit,
+                measurements_per_sensor=args.measurements_per_sensor,
+                page_delay_seconds=args.page_delay_seconds,
+                resume=args.resume,
+                progress=args.progress,
+                max_retries=args.max_retries,
+                retry_backoff_seconds=args.retry_backoff_seconds,
+            )
         print(json.dumps(summary.as_dict(), indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "map":
+        from experiments.openaq.map import generate_selection_map
+
+        output_file = generate_selection_map(
+            metadata_file=args.metadata_file,
+            output_file=args.output_file,
+        )
+        print(json.dumps({"map_file": str(output_file)}, indent=2, sort_keys=True))
         return 0
 
     parser.error(f"Unsupported command: {args.command}")

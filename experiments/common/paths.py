@@ -15,6 +15,7 @@ AUDIT_OUTPUT_DIR = OUTPUTS_ROOT / "audit"
 CHAIN_OUTPUT_DIR = OUTPUTS_ROOT / "chains"
 VERIFICATION_OUTPUT_DIR = OUTPUTS_ROOT / "verification"
 METRICS_OUTPUT_DIR = OUTPUTS_ROOT / "metrics"
+MAP_OUTPUT_DIR = OUTPUTS_ROOT / "maps"
 DEFAULT_DB_PATH = DATA_ROOT / "experiments.sqlite"
 
 
@@ -27,5 +28,6 @@ def ensure_experiment_dirs() -> None:
         CHAIN_OUTPUT_DIR,
         VERIFICATION_OUTPUT_DIR,
         METRICS_OUTPUT_DIR,
+        MAP_OUTPUT_DIR,
     ):
         path.mkdir(parents=True, exist_ok=True)

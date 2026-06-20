@@ -32,21 +32,47 @@ pdm install
 
 Package management is handled through PDM. The current `pyproject.toml` declares the minimal ingestion dependency set. Avoid creating a project-local `.venv`; the intended environment is the shared venv above.
 
-## Download Example
+## Recommended Download Example
 
 OpenAQ API v3 requires an API key in the `X-API-Key` header. Set it as `OPENAQ_API_KEY` or pass `--api-key-file`.
+
+The recommended MVP selection mode searches near selected European capitals, scores candidate locations by measurement availability in the requested time window, and selects three geographically separated monitoring locations per city.
 
 ```powershell
 $env:OPENAQ_API_KEY = "your-key"
 pdm run openaq-download `
   --dataset-id openaq_mvp `
-  --datetime-from 2026-06-01 `
-  --datetime-to 2026-06-08 `
-  --iso PL `
-  --location-limit 3 `
-  --sensor-limit 6 `
-  --measurements-per-sensor 100
+  --selection-mode capital-triangles `
+  --city warsaw `
+  --city berlin `
+  --city paris `
+  --city madrid `
+  --datetime-from 2025-07-01 `
+  --datetime-to 2025-12-31 `
+  --locations-per-city 3 `
+  --sensors-per-location 3 `
+  --city-radius-meters 25000 `
+  --min-location-distance-meters 5000 `
+  --candidate-locations-per-city 50 `
+  --measurements-per-sensor 5000 `
+  --max-retries 6 `
+  --retry-backoff-seconds 3 `
+  --resume `
+  --progress
 ```
+
+The downloader writes a state file next to the raw data file. If the process is interrupted, rerun the same command with `--resume`.
+
+## Map Example
+
+After a successful download, generate a local HTML map of the selected monitoring locations:
+
+```powershell
+pdm run openaq-map `
+  --metadata-file experiments\data\raw\openaq_mvp_openaq_v3_download_metadata.json
+```
+
+The map is written to `experiments/outputs/maps/` and is ignored by git.
 
 ## Ingestion Example
 

@@ -83,6 +83,26 @@ Rationale:
 
 This design produces a clearer information-systems evaluation than demonstrating one architecture alone. It allows the paper to show which threats each model can and cannot detect without claiming environmental engineering results.
 
+### Decision 10: Select OpenAQ monitoring locations by city-centered availability and geography
+
+The MVP OpenAQ dataset should not use the first available locations returned by the country-level API query. Instead, candidate monitoring locations should be selected around selected European capitals: Warsaw, Berlin, Paris, and Madrid.
+
+For each city, the downloader should:
+
+1. Search candidate OpenAQ locations within a configurable radius around the city center.
+2. Score candidate locations by available measurement counts in the selected time window.
+3. Select a configurable number of monitoring locations, defaulting to three per city.
+4. Prefer geographically separated locations that roughly form a triangle around the city center.
+5. Keep the number of selected sensors per location configurable.
+6. Use a configurable minimum distance between selected locations so the three points are not clustered too closely.
+7. Generate an inspection map for each download so the selected locations can be visually reviewed before experiments are interpreted.
+
+The candidate MVP time window is 2025-07-01 to 2025-12-31. This range is not final until the downloader confirms that selected locations have sufficient measurement availability in that period.
+
+Rationale:
+
+This creates a more intentional and reproducible dataset slice than arbitrary country-level selection. It also supports the paper's distributed monitoring scenario by using multiple cities and multiple monitoring locations per city while keeping the dataset bounded.
+
 ## Open Decisions
 
 1. Select the exact target venue and verify whether computer science / information systems framing fits its scope. TODO:CITATION_NEEDED

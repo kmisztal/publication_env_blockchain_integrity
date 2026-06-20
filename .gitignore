@@ -2,6 +2,11 @@ build/*
 !build/.gitkeep
 .venv/
 .pdm-python
+.python-version
+__pycache__/
+*.pyc
+experiments/openaq/API_KEY
+experiments/data/*.sqlite
 experiments/data/raw/*
 !experiments/data/raw/.gitkeep
 experiments/data/processed/*
@@ -16,6 +21,8 @@ experiments/outputs/verification/*
 !experiments/outputs/verification/.gitkeep
 experiments/outputs/metrics/*
 !experiments/outputs/metrics/.gitkeep
+experiments/outputs/maps/*
+!experiments/outputs/maps/.gitkeep
 *.aux
 *.bbl
 *.blg

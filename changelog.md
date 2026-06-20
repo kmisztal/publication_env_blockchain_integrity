@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-06-20 20:14:16 +02:00
+
+- Added retry/backoff handling for OpenAQ API HTTP 429, 500, 502, 503, and 504 responses.
+- Updated OpenAQ candidate scoring to skip a failing location or sensor after retry attempts instead of aborting the entire download.
+- Added `--max-retries` and `--retry-backoff-seconds` to the OpenAQ downloader CLI.
+- Added `--min-location-distance-meters` to avoid selecting monitoring locations that are too close together within a city.
+- Added `experiments/openaq/map.py` for generating static HTML maps from OpenAQ download metadata.
+- Added `pdm run openaq-map` and `experiments/outputs/maps/` for local map inspection artifacts.
+- Updated `experiments/README.md` and `DEVELOPMENT_PROGRESS.md` with distance, retry, resume, progress, and map commands.
+- Did not run a new data download in this step.
+
+## 2026-06-20 20:03:29 +02:00
+
+- Added resumable OpenAQ measurement downloading with a per-sensor state file under `experiments/data/raw/`.
+- Added `--resume` and `--progress` options to the OpenAQ downloader CLI.
+- Updated the recommended capital-triangle workflow to use the candidate time window 2025-07-01 to 2025-12-31.
+- Documented that the 2025 window remains subject to per-location availability checks before final dataset freeze.
+- Updated `experiments/README.md`, `DEVELOPMENT_PROGRESS.md`, and `notes/decisions.md` accordingly.
+- Did not run a new data download in this step.
+
+## 2026-06-20 19:57:56 +02:00
+
+- Added OpenAQ capital-triangle selection support for Warsaw, Berlin, Paris, and Madrid.
+- Extended `experiments/openaq/download.py` to score candidate city locations by measurement availability in the requested time window.
+- Added geographic selection logic that prefers three separated monitoring locations around each city center.
+- Extended the OpenAQ CLI with `--selection-mode capital-triangles`, `--city`, `--locations-per-city`, `--sensors-per-location`, `--city-radius-meters`, and `--candidate-locations-per-city`.
+- Updated `experiments/README.md` and `DEVELOPMENT_PROGRESS.md` with the recommended capital-triangle download workflow.
+- Added Decision 10 to `notes/decisions.md` documenting city-centered, high-availability OpenAQ location selection.
+
+## 2026-06-20 19:44:32 +02:00
+
+- Added `experiments/openaq/API_KEY` to `.gitignore` after the local OpenAQ API key file was provided.
+- Updated `DEVELOPMENT_PROGRESS.md` to document that the local API key file is ignored and must not be committed.
+- Downloaded a bounded OpenAQ API v3 MVP extract for `openaq_mvp` using the local API key file.
+- Initial 2026-06-01 to 2026-06-08 query returned zero measurements for the selected Polish sensors; metadata showed the selected sensors were active around 2016-2017.
+- Re-ran the download for 2016-12-01 to 2016-12-08 and froze 600 raw OpenAQ measurement records locally.
+- Installed PDM dependencies into the provided virtual environment, including `pandas 3.0.3`.
+- Updated OpenAQ ingestion to read JSONL through `pandas.json_normalize` and to use `period.datetimeFrom.utc` for OpenAQ v3 measurement timestamps.
+- Ingested the frozen OpenAQ extract into canonical measurement artifacts and SQLite: 600 records, 0 dropped records, 2 stations, and 5 parameters.
+- Updated `.gitignore` for local Python cache files, `.python-version`, and `experiments/data/*.sqlite`.
+- These are data-preparation artifacts only; no integrity-model verification results or threat-coverage matrix were generated.
+
 ## 2026-06-20 19:33:29 +02:00
 
 - Added `experiments/openaq/download.py` for freezing bounded OpenAQ API v3 extracts as raw JSONL artifacts.

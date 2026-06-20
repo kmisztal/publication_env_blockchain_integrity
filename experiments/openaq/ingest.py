@@ -25,7 +25,12 @@ def read_openaq_source(path: Path) -> pd.DataFrame:
     if suffix == ".csv":
         return pd.read_csv(path)
     if suffix in {".jsonl", ".ndjson"}:
-        return pd.read_json(path, lines=True)
+        records = [
+            json.loads(line)
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        return pd.json_normalize(records)
     if suffix == ".json":
         data = json.loads(path.read_text(encoding="utf-8"))
         if isinstance(data, dict):
@@ -56,6 +61,7 @@ def normalize_openaq_dataframe(
     ]
 
     timestamp = _first_available(source, [
+        "period.datetimeFrom.utc",
         "datetimeFrom.utc",
         "datetime.utc",
         "date.utc",

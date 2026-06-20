@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-20 19:33:29 +02:00
+Last updated: 2026-06-20 20:14:16 +02:00
 
 ### Completed
 
@@ -22,6 +22,16 @@ Last updated: 2026-06-20 19:33:29 +02:00
 - Updated `.gitignore` so generated datasets, SQLite files, and outputs are excluded from version control by default.
 - Added `experiments/README.md` with the initial ingestion workflow.
 - Updated `notes/codex_tasks.md` to reflect completed setup and first ingestion tasks.
+- Downloaded a bounded OpenAQ API v3 MVP extract locally using the provided API key file.
+- Ingested the frozen OpenAQ MVP extract into canonical measurements and SQLite.
+- Added a capital-triangle OpenAQ selection mode for Warsaw, Berlin, Paris, and Madrid.
+- The capital-triangle selector scores candidate locations by measurement availability and selects geographically separated monitoring locations around each city center.
+- Added resumable OpenAQ downloading with a per-sensor state file.
+- Added text progress output for OpenAQ scoring and measurement download steps.
+- Proposed MVP time window: 2025-07-01 to 2025-12-31, subject to per-location data availability checks.
+- Added retry/backoff handling for OpenAQ HTTP 429, 500, 502, 503, and 504 responses.
+- Added minimum inter-location distance for city selection.
+- Added static HTML map generation from OpenAQ selection metadata.
 
 ### Implemented Modules
 
@@ -34,6 +44,7 @@ Last updated: 2026-06-20 19:33:29 +02:00
 | `experiments/common/storage.py` | SQLite schema initialization and measurement loading helpers. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
+| `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
 | `experiments/openaq/cli.py` | Lightweight CLI for OpenAQ ingestion. |
 
 ## Python Environment
@@ -73,6 +84,7 @@ Verification note:
 - The provided venv Python reports version `3.14.0`.
 - `pandas` was not installed in the provided venv at the time of this update; it is required for ingestion, while the OpenAQ downloader uses the Python standard library.
 - A temporary project-local `.venv` was created by PDM during verification when the external venv was not active; `.venv/` is now ignored and should not be used as the intended project environment.
+- The local OpenAQ API key file is expected at `experiments/openaq/API_KEY`; it is ignored by git and must not be committed.
 
 ## Minimal Implementation Structure
 
@@ -97,6 +109,7 @@ experiments/
     chains/
     verification/
     metrics/
+    maps/
 ```
 
 General logic belongs in `experiments/common/`. Dataset-specific parsing and field mapping belongs in dataset packages such as `experiments/openaq/`.
@@ -109,12 +122,28 @@ The download command freezes a bounded OpenAQ API v3 extract when an API key is 
 $env:OPENAQ_API_KEY = "your-key"
 pdm run openaq-download `
   --dataset-id openaq_mvp `
-  --datetime-from 2026-06-01 `
-  --datetime-to 2026-06-08 `
-  --iso PL `
-  --location-limit 3 `
-  --sensor-limit 6 `
-  --measurements-per-sensor 100
+  --selection-mode capital-triangles `
+  --city warsaw `
+  --city berlin `
+  --city paris `
+  --city madrid `
+  --datetime-from 2025-07-01 `
+  --datetime-to 2025-12-31 `
+  --locations-per-city 3 `
+  --sensors-per-location 3 `
+  --city-radius-meters 25000 `
+  --min-location-distance-meters 5000 `
+  --candidate-locations-per-city 50 `
+  --measurements-per-sensor 5000 `
+  --max-retries 6 `
+  --retry-backoff-seconds 3 `
+  --resume `
+  --progress
+```
+
+```powershell
+pdm run openaq-map `
+  --metadata-file experiments\data\raw\openaq_mvp_openaq_v3_download_metadata.json
 ```
 
 ```powershell
@@ -129,11 +158,13 @@ Generated artifacts:
 
 - `experiments/data/raw/<dataset_id>_openaq_v3_measurements.jsonl`
 - `experiments/data/raw/<dataset_id>_openaq_v3_download_metadata.json`
+- `experiments/data/raw/<dataset_id>_openaq_v3_download_state.json`
 - `experiments/data/processed/<dataset_id>_measurements.csv`
 - `experiments/data/processed/<dataset_id>_measurements.jsonl`
 - `experiments/data/processed/<dataset_id>_manifest.json`
 - `experiments/data/processed/<dataset_id>_preprocessing_report.json`
 - `experiments/data/experiments.sqlite`
+- `experiments/outputs/maps/<dataset_id>_sensor_map.html`
 
 These files are generated artifacts and are ignored by default, except `.gitkeep` placeholders.
 
@@ -164,11 +195,21 @@ No model verification outputs have been generated yet.
 
 No scientific results should be reported from the current implementation alone.
 
+Current previously downloaded data-preparation artifacts are local reproducibility inputs only and may be replaced after final city/time-window selection:
+
+- Dataset ID: `openaq_mvp`
+- Source: OpenAQ API v3
+- Query window: 2016-12-01 to 2016-12-08
+- Local raw measurement records downloaded: 600
+- Canonical measurement records ingested: 600
+- Stations represented after ingestion: 2
+- Parameters represented after ingestion: 5
+
 ## Next Development Steps
 
 1. Run `pdm install` in the provided virtual environment.
 2. Add `OPENAQ_API_KEY` locally or provide an API key file outside version control.
-3. Download a small frozen OpenAQ extract selected by explicit query parameters.
+3. Re-download the frozen OpenAQ extract using capital-triangle selection and the 2025-07-01 to 2025-12-31 candidate window.
 4. Run the ingestion command and inspect the generated manifest and preprocessing report.
 5. Implement baseline event construction from canonical measurements.
 6. Implement Model A and Model B stores.
