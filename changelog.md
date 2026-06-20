@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-20 18:14:45 +02:00
+
+- Created `notes/experimental_plan.md` with an executable MVP and extended experiment set for environmental data integrity, audit trails, hash verification, tampering detection, provenance verification, and blockchain-inspired architecture.
+- Added verified candidate public data sources for OpenAQ, EPA AQS, Water Quality Portal, and NOAA/NCEI CDO without generating results or claiming dataset availability beyond source suitability.
+
 ## 2026-06-20 18:06:32 +02:00
 
 - Renamed `BLOCKCHAIN_PANTENT.md` to `BLOCKCHAIN_PATENT.md`.
