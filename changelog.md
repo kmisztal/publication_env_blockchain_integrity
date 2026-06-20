@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-20 18:25:38 +02:00
+
+- Drafted `sections/01_introduction.tex` in scientific journal style, covering environmental monitoring data integrity, sensor-network challenges, provenance, blockchain-inspired audit trails, transfer from regulated environments, research gap, research question, and objectives.
+- Added `TODO:CITATION_NEEDED` markers where literature support is required.
+
 ## 2026-06-20 18:19:46 +02:00
 
 - Created `notes/poc_architecture.md` describing the lightweight proof-of-concept architecture, data flow, data model, hashing strategy, audit trail model, and verification workflow.
