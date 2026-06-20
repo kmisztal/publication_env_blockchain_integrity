@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-20 19:22:54 +02:00
+
+- Added `pyproject.toml` for PDM-managed experiment dependencies and scripts.
+- Documented the project virtual environment path `e:\git_venv\dicella\env_blockchain_integrity\` in `experiments/README.md` and `DEVELOPMENT_PROGRESS.md`.
+- Updated the OpenAQ ingestion examples to use `pdm run openaq-ingest`.
+- Verified that PDM is available in the provided virtual environment as version 2.27.0.
+- Verified that the provided virtual environment uses Python 3.14.0.
+- Noted that `pandas` is not installed in the provided virtual environment yet; it is declared as a PDM dependency and should be installed with `pdm install`.
+- Added `.venv/` to `.gitignore` because the intended environment is `e:\git_venv\dicella\env_blockchain_integrity\`, not a project-local virtual environment.
+- Added `.pdm-python` to `.gitignore` because it is a local PDM interpreter selection file.
+
+## 2026-06-20 19:16:32 +02:00
+
+- Started the proof-of-concept experiment implementation under `experiments/`.
+- Added reusable experiment utilities in `experiments/common/` for paths, deterministic hashing, canonical schema definitions, dataset manifests, and SQLite storage.
+- Added OpenAQ-specific ingestion in `experiments/openaq/` for frozen local CSV, JSON, or JSONL exports, including canonical measurement normalization, deterministic `record_id` generation, raw payload preservation, preprocessing reports, and manifest creation.
+- Added `experiments/README.md` with the current ingestion workflow.
+- Added `DEVELOPMENT_PROGRESS.md` to track implementation status, package structure, current OpenAQ workflow, explicit non-results, and next development steps.
+- Added experiment data and output directories with `.gitkeep` placeholders and updated `.gitignore` so generated data and outputs are not tracked by default.
+- Updated `notes/codex_tasks.md` to mark completed Phase 0 setup and initial Phase 1 ingestion tasks.
+
 ## 2026-06-20 18:54:20 +02:00
 
 - Updated scope across planning notes to position the paper primarily as a computer science / information systems contribution.

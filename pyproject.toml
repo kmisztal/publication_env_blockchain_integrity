@@ -1,0 +1,16 @@
+[project]
+name = "env-blockchain-integrity"
+version = "0.1.0"
+description = "Proof-of-concept experiments for environmental data integrity models."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.0",
+]
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+compile = "python -m compileall experiments"
+openaq-ingest = "python -m experiments.openaq.cli ingest"

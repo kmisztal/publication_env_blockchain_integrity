@@ -12,23 +12,23 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 0: Repository Setup
 
-- [ ] Decide implementation folder name: `poc/` or `experiments/`.
-- [ ] Create package skeleton with `__init__.py`.
-- [ ] Add output folders: `data/raw/`, `data/processed/`, `data/tampered/`, `outputs/chains/`, `outputs/audit/`, `outputs/verification/`, `outputs/metrics/`.
-- [ ] Add `.gitkeep` files where empty folders must be preserved.
-- [ ] Add a short `README` for running the PoC.
-- [ ] Confirm whether generated data and outputs should be gitignored.
+- [x] Decide implementation folder name: `experiments/`.
+- [x] Create package skeleton with `__init__.py`.
+- [x] Add output folders under `experiments/`: `data/raw/`, `data/processed/`, `data/tampered/`, `outputs/chains/`, `outputs/audit/`, `outputs/verification/`, `outputs/metrics/`.
+- [x] Add `.gitkeep` files where empty folders must be preserved.
+- [x] Add a short `README` for running the PoC.
+- [x] Confirm generated data and outputs should be gitignored, while placeholder directories stay tracked.
 
 ## Phase 1: Data Ingestion and Preprocessing
 
-- [ ] Implement CSV ingestion for a frozen public dataset extract.
-- [ ] Implement dataset manifest creation.
-- [ ] Implement preprocessing with Pandas.
-- [ ] Normalize timestamps, station IDs, parameters, units, coordinates, and values.
-- [ ] Generate deterministic `record_id` values.
-- [ ] Preserve source rows as JSON payloads.
-- [ ] Export cleaned data to `data/processed/`.
-- [ ] Add preprocessing report with record counts and missing field counts.
+- [x] Implement CSV ingestion for a frozen public dataset extract.
+- [x] Implement dataset manifest creation.
+- [x] Implement preprocessing with Pandas for OpenAQ exports.
+- [x] Normalize timestamps, station IDs, parameters, units, coordinates, and values.
+- [x] Generate deterministic `record_id` values.
+- [x] Preserve source rows as JSON payloads.
+- [x] Export cleaned data to `experiments/data/processed/`.
+- [x] Add preprocessing report with record counts and missing field counts.
 
 ## Phase 2: Storage Layer
 
