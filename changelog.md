@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-20 18:19:46 +02:00
+
+- Created `notes/poc_architecture.md` describing the lightweight proof-of-concept architecture, data flow, data model, hashing strategy, audit trail model, and verification workflow.
+- Replaced the placeholder `notes/codex_tasks.md` with a detailed implementation backlog for the PoC.
+
 ## 2026-06-20 18:14:45 +02:00
 
 - Created `notes/experimental_plan.md` with an executable MVP and extended experiment set for environmental data integrity, audit trails, hash verification, tampering detection, provenance verification, and blockchain-inspired architecture.
