@@ -1,3 +1,55 @@
 \section{Related Work}
 
-Summarize relevant literature. Use \texttt{TODO:CITATION\_NEEDED} for unsupported claims.
+\subsection{Environmental Monitoring Systems}
+
+Environmental monitoring systems collect observations about air quality, water quality, meteorological conditions, soil conditions, noise, radiation, and other parameters relevant to environmental assessment and infrastructure governance. \texttt{TODO:CITATION\_NEEDED} These systems may combine fixed monitoring stations, mobile sensors, laboratory measurements, remote sensing sources, and public data repositories. \texttt{TODO:CITATION\_NEEDED} Their outputs are often used by public authorities, researchers, infrastructure operators, and local communities to support environmental decisions and risk assessment. \texttt{TODO:CITATION\_NEEDED}
+
+The literature on environmental monitoring commonly emphasizes sensing accuracy, spatial coverage, calibration, communication protocols, data quality, and analytics. \texttt{TODO:CITATION\_NEEDED} These topics are essential, but they do not fully address the integrity of the data lifecycle after a measurement has been produced. In particular, the questions of who or what produced a record, whether it was later corrected, whether it was transmitted without alteration, and whether its provenance can be independently verified require additional attention.
+
+\subsection{Rural IoT Monitoring}
+
+Rural IoT monitoring systems operate under constraints that differ from dense urban monitoring deployments. Rural environments may include sparse connectivity, limited access to maintenance personnel, long distances between devices, heterogeneous energy availability, and weaker institutional infrastructure for continuous supervision. \texttt{TODO:CITATION\_NEEDED} These constraints affect not only data availability, but also the ability to reconstruct the history of environmental records when anomalies, delays, or missing values occur.
+
+IoT-based monitoring is frequently discussed in terms of low-cost sensing, wireless communication, edge processing, gateway architectures, and energy-efficient data collection. \texttt{TODO:CITATION\_NEEDED} For the present study, the important issue is how such deployments can preserve data trustworthiness when measurements are buffered locally, synchronized later, or handled by multiple technical and organizational actors. This creates a need for integrity mechanisms that are lightweight enough for constrained deployments but expressive enough to support later audit and verification.
+
+\subsection{Environmental Sensor Networks}
+
+Environmental sensor networks provide the technical basis for many modern monitoring systems. They typically consist of sensor nodes, communication links, gateways, storage backends, and analytical services. \texttt{TODO:CITATION\_NEEDED} Prior research has examined network design, sensor placement, calibration, data fusion, anomaly detection, and quality assurance for environmental measurements. \texttt{TODO:CITATION\_NEEDED}
+
+However, environmental sensor networks also create data lineage challenges. A measurement may pass through a sensor, local controller, gateway, cloud service, preprocessing script, database, and public reporting interface before it is used. Each step may introduce transformations, aggregation, correction, or filtering. \texttt{TODO:CITATION\_NEEDED} Without an explicit record of these steps, later users may be unable to distinguish original observations from derived or corrected records.
+
+\subsection{Data Provenance in Environmental Data}
+
+Data provenance describes the origin, history, custody, transformation, and context of a data item. \texttt{TODO:CITATION\_NEEDED} In environmental monitoring, provenance can include the source station, sensor identifier, location, parameter, timestamp, unit, calibration state, processing step, responsible organization, and publication history. \texttt{TODO:CITATION\_NEEDED} Provenance is especially important when environmental records are reused outside the original collection context, for example in scientific analysis, public reporting, compliance workflows, or infrastructure planning.
+
+Existing provenance approaches can document data lineage, but they may not always provide tamper-evident verification of the recorded lineage itself. \texttt{TODO:CITATION\_NEEDED} For the present work, provenance is treated as both descriptive metadata and an audit object: it should be possible to verify whether provenance records have been altered, whether a correction refers to a valid original record, and whether the actor performing a change was authorized at the time of the event.
+
+\subsection{Data Integrity and Trustworthiness}
+
+Data integrity refers to the preservation of data accuracy, completeness, consistency, and resistance to unauthorized modification across the data lifecycle. \texttt{TODO:CITATION\_NEEDED} In environmental monitoring, integrity concerns include altered measurements, missing records, duplicated or replayed observations, inconsistent timestamps, undocumented corrections, and loss of custody metadata. \texttt{TODO:CITATION\_NEEDED}
+
+Trustworthiness is broader than integrity alone. It also includes transparency about collection methods, sensor limitations, calibration status, processing history, and governance responsibilities. \texttt{TODO:CITATION\_NEEDED} A monitoring system can produce technically accurate data while still being difficult to trust if users cannot reconstruct how a record was created and changed. This motivates an audit-oriented approach in which integrity checks, provenance metadata, and correction history are treated as first-class elements of the monitoring architecture.
+
+\subsection{Blockchain for Environmental Systems}
+
+Blockchain and distributed ledger technologies have been proposed for a range of environmental and sustainability applications, including environmental data sharing, carbon accounting, supply-chain transparency, resource management, and sensor data verification. \texttt{TODO:CITATION\_NEEDED} In these contexts, the most relevant technical properties are append-only recording, cryptographic linking, distributed verification, and resistance to undetected modification. \texttt{TODO:CITATION\_NEEDED}
+
+For rural environmental monitoring, a fully public or fully decentralized blockchain may be unnecessary or impractical. \texttt{TODO:CITATION\_NEEDED} The present study therefore focuses on blockchain-inspired architecture rather than cryptocurrency-oriented deployment. The core idea is to use hash-linked events, timestamped records, permission events, and summary verification to preserve evidence of data integrity while keeping raw environmental measurements in conventional off-chain storage.
+
+\subsection{Audit Trails}
+
+Audit trails record actions performed on data and systems, including creation, modification, review, approval, correction, deletion attempts, and access-control changes. \texttt{TODO:CITATION\_NEEDED} In regulated environments, audit trails support accountability by recording who performed an action, when it occurred, what object was affected, and what changed. \texttt{TODO:CITATION\_NEEDED}
+
+Environmental monitoring systems can benefit from similar audit concepts. A measurement correction, sensor replacement, data invalidation, delayed upload, or publication event can be represented as an audit event rather than an invisible change to a database row. This approach is especially relevant when multiple actors participate in the data lifecycle, including sensor operators, local authorities, laboratories, environmental agencies, and researchers. \texttt{TODO:CITATION\_NEEDED}
+
+\subsection{Hash Verification}
+
+Hash verification provides a lightweight mechanism for detecting whether data have changed since a reference digest was computed. \texttt{TODO:CITATION\_NEEDED} When records are serialized deterministically and linked through previous hashes, later verification can detect changes to record values, timestamps, metadata, or event order. \texttt{TODO:CITATION\_NEEDED} Hash verification is therefore suitable for proof-of-concept experiments involving controlled tampering and known ground-truth labels.
+
+Hashing alone does not solve all data trust problems. It cannot determine whether an originally submitted measurement was physically correct, whether a sensor was calibrated, or whether an authorized actor entered false information. \texttt{TODO:CITATION\_NEEDED} Its value lies in detecting unauthorized or undocumented changes after a record has been committed to an integrity layer. For this reason, the proposed architecture combines hash verification with provenance metadata, audit events, and permission-state reconstruction.
+
+\subsection{Literature Gap}
+
+The reviewed topic areas suggest three gaps that motivate this study. First, environmental monitoring and sensor-network literature provides extensive treatment of measurement, communication, and data quality, but less explicit treatment of data integrity as an auditable lifecycle problem. \texttt{TODO:CITATION\_NEEDED} Second, provenance literature supports lineage description, but the relationship between provenance metadata and tamper-evident verification remains underdeveloped for rural monitoring workflows. \texttt{TODO:CITATION\_NEEDED} Third, blockchain applications in environmental systems often emphasize decentralization or transparency, while fewer studies focus on lightweight, semi-decentralized, audit-trail architectures for rural sensor data. \texttt{TODO:CITATION\_NEEDED}
+
+This paper addresses these gaps by proposing a blockchain-inspired integrity architecture that separates raw environmental measurements from hash records, provenance metadata, permission events, correction history, and verification reports. The intended contribution is not a production blockchain network, but a structured and experimentally testable model for environmental data integrity in rural monitoring systems.

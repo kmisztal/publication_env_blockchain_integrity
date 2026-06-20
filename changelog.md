@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-20 18:37:51 +02:00
+
+- Drafted `sections/02_related_work.tex` as a structured literature review skeleton covering environmental monitoring systems, rural IoT monitoring, environmental sensor networks, data provenance, data integrity, blockchain for environmental systems, audit trails, hash verification, and literature gaps.
+- Used LaTeX-safe `TODO:CITATION_NEEDED` placeholders without inventing references.
+
 ## 2026-06-20 18:33:14 +02:00
 
 - Compiled the manuscript to `build/main.pdf` using MiKTeX `pdflatex`.
