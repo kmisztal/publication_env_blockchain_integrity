@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-06-20 18:33:14 +02:00
+
+- Compiled the manuscript to `build/main.pdf` using MiKTeX `pdflatex`.
+- Copied the generated PDF to root-level `main.pdf`.
+- Escaped LaTeX TODO markers with underscores in `sections/01_introduction.tex` and `sections/02_related_work.tex` so the manuscript compiles.
+
 ## 2026-06-20 18:25:38 +02:00
 
 - Drafted `sections/01_introduction.tex` in scientific journal style, covering environmental monitoring data integrity, sensor-network challenges, provenance, blockchain-inspired audit trails, transfer from regulated environments, research gap, research question, and objectives.
