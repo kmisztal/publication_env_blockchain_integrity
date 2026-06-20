@@ -6,6 +6,7 @@ The first MVP dataset path is OpenAQ, with reusable experiment utilities kept in
 
 ## Current Scope
 
+- Download a small bounded OpenAQ API v3 extract when an API key is available.
 - Ingest a frozen local OpenAQ CSV, JSON, or JSONL export.
 - Normalize records into a canonical measurement schema.
 - Create a dataset manifest with file hashes and source metadata.
@@ -31,14 +32,30 @@ pdm install
 
 Package management is handled through PDM. The current `pyproject.toml` declares the minimal ingestion dependency set. Avoid creating a project-local `.venv`; the intended environment is the shared venv above.
 
-## Example
+## Download Example
+
+OpenAQ API v3 requires an API key in the `X-API-Key` header. Set it as `OPENAQ_API_KEY` or pass `--api-key-file`.
+
+```powershell
+$env:OPENAQ_API_KEY = "your-key"
+pdm run openaq-download `
+  --dataset-id openaq_mvp `
+  --datetime-from 2026-06-01 `
+  --datetime-to 2026-06-08 `
+  --iso PL `
+  --location-limit 3 `
+  --sensor-limit 6 `
+  --measurements-per-sensor 100
+```
+
+## Ingestion Example
 
 ```powershell
 pdm run openaq-ingest `
-  --source-file path\to\openaq_export.csv `
+  --source-file experiments\data\raw\openaq_mvp_openaq_v3_measurements.jsonl `
   --dataset-id openaq_mvp `
-  --source-url https://docs.openaq.org/ `
-  --query-parameters-json "{}"
+  --source-url https://api.openaq.org/v3 `
+  --query-parameters-json "{""api_version"":""v3""}"
 ```
 
 Outputs are written under `experiments/data/` by default.

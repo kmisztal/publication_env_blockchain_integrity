@@ -56,6 +56,7 @@ def normalize_openaq_dataframe(
     ]
 
     timestamp = _first_available(source, [
+        "datetimeFrom.utc",
         "datetime.utc",
         "date.utc",
         "utc",
@@ -64,6 +65,8 @@ def normalize_openaq_dataframe(
         "date",
     ])
     station = _first_available(source, [
+        "sensor.location.id",
+        "sensor.location.name",
         "location.id",
         "locationId",
         "location_id",
@@ -76,6 +79,7 @@ def normalize_openaq_dataframe(
         "sensors_id",
     ])
     parameter = _first_available(source, [
+        "sensor.parameter.name",
         "parameter.name",
         "parameter",
         "parameters_name",
@@ -83,17 +87,20 @@ def normalize_openaq_dataframe(
     ])
     value = _first_available(source, ["value"])
     unit = _first_available(source, [
+        "sensor.parameter.units",
         "parameter.units",
         "unit",
         "units",
         "parameters_units",
     ])
     latitude = _first_available(source, [
+        "sensor.location.coordinates.latitude",
         "coordinates.latitude",
         "latitude",
         "lat",
     ])
     longitude = _first_available(source, [
+        "sensor.location.coordinates.longitude",
         "coordinates.longitude",
         "longitude",
         "lon",

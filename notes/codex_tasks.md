@@ -29,6 +29,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Preserve source rows as JSON payloads.
 - [x] Export cleaned data to `experiments/data/processed/`.
 - [x] Add preprocessing report with record counts and missing field counts.
+- [x] Add an OpenAQ API v3 downloader that freezes a bounded raw JSONL extract when `OPENAQ_API_KEY` is available.
 
 ## Phase 2: Storage Layer
 

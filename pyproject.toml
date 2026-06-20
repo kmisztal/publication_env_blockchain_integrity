@@ -14,3 +14,4 @@ distribution = false
 [tool.pdm.scripts]
 compile = "python -m compileall experiments"
 openaq-ingest = "python -m experiments.openaq.cli ingest"
+openaq-download = "python -m experiments.openaq.cli download"

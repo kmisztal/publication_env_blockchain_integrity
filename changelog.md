@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-20 19:33:29 +02:00
+
+- Added `experiments/openaq/download.py` for freezing bounded OpenAQ API v3 extracts as raw JSONL artifacts.
+- Extended the OpenAQ CLI with `download`, using `OPENAQ_API_KEY` or `--api-key-file`.
+- Changed OpenAQ CLI imports to be command-specific so downloader help and downloads do not require `pandas`.
+- Updated OpenAQ ingestion field mapping for API v3 records, including `datetimeFrom.utc`, `sensor.parameter.*`, and `sensor.location.*` fields.
+- Added a `pdm run openaq-download` script in `pyproject.toml`.
+- Added `pdm.lock` for the declared PDM dependency set.
+- Updated `experiments/README.md` and `DEVELOPMENT_PROGRESS.md` with the download and ingestion workflow.
+- Updated `notes/codex_tasks.md` to mark OpenAQ API v3 downloader support as implemented.
+- Did not download real OpenAQ data or generate experiment results in this step.
+
 ## 2026-06-20 19:22:54 +02:00
 
 - Added `pyproject.toml` for PDM-managed experiment dependencies and scripts.
