@@ -186,6 +186,52 @@ def build_model_b_events(
     return events
 
 
+def build_model_c_events(
+    measurements: pd.DataFrame,
+    *,
+    dataset_id: str,
+    actor_id: str = DEFAULT_INGEST_ACTOR_ID,
+    created_at_utc: str | None = None,
+) -> list[AuditEvent]:
+    ordered = order_measurements(measurements)
+    event_created_at = created_at_utc or utc_now_iso()
+    events: list[AuditEvent] = []
+    previous_hash: str | None = None
+
+    genesis = make_event(
+        model_id=MODEL_C,
+        event_type=EVENT_GENESIS,
+        event_timestamp=event_created_at,
+        actor_id=actor_id,
+        subject_id=dataset_id,
+        payload=genesis_payload(dataset_id, len(ordered)),
+        previous_hash=previous_hash,
+        created_at_utc=event_created_at,
+        include_block_hash=True,
+    )
+    events.append(genesis)
+    previous_hash = genesis.block_hash
+
+    for row in ordered.to_dict(orient="records"):
+        payload = measurement_payload(row)
+        event = make_event(
+            model_id=MODEL_C,
+            event_type=EVENT_MEASUREMENT_RECORDED,
+            event_timestamp=payload["timestamp_utc"],
+            actor_id=actor_id,
+            subject_id=payload["station_id"],
+            payload=payload,
+            source_record_id=payload["record_id"],
+            previous_hash=previous_hash,
+            created_at_utc=event_created_at,
+            include_block_hash=True,
+        )
+        events.append(event)
+        previous_hash = event.block_hash
+
+    return events
+
+
 def order_measurements(measurements: pd.DataFrame) -> pd.DataFrame:
     return measurements.sort_values(
         ["timestamp_utc", "station_id", "parameter", "record_id"],

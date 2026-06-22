@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Sequence
 
-from experiments.common.paths import AUDIT_OUTPUT_DIR, DEFAULT_DB_PATH
+from experiments.common.paths import AUDIT_OUTPUT_DIR, CHAIN_OUTPUT_DIR, DEFAULT_DB_PATH
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -26,6 +26,16 @@ def build_parser() -> argparse.ArgumentParser:
     baseline.add_argument("--output-dir", type=Path, default=AUDIT_OUTPUT_DIR)
     baseline.add_argument("--database", type=Path, default=DEFAULT_DB_PATH)
     baseline.add_argument("--no-sqlite", action="store_true")
+
+    chain = subparsers.add_parser(
+        "build-hash-chain",
+        help="Build Model C hash-chain artifacts from canonical measurements.",
+    )
+    chain.add_argument("--dataset-id", required=True)
+    chain.add_argument("--measurements-file", required=True, type=Path)
+    chain.add_argument("--output-dir", type=Path, default=CHAIN_OUTPUT_DIR)
+    chain.add_argument("--database", type=Path, default=DEFAULT_DB_PATH)
+    chain.add_argument("--no-sqlite", action="store_true")
     return parser
 
 
@@ -44,6 +54,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         from experiments.integrity.models import build_baseline_artifacts
 
         summary = build_baseline_artifacts(
+            dataset_id=args.dataset_id,
+            measurements_file=args.measurements_file,
+            output_dir=args.output_dir,
+            database_path=None if args.no_sqlite else args.database,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "build-hash-chain":
+        from experiments.integrity.models import build_hash_chain_artifacts
+
+        summary = build_hash_chain_artifacts(
             dataset_id=args.dataset_id,
             measurements_file=args.measurements_file,
             output_dir=args.output_dir,

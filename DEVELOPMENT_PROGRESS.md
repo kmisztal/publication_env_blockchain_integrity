@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-22 04:56:54 +02:00
+Last updated: 2026-06-22 05:17:16 +02:00
 
 ### Completed
 
@@ -47,6 +47,10 @@ Last updated: 2026-06-22 04:56:54 +02:00
 - Model B genesis timestamp is derived from canonical measurement metadata so repeated builds of the same processed file are reproducible.
 - Added an integrity CLI with `init-db` and `build-baseline` commands.
 - Built local baseline artifacts for `openaq_capitals_2025_h2`: 112,973 Model A records and 112,974 Model B audit events including one genesis event.
+- Added Model C hash-chain construction with deterministic `previous_hash` and `block_hash` linkage.
+- Added the `integrity-build-hash-chain` PDM script.
+- Built local Model C hash-chain artifacts for `openaq_capitals_2025_h2`: 112,974 events including one genesis event.
+- Checked the generated Model C chain for broken previous-hash links; no broken links were found in the generated artifact.
 
 ### Implemented Modules
 
@@ -58,7 +62,7 @@ Last updated: 2026-06-22 04:56:54 +02:00
 | `experiments/common/manifest.py` | Dataset manifest creation with raw and processed file hashes. |
 | `experiments/common/storage.py` | SQLite schema initialization and measurement loading helpers. |
 | `experiments/integrity/events.py` | Deterministic event constants, payload hashes, genesis events, and measurement audit events. |
-| `experiments/integrity/models.py` | Model A and Model B baseline artifact builders. |
+| `experiments/integrity/models.py` | Model A, Model B, and Model C artifact builders. |
 | `experiments/integrity/cli.py` | CLI for initializing storage and building baseline integrity artifacts. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
@@ -216,6 +220,29 @@ For `openaq_capitals_2025_h2`, the local baseline build produced:
 
 These files are generated artifacts and are ignored by default.
 
+## Current Hash-Chain Workflow
+
+Build the Model C audit trail plus hash chain:
+
+```powershell
+pdm run integrity-build-hash-chain `
+  --dataset-id openaq_capitals_2025_h2 `
+  --measurements-file experiments\data\processed\openaq_capitals_2025_h2_measurements.csv
+```
+
+Generated hash-chain artifacts:
+
+- `experiments/outputs/chains/<dataset_id>_model_c_hash_chain.jsonl`
+- `experiments/outputs/chains/<dataset_id>_model_c_hash_chain_summary.json`
+
+For `openaq_capitals_2025_h2`, the local hash-chain build produced:
+
+- Model C events: 112,974, including one genesis event
+- SQLite audit event rows for Model C: 112,974
+- Structural chain check: no broken previous-hash links in the generated artifact
+
+This is a construction sanity check, not a tampering experiment or threat-detection result.
+
 ## Canonical Measurement Fields
 
 The initial canonical schema contains:
@@ -277,12 +304,12 @@ The full four-capital extract `openaq_capitals_2025_h2` has now been generated w
 
 These are data-preparation and reproducibility checks only. They are not threat-model results, verification outputs, or scientific findings.
 
-The Model A and Model B baseline artifacts are also reproducibility inputs only. They do not contain tampering scenarios, verifier alerts, detection rates, or threat-coverage outputs.
+The Model A, Model B, and Model C artifacts are also reproducibility inputs only. They do not contain tampering scenarios, verifier alerts, detection rates, or threat-coverage outputs.
 
 ## Next Development Steps
 
-1. Add hash-chain construction for Models C and D.
-2. Add permission and provenance events needed by Model D.
-3. Implement baseline verification for Model A and Model B artifacts.
+1. Add permission and provenance events needed by Model D.
+2. Implement baseline verification for Models A, B, and C artifacts.
+3. Add hash-chain recalculation checks to the verification engine.
 4. Implement controlled tampering scenarios only after baseline artifacts are stable.
 5. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.

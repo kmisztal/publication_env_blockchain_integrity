@@ -106,4 +106,21 @@ This writes:
 - `experiments/outputs/audit/<dataset_id>_model_b_audit_events.jsonl`
 - `experiments/outputs/audit/<dataset_id>_baseline_models_summary.json`
 
-Model A is a conventional canonical measurement export. Model B is an append-only audit event export without hash-chain linkage. Hash-chain artifacts for Models C and D are a later step.
+Model A is a conventional canonical measurement export. Model B is an append-only audit event export without hash-chain linkage.
+
+## Hash-Chain Example
+
+Build the Model C audit trail with `previous_hash` and `block_hash` linkage:
+
+```powershell
+pdm run integrity-build-hash-chain `
+  --dataset-id openaq_capitals_2025_h2 `
+  --measurements-file experiments\data\processed\openaq_capitals_2025_h2_measurements.csv
+```
+
+This writes:
+
+- `experiments/outputs/chains/<dataset_id>_model_c_hash_chain.jsonl`
+- `experiments/outputs/chains/<dataset_id>_model_c_hash_chain_summary.json`
+
+Model C adds hash-chain linkage to the audit trail. Model D provenance and permission reconstruction is a later step.

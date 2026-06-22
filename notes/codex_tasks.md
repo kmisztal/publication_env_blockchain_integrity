@@ -52,8 +52,8 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement measurement event creation.
 - [ ] Implement permission event creation.
 - [ ] Implement correction and invalidation event creation.
-- [ ] Build ordered hash chain from cleaned measurements.
-- [ ] Export chains as JSONL.
+- [x] Build ordered hash chain from cleaned measurements.
+- [x] Export chains as JSONL.
 
 ## Phase 4: Audit Trail Model
 

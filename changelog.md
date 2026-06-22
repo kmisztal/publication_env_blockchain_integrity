@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-22 05:17:16 +02:00
+
+- Added Model C hash-chain event construction using deterministic `previous_hash` and `block_hash` linkage.
+- Added `build-hash-chain` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-build-hash-chain`.
+- Built local Model C artifacts for `openaq_capitals_2025_h2`: 112,974 events including one genesis event.
+- Confirmed Model C JSONL line count and SQLite audit-event row count both equal 112,974.
+- Ran a structural chain check over the generated JSONL and found no broken previous-hash links; the terminal block hash matches the summary artifact.
+- Treated Model C construction checks as reproducibility sanity checks only, not threat-verification results.
+
 ## 2026-06-22 04:56:54 +02:00
 
 - Added generic integrity-model modules under `experiments/integrity/`.
