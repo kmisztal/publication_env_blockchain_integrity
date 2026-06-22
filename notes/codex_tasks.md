@@ -50,16 +50,16 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement block hashing.
 - [x] Implement genesis event creation.
 - [x] Implement measurement event creation.
-- [ ] Implement permission event creation.
+- [x] Implement permission event creation.
 - [ ] Implement correction and invalidation event creation.
 - [x] Build ordered hash chain from cleaned measurements.
 - [x] Export chains as JSONL.
 
 ## Phase 4: Audit Trail Model
 
-- [ ] Implement key insertion events.
+- [x] Implement key insertion events.
 - [ ] Implement key revocation events.
-- [ ] Implement active key-state reconstruction.
+- [x] Implement active key-state reconstruction.
 - [ ] Implement correction lineage fields.
 - [ ] Implement validation for correction target existence.
 - [ ] Implement validation for required correction reason.

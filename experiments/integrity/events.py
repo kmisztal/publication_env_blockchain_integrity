@@ -24,6 +24,8 @@ EVENT_CORRECTION_RECORDED = "correction_recorded"
 EVENT_RECORD_INVALIDATED = "record_invalidated"
 
 DEFAULT_INGEST_ACTOR_ID = "actor:openaq_ingest"
+DEFAULT_INGEST_KEY_ID = "key:openaq_ingest:baseline"
+PERMISSION_INGEST_MEASUREMENT = "ingest_measurement"
 
 
 @dataclass(frozen=True)
@@ -101,6 +103,38 @@ def genesis_payload(dataset_id: str, record_count: int) -> dict[str, Any]:
         "dataset_id": dataset_id,
         "record_count": record_count,
         "purpose": "baseline_event_log_start",
+    }
+
+
+def permission_payload(
+    *,
+    actor_id: str,
+    key_id: str,
+    permissions: list[str],
+    valid_from: str,
+    valid_to: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "actor_id": actor_id,
+        "key_id": key_id,
+        "permissions": sorted(permissions),
+        "valid_from": valid_from,
+        "valid_to": valid_to,
+    }
+
+
+def key_revocation_payload(
+    *,
+    actor_id: str,
+    key_id: str,
+    revoked_at: str,
+    reason: str,
+) -> dict[str, Any]:
+    return {
+        "actor_id": actor_id,
+        "key_id": key_id,
+        "revoked_at": revoked_at,
+        "reason": reason,
     }
 
 
@@ -230,6 +264,104 @@ def build_model_c_events(
         previous_hash = event.block_hash
 
     return events
+
+
+def build_model_d_events(
+    measurements: pd.DataFrame,
+    *,
+    dataset_id: str,
+    actor_id: str = DEFAULT_INGEST_ACTOR_ID,
+    key_id: str = DEFAULT_INGEST_KEY_ID,
+    created_at_utc: str | None = None,
+) -> list[AuditEvent]:
+    ordered = order_measurements(measurements)
+    event_created_at = created_at_utc or utc_now_iso()
+    events: list[AuditEvent] = []
+    previous_hash: str | None = None
+
+    genesis = make_event(
+        model_id=MODEL_D,
+        event_type=EVENT_GENESIS,
+        event_timestamp=event_created_at,
+        actor_id=actor_id,
+        subject_id=dataset_id,
+        payload=genesis_payload(dataset_id, len(ordered)),
+        previous_hash=previous_hash,
+        created_at_utc=event_created_at,
+        include_block_hash=True,
+    )
+    events.append(genesis)
+    previous_hash = genesis.block_hash
+
+    permission = make_event(
+        model_id=MODEL_D,
+        event_type=EVENT_PERMISSION_GRANTED,
+        event_timestamp=event_created_at,
+        actor_id=actor_id,
+        subject_id=actor_id,
+        payload=permission_payload(
+            actor_id=actor_id,
+            key_id=key_id,
+            permissions=[PERMISSION_INGEST_MEASUREMENT],
+            valid_from=event_created_at,
+        ),
+        previous_hash=previous_hash,
+        signature_id=key_id,
+        created_at_utc=event_created_at,
+        include_block_hash=True,
+    )
+    events.append(permission)
+    previous_hash = permission.block_hash
+
+    for row in ordered.to_dict(orient="records"):
+        payload = measurement_payload(row)
+        event = make_event(
+            model_id=MODEL_D,
+            event_type=EVENT_MEASUREMENT_RECORDED,
+            event_timestamp=payload["timestamp_utc"],
+            actor_id=actor_id,
+            subject_id=payload["station_id"],
+            payload=payload,
+            source_record_id=payload["record_id"],
+            previous_hash=previous_hash,
+            signature_id=key_id,
+            created_at_utc=event_created_at,
+            include_block_hash=True,
+        )
+        events.append(event)
+        previous_hash = event.block_hash
+
+    return events
+
+
+def reconstruct_active_keys(events: Iterable[AuditEvent | dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    active_keys: dict[str, dict[str, Any]] = {}
+    for event in events:
+        record = event.as_dict() if isinstance(event, AuditEvent) else event
+        event_type = record["event_type"]
+        payload = record["payload_json"]
+        if event_type == EVENT_PERMISSION_GRANTED:
+            active_keys[payload["key_id"]] = {
+                "actor_id": payload["actor_id"],
+                "key_id": payload["key_id"],
+                "permissions": list(payload["permissions"]),
+                "valid_from": payload["valid_from"],
+                "valid_to": payload.get("valid_to"),
+                "status": "active",
+                "created_event_id": record["event_id"],
+                "revoked_event_id": None,
+            }
+        elif event_type == EVENT_KEY_REVOKED:
+            key_id = payload["key_id"]
+            if key_id in active_keys:
+                active_keys[key_id]["status"] = "revoked"
+                active_keys[key_id]["valid_to"] = payload["revoked_at"]
+                active_keys[key_id]["revoked_event_id"] = record["event_id"]
+    return {
+        key_id: state
+        for key_id, state in sorted(active_keys.items())
+        if state["status"] == "active"
+    }
 
 
 def order_measurements(measurements: pd.DataFrame) -> pd.DataFrame:

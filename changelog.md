@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-22 05:31:51 +02:00
+
+- Added `experiments/outputs/demo_overview.md` as a local demonstration overview of the current PoC construction state.
+- Summarized the prepared OpenAQ dataset, Model A-D artifacts, and construction sanity checks.
+- Explicitly marked the overview as non-results documentation without threat-coverage, verifier-output, or detection-rate claims.
+
+## 2026-06-22 05:28:50 +02:00
+
+- Added Model D provenance/permission event construction using a deterministic ingest actor key and permission grant event.
+- Added active key-state reconstruction from permission and revocation events.
+- Added `build-provenance-chain` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-build-provenance-chain`.
+- Built local Model D artifacts for `openaq_capitals_2025_h2`: 112,975 events including one genesis event, one permission event, and 112,973 measurement events.
+- Confirmed Model D JSONL line count and SQLite audit-event row count both equal 112,975.
+- Ran a structural Model D check: no broken previous-hash links, terminal block hash matches the summary artifact, and all measurement events reference an active reconstructed key.
+- Treated Model D construction checks as reproducibility sanity checks only, not threat-verification results.
+
 ## 2026-06-22 05:17:16 +02:00
 
 - Added Model C hash-chain event construction using deterministic `previous_hash` and `block_hash` linkage.

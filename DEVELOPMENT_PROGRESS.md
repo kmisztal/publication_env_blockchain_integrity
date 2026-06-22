@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-22 05:17:16 +02:00
+Last updated: 2026-06-22 05:28:50 +02:00
 
 ### Completed
 
@@ -51,6 +51,11 @@ Last updated: 2026-06-22 05:17:16 +02:00
 - Added the `integrity-build-hash-chain` PDM script.
 - Built local Model C hash-chain artifacts for `openaq_capitals_2025_h2`: 112,974 events including one genesis event.
 - Checked the generated Model C chain for broken previous-hash links; no broken links were found in the generated artifact.
+- Added Model D provenance/permission chain construction with an ingest actor key and permission grant event.
+- Added active key-state reconstruction from permission and revocation events.
+- Added the `integrity-build-provenance-chain` PDM script.
+- Built local Model D artifacts for `openaq_capitals_2025_h2`: 112,975 events including one genesis event, one permission event, and 112,973 measurement events.
+- Checked the generated Model D chain for broken previous-hash links and measurement events without an active key; no issues were found in the generated artifact.
 
 ### Implemented Modules
 
@@ -243,6 +248,32 @@ For `openaq_capitals_2025_h2`, the local hash-chain build produced:
 
 This is a construction sanity check, not a tampering experiment or threat-detection result.
 
+## Current Provenance And Permission Workflow
+
+Build the Model D audit trail plus hash chain and active key-state reconstruction:
+
+```powershell
+pdm run integrity-build-provenance-chain `
+  --dataset-id openaq_capitals_2025_h2 `
+  --measurements-file experiments\data\processed\openaq_capitals_2025_h2_measurements.csv
+```
+
+Generated Model D artifacts:
+
+- `experiments/outputs/chains/<dataset_id>_model_d_provenance_chain.jsonl`
+- `experiments/outputs/chains/<dataset_id>_model_d_provenance_chain_summary.json`
+
+For `openaq_capitals_2025_h2`, the local Model D build produced:
+
+- Model D events: 112,975
+- Measurement events: 112,973
+- Permission events: 1
+- Active reconstructed keys: 1
+- SQLite audit event rows for Model D: 112,975
+- Structural chain and active-key check: no broken links and no measurement event without an active key in the generated artifact
+
+This is a construction sanity check, not a tampering experiment or threat-detection result.
+
 ## Canonical Measurement Fields
 
 The initial canonical schema contains:
@@ -304,12 +335,12 @@ The full four-capital extract `openaq_capitals_2025_h2` has now been generated w
 
 These are data-preparation and reproducibility checks only. They are not threat-model results, verification outputs, or scientific findings.
 
-The Model A, Model B, and Model C artifacts are also reproducibility inputs only. They do not contain tampering scenarios, verifier alerts, detection rates, or threat-coverage outputs.
+The Model A, Model B, Model C, and Model D artifacts are also reproducibility inputs only. They do not contain tampering scenarios, verifier alerts, detection rates, or threat-coverage outputs.
 
 ## Next Development Steps
 
-1. Add permission and provenance events needed by Model D.
-2. Implement baseline verification for Models A, B, and C artifacts.
-3. Add hash-chain recalculation checks to the verification engine.
+1. Implement baseline verification for Models A, B, C, and D artifacts.
+2. Add hash-chain recalculation checks to the verification engine.
+3. Add permission/key-state checks to the verification engine.
 4. Implement controlled tampering scenarios only after baseline artifacts are stable.
 5. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.

@@ -36,6 +36,16 @@ def build_parser() -> argparse.ArgumentParser:
     chain.add_argument("--output-dir", type=Path, default=CHAIN_OUTPUT_DIR)
     chain.add_argument("--database", type=Path, default=DEFAULT_DB_PATH)
     chain.add_argument("--no-sqlite", action="store_true")
+
+    provenance = subparsers.add_parser(
+        "build-provenance-chain",
+        help="Build Model D hash-chain artifacts with permission/provenance state.",
+    )
+    provenance.add_argument("--dataset-id", required=True)
+    provenance.add_argument("--measurements-file", required=True, type=Path)
+    provenance.add_argument("--output-dir", type=Path, default=CHAIN_OUTPUT_DIR)
+    provenance.add_argument("--database", type=Path, default=DEFAULT_DB_PATH)
+    provenance.add_argument("--no-sqlite", action="store_true")
     return parser
 
 
@@ -66,6 +76,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         from experiments.integrity.models import build_hash_chain_artifacts
 
         summary = build_hash_chain_artifacts(
+            dataset_id=args.dataset_id,
+            measurements_file=args.measurements_file,
+            output_dir=args.output_dir,
+            database_path=None if args.no_sqlite else args.database,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "build-provenance-chain":
+        from experiments.integrity.models import build_provenance_artifacts
+
+        summary = build_provenance_artifacts(
             dataset_id=args.dataset_id,
             measurements_file=args.measurements_file,
             output_dir=args.output_dir,

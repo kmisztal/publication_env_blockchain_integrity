@@ -123,4 +123,21 @@ This writes:
 - `experiments/outputs/chains/<dataset_id>_model_c_hash_chain.jsonl`
 - `experiments/outputs/chains/<dataset_id>_model_c_hash_chain_summary.json`
 
-Model C adds hash-chain linkage to the audit trail. Model D provenance and permission reconstruction is a later step.
+Model C adds hash-chain linkage to the audit trail.
+
+## Provenance And Permission Example
+
+Build the Model D audit trail with hash-chain linkage, an ingest actor key, and reconstructed active key state:
+
+```powershell
+pdm run integrity-build-provenance-chain `
+  --dataset-id openaq_capitals_2025_h2 `
+  --measurements-file experiments\data\processed\openaq_capitals_2025_h2_measurements.csv
+```
+
+This writes:
+
+- `experiments/outputs/chains/<dataset_id>_model_d_provenance_chain.jsonl`
+- `experiments/outputs/chains/<dataset_id>_model_d_provenance_chain_summary.json`
+
+Model D adds a permission event and signature/key references to measurement events. Verification and controlled tampering are later steps.
