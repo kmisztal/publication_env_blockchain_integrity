@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-22 05:28:50 +02:00
+Last updated: 2026-06-22 05:45:24 +02:00
 
 ### Completed
 
@@ -56,6 +56,10 @@ Last updated: 2026-06-22 05:28:50 +02:00
 - Added the `integrity-build-provenance-chain` PDM script.
 - Built local Model D artifacts for `openaq_capitals_2025_h2`: 112,975 events including one genesis event, one permission event, and 112,973 measurement events.
 - Checked the generated Model D chain for broken previous-hash links and measurement events without an active key; no issues were found in the generated artifact.
+- Added a baseline verification engine under `experiments/integrity/verification.py`.
+- Added `integrity-verify` CLI/PDM support for verifying a single generated artifact.
+- Generated baseline verification reports and alert CSV files for Models A-D.
+- Baseline verification currently checks schema, duplicate IDs, payload hashes, block hashes, previous-hash links, and Model D active-key references.
 
 ### Implemented Modules
 
@@ -67,8 +71,9 @@ Last updated: 2026-06-22 05:28:50 +02:00
 | `experiments/common/manifest.py` | Dataset manifest creation with raw and processed file hashes. |
 | `experiments/common/storage.py` | SQLite schema initialization and measurement loading helpers. |
 | `experiments/integrity/events.py` | Deterministic event constants, payload hashes, genesis events, and measurement audit events. |
-| `experiments/integrity/models.py` | Model A, Model B, and Model C artifact builders. |
+| `experiments/integrity/models.py` | Model A, Model B, Model C, and Model D artifact builders. |
 | `experiments/integrity/cli.py` | CLI for initializing storage and building baseline integrity artifacts. |
+| `experiments/integrity/verification.py` | Baseline verification engine for generated Model A-D artifacts. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -248,6 +253,24 @@ For `openaq_capitals_2025_h2`, the local hash-chain build produced:
 
 This is a construction sanity check, not a tampering experiment or threat-detection result.
 
+## Current Baseline Verification Workflow
+
+Verify a generated artifact:
+
+```powershell
+pdm run integrity-verify `
+  --dataset-id openaq_capitals_2025_h2 `
+  --model-id C_audit_hash_chain `
+  --artifact-file experiments\outputs\chains\openaq_capitals_2025_h2_model_c_hash_chain.jsonl
+```
+
+Generated verification artifacts:
+
+- `experiments/outputs/verification/<dataset_id>_<model_id>_verification_report.json`
+- `experiments/outputs/verification/<dataset_id>_<model_id>_alerts.csv`
+
+Baseline verification has been run for the current non-tampered Model A-D artifacts. This is a technical sanity check of generated artifacts, not a tampering experiment or threat-coverage result.
+
 ## Current Provenance And Permission Workflow
 
 Build the Model D audit trail plus hash chain and active key-state reconstruction:
@@ -335,12 +358,11 @@ The full four-capital extract `openaq_capitals_2025_h2` has now been generated w
 
 These are data-preparation and reproducibility checks only. They are not threat-model results, verification outputs, or scientific findings.
 
-The Model A, Model B, Model C, and Model D artifacts are also reproducibility inputs only. They do not contain tampering scenarios, verifier alerts, detection rates, or threat-coverage outputs.
+The Model A, Model B, Model C, and Model D artifacts plus baseline verification reports are reproducibility inputs only. They do not contain tampering scenarios, detection rates, or threat-coverage outputs.
 
 ## Next Development Steps
 
-1. Implement baseline verification for Models A, B, C, and D artifacts.
-2. Add hash-chain recalculation checks to the verification engine.
-3. Add permission/key-state checks to the verification engine.
-4. Implement controlled tampering scenarios only after baseline artifacts are stable.
-5. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.
+1. Add off-chain measurement hash verification where applicable.
+2. Add correction lineage checks after correction events are implemented.
+3. Implement controlled tampering scenarios only after baseline artifacts are stable.
+4. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.

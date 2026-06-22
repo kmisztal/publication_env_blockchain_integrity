@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from typing import Sequence
 
-from experiments.common.paths import AUDIT_OUTPUT_DIR, CHAIN_OUTPUT_DIR, DEFAULT_DB_PATH
+from experiments.common.paths import AUDIT_OUTPUT_DIR, CHAIN_OUTPUT_DIR, DEFAULT_DB_PATH, VERIFICATION_OUTPUT_DIR
+from experiments.integrity.events import MODEL_A, MODEL_B, MODEL_C, MODEL_D
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,6 +47,15 @@ def build_parser() -> argparse.ArgumentParser:
     provenance.add_argument("--output-dir", type=Path, default=CHAIN_OUTPUT_DIR)
     provenance.add_argument("--database", type=Path, default=DEFAULT_DB_PATH)
     provenance.add_argument("--no-sqlite", action="store_true")
+
+    verify = subparsers.add_parser(
+        "verify",
+        help="Verify one generated integrity-model artifact.",
+    )
+    verify.add_argument("--dataset-id", required=True)
+    verify.add_argument("--model-id", required=True, choices=[MODEL_A, MODEL_B, MODEL_C, MODEL_D])
+    verify.add_argument("--artifact-file", required=True, type=Path)
+    verify.add_argument("--output-dir", type=Path, default=VERIFICATION_OUTPUT_DIR)
     return parser
 
 
@@ -94,6 +104,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             database_path=None if args.no_sqlite else args.database,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "verify":
+        from experiments.integrity.verification import verify_model_artifact
+
+        report = verify_model_artifact(
+            model_id=args.model_id,
+            artifact_file=args.artifact_file,
+            dataset_id=args.dataset_id,
+            output_dir=args.output_dir,
+        )
+        print(json.dumps(report, indent=2, sort_keys=True))
         return 0
 
     parser.error(f"Unsupported command: {args.command}")

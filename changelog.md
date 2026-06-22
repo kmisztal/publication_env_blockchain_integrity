@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-06-22 05:45:24 +02:00
+
+- Added `experiments/integrity/verification.py` as a baseline verifier for generated Model A-D artifacts.
+- Added `verify` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-verify`.
+- Implemented schema checks, duplicate ID checks, payload hash recalculation, block hash recalculation, previous-hash verification, and Model D active-key checks.
+- Generated baseline verification reports and alert CSV files for the current non-tampered `openaq_capitals_2025_h2` Model A-D artifacts.
+- Treated these reports as technical sanity checks only, not threat-coverage or detection-rate results.
+
 ## 2026-06-22 05:31:51 +02:00
 
 - Added `experiments/outputs/demo_overview.md` as a local demonstration overview of the current PoC construction state.

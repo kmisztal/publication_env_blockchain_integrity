@@ -67,16 +67,16 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 5: Verification Engine
 
-- [ ] Implement schema validation.
-- [ ] Implement payload hash recalculation.
-- [ ] Implement block hash recalculation.
-- [ ] Implement previous-hash link verification.
+- [x] Implement schema validation.
+- [x] Implement payload hash recalculation.
+- [x] Implement block hash recalculation.
+- [x] Implement previous-hash link verification.
 - [ ] Implement off-chain measurement hash verification.
-- [ ] Implement actor key authorization checks.
+- [x] Implement actor key authorization checks.
 - [ ] Implement correction lineage checks.
-- [ ] Implement stable alert codes.
-- [ ] Export `verification_report.json`.
-- [ ] Export `alerts.csv`.
+- [x] Implement stable alert codes.
+- [x] Export `verification_report.json`.
+- [x] Export `alerts.csv`.
 
 ## Phase 6: Tampering Generator
 

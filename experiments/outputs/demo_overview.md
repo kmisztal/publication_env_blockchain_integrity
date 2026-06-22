@@ -135,6 +135,27 @@ The current demo can show:
 - Four generated model artifacts from the same canonical data.
 - The difference between conventional storage, audit trail, hash-chain linkage, and provenance/permission state.
 - Basic construction sanity checks for Models C and D.
+- Baseline verification reports for the non-tampered Model A-D artifacts.
+
+## Baseline Verification Artifacts
+
+The baseline verifier has been run against the current non-tampered artifacts.
+
+Verification reports:
+
+- `experiments/outputs/verification/openaq_capitals_2025_h2_A_conventional_storage_verification_report.json`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_B_audit_trail_verification_report.json`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_C_audit_hash_chain_verification_report.json`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_D_audit_hash_chain_provenance_verification_report.json`
+
+Alert CSV files:
+
+- `experiments/outputs/verification/openaq_capitals_2025_h2_A_conventional_storage_alerts.csv`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_B_audit_trail_alerts.csv`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_C_audit_hash_chain_alerts.csv`
+- `experiments/outputs/verification/openaq_capitals_2025_h2_D_audit_hash_chain_provenance_alerts.csv`
+
+These baseline reports are technical sanity checks of generated artifacts. They are not controlled tampering experiments and should not be interpreted as detection-rate results.
 
 ## What Is Not Available Yet
 

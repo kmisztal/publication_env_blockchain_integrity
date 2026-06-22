@@ -141,3 +141,30 @@ This writes:
 - `experiments/outputs/chains/<dataset_id>_model_d_provenance_chain_summary.json`
 
 Model D adds a permission event and signature/key references to measurement events. Verification and controlled tampering are later steps.
+
+## Baseline Verification Example
+
+Verify an existing generated artifact:
+
+```powershell
+pdm run integrity-verify `
+  --dataset-id openaq_capitals_2025_h2 `
+  --model-id C_audit_hash_chain `
+  --artifact-file experiments\outputs\chains\openaq_capitals_2025_h2_model_c_hash_chain.jsonl
+```
+
+The verifier writes:
+
+- `experiments/outputs/verification/<dataset_id>_<model_id>_verification_report.json`
+- `experiments/outputs/verification/<dataset_id>_<model_id>_alerts.csv`
+
+Current baseline verification supports:
+
+- canonical record schema checks for Model A
+- audit event schema checks for Models B-D
+- payload hash recalculation for Models B-D
+- block hash recalculation for Models C-D
+- previous-hash link checks for Models C-D
+- active key checks for Model D
+
+Baseline verification of non-tampered artifacts is a technical sanity check. Controlled tampering and threat-coverage metrics are later steps.
