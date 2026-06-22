@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-06-22 04:56:54 +02:00
+
+- Added generic integrity-model modules under `experiments/integrity/`.
+- Implemented deterministic event construction for baseline genesis and measurement audit events.
+- Added Model A conventional-storage artifact export and Model B audit-trail artifact export.
+- Added `experiments.integrity.cli` with `init-db` and `build-baseline` commands.
+- Added PDM scripts `integrity-init-db` and `integrity-build-baseline`.
+- Optimized SQLite audit-event loading with direct `executemany` insertion.
+- Made baseline Model B genesis timestamp deterministic by deriving it from canonical measurement metadata.
+- Built local baseline artifacts for `openaq_capitals_2025_h2`: 112,973 Model A records and 112,974 Model B audit events.
+- Verified Model B JSONL line count and SQLite audit-event row count both equal 112,974.
+- Treated baseline artifacts as reproducibility inputs only, not scientific results or threat-verification outputs.
+
 ## 2026-06-22 04:38:23 +02:00
 
 - Confirmed the full OpenAQ capital-triangle extract `openaq_capitals_2025_h2` was ingested from local frozen data.

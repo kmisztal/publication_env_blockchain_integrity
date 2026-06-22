@@ -161,3 +161,37 @@ def replace_measurements(db_path: Path, measurements: pd.DataFrame, dataset_id: 
     with connect(db_path) as connection:
         connection.execute("DELETE FROM measurements WHERE dataset_id = ?", (dataset_id,))
         ordered.to_sql("measurements", connection, if_exists="append", index=False)
+
+
+def replace_audit_events(db_path: Path, events: list[dict[str, Any]], model_id: str) -> None:
+    init_db(db_path)
+    with connect(db_path) as connection:
+        connection.execute("DELETE FROM audit_events WHERE model_id = ?", (model_id,))
+        connection.executemany(
+            """
+            INSERT INTO audit_events (
+                event_id, model_id, event_type, event_timestamp, actor_id, subject_id,
+                payload_json, payload_hash, previous_hash, block_hash, signature_id,
+                source_record_id, created_at_utc
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                (
+                    event["event_id"],
+                    event["model_id"],
+                    event["event_type"],
+                    event["event_timestamp"],
+                    event["actor_id"],
+                    event["subject_id"],
+                    json.dumps(event["payload_json"], sort_keys=True),
+                    event["payload_hash"],
+                    event["previous_hash"],
+                    event["block_hash"],
+                    event["signature_id"],
+                    event["source_record_id"],
+                    event["created_at_utc"],
+                )
+                for event in events
+            ],
+        )

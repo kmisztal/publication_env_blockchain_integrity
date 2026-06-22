@@ -33,23 +33,23 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 2: Storage Layer
 
-- [ ] Create SQLite schema for `dataset_manifest`.
-- [ ] Create SQLite schema for `measurements`.
-- [ ] Create SQLite schema for `events`.
-- [ ] Create SQLite schema for `keys`.
-- [ ] Create SQLite schema for `verification_reports`.
-- [ ] Create SQLite schema for `tampering_labels`.
-- [ ] Implement storage helper functions.
-- [ ] Add reset/init command for local experiment database.
+- [x] Create SQLite schema for `dataset_manifest`.
+- [x] Create SQLite schema for `measurements`.
+- [x] Create SQLite schema for `events`.
+- [x] Create SQLite schema for `keys`.
+- [x] Create SQLite schema for `verification_reports`.
+- [x] Create SQLite schema for `tampering_labels`.
+- [x] Implement storage helper functions.
+- [x] Add reset/init command for local experiment database.
 
 ## Phase 3: Event and Hash Chain Core
 
-- [ ] Define event types in Python constants or enums.
-- [ ] Implement deterministic JSON serialization.
-- [ ] Implement payload hashing.
-- [ ] Implement block hashing.
-- [ ] Implement genesis event creation.
-- [ ] Implement measurement event creation.
+- [x] Define event types in Python constants or enums.
+- [x] Implement deterministic JSON serialization.
+- [x] Implement payload hashing.
+- [x] Implement block hashing.
+- [x] Implement genesis event creation.
+- [x] Implement measurement event creation.
 - [ ] Implement permission event creation.
 - [ ] Implement correction and invalidation event creation.
 - [ ] Build ordered hash chain from cleaned measurements.
@@ -63,7 +63,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [ ] Implement correction lineage fields.
 - [ ] Implement validation for correction target existence.
 - [ ] Implement validation for required correction reason.
-- [ ] Implement audit event export.
+- [x] Implement audit event export.
 
 ## Phase 5: Verification Engine
 
@@ -144,9 +144,9 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 Minimum tasks before running publication experiments:
 
-- [ ] Phase 0 repository setup.
-- [ ] Phase 1 ingestion and preprocessing.
-- [ ] Phase 2 SQLite storage.
+- [x] Phase 0 repository setup.
+- [x] Phase 1 ingestion and preprocessing.
+- [x] Phase 2 SQLite storage.
 - [ ] Phase 3 event and hash-chain core.
 - [ ] Phase 4 basic audit trail.
 - [ ] Phase 5 verification engine.
