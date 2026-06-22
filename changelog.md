@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-06-22 04:38:23 +02:00
+
+- Confirmed the full OpenAQ capital-triangle extract `openaq_capitals_2025_h2` was ingested from local frozen data.
+- Recorded ingestion artifact summary: 116,361 input records, 112,973 canonical records, 3,388 dropped records due to missing measurement values, 12 stations, and 9 parameters.
+- Confirmed generated map artifact exists at `experiments/outputs/maps/openaq_capitals_2025_h2_sensor_map.html`.
+- Checked selected station triangle geometry for Warsaw, Berlin, Paris, and Madrid; each city center is inside the selected three-station triangle.
+- Treated these as data-preparation checks only, not scientific results or model verification outputs.
+
+## 2026-06-22 03:32:30 +02:00
+
+- Inspected local OpenAQ `openaq_warsaw_test2` artifacts generated after the area-aware selector update.
+- Confirmed `openaq_warsaw_test2` contains 31,187 raw records and 31,147 canonical records after ingestion; 40 records were dropped due to missing values.
+- Confirmed the regenerated Warsaw selection forms a usable triangle: Piastów, Legionowo, and Otwock, with approximate area 360.86 km².
+- Checked existing Berlin, Paris, and Madrid triangle geometries from local `openaq_mvp` metadata:
+  - Berlin: approximate area 576.05 km², city center inside triangle.
+  - Paris: approximate area 359.17 km², city center inside triangle.
+  - Madrid: approximate area 281.60 km², city center inside triangle.
+- These checks are data-preparation sanity checks only, not integrity experiment results.
+
+## 2026-06-21 02:49:42 +02:00
+
+- Fixed OpenAQ measurement downloading for requests where `--measurements-per-sensor` is greater than the API's per-request limit of 1000.
+- Added internal pagination so `--measurements-per-sensor 5000` is treated as a total target per sensor and downloaded in pages of at most 1000 records.
+- Improved resume behavior after failed downloads: failed sensors are no longer marked complete, and stale state is ignored when no raw output file exists.
+- Documented the OpenAQ per-request measurement limit in `experiments/README.md` and `DEVELOPMENT_PROGRESS.md`.
+- Did not run a new data download in this step.
+
+## 2026-06-21 02:15:53 +02:00
+
+- Checked the current Warsaw OpenAQ selection and confirmed it is nearly collinear: the selected points have an approximate triangle area of only 0.2 km².
+- Replaced sector-only three-location selection with an area- and center-aware combination search.
+- The updated selector now scores three-location combinations using measurement availability, triangle area, and whether the city center lies inside the triangle.
+- Documented that the current local 2025 capital-triangle metadata should be regenerated before finalizing the MVP dataset.
+- Did not run a new data download in this step.
+
 ## 2026-06-20 20:26:08 +02:00
 
 - Added process-local OpenAQ request pacing with a default of 55 requests per minute.

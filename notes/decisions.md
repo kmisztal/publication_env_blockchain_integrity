@@ -96,6 +96,7 @@ For each city, the downloader should:
 5. Keep the number of selected sensors per location configurable.
 6. Use a configurable minimum distance between selected locations so the three points are not clustered too closely.
 7. Generate an inspection map for each download so the selected locations can be visually reviewed before experiments are interpreted.
+8. For the default three-location case, select the best combination using triangle area and whether the city center is enclosed, not only directional sectors.
 
 The candidate MVP time window is 2025-07-01 to 2025-12-31. This range is not final until the downloader confirms that selected locations have sufficient measurement availability in that period.
 

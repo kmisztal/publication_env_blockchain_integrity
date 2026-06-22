@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-20 20:26:08 +02:00
+Last updated: 2026-06-22 03:32:30 +02:00
 
 ### Completed
 
@@ -34,6 +34,13 @@ Last updated: 2026-06-20 20:26:08 +02:00
 - Added handling for rate-limit remaining/reset headers when OpenAQ returns them.
 - Added minimum inter-location distance for city selection.
 - Added static HTML map generation from OpenAQ selection metadata.
+- Replaced sector-only three-location selection with an area- and center-aware triangle search.
+- Confirmed the previously downloaded Warsaw selection was nearly collinear and should be regenerated before use as the final MVP extract.
+- Added paginated OpenAQ measurement downloads because the API rejects single measurement requests with `limit > 1000`.
+- Improved resume behavior so failed sensor downloads are not marked complete.
+- Confirmed the regenerated Warsaw-only test extract has 31,187 raw records and 31,147 canonical records after ingestion.
+- Confirmed regenerated Warsaw station geometry forms a usable triangle with approximate area 360.86 km².
+- Checked existing Berlin, Paris, and Madrid triangle geometries from local metadata; all contain their city center and have non-collinear areas.
 
 ### Implemented Modules
 
@@ -87,6 +94,7 @@ Verification note:
 - `pandas` was not installed in the provided venv at the time of this update; it is required for ingestion, while the OpenAQ downloader uses the Python standard library.
 - A temporary project-local `.venv` was created by PDM during verification when the external venv was not active; `.venv/` is now ignored and should not be used as the intended project environment.
 - The local OpenAQ API key file is expected at `experiments/openaq/API_KEY`; it is ignored by git and must not be committed.
+- OpenAQ measurement requests are paginated internally in chunks of at most 1000 records.
 
 ## Minimal Implementation Structure
 
@@ -208,13 +216,36 @@ Current previously downloaded data-preparation artifacts are local reproducibili
 - Stations represented after ingestion: 2
 - Parameters represented after ingestion: 5
 
+The `openaq_warsaw_test2` extract was generated after the area-aware selector update and is a better candidate for validating the Warsaw selection workflow:
+
+- Raw OpenAQ records: 31,187
+- Canonical records after ingestion: 31,147
+- Dropped records: 40, due to missing values
+- Stations: 3
+- Parameters: 7
+- Triangle area: approximately 360.86 km²
+
+The full four-capital extract `openaq_capitals_2025_h2` has now been generated with the area-aware triangle selector and ingested into canonical artifacts:
+
+- Source: OpenAQ API v3
+- Query window: 2025-07-01 to 2025-12-31
+- Cities: Warsaw, Berlin, Paris, Madrid
+- Selected stations: 12, using 3 stations per city
+- Parameters after ingestion: 9
+- Input OpenAQ records: 116,361
+- Canonical records after ingestion: 112,973
+- Dropped records: 3,388, due to missing measurement values
+- Generated map: `experiments/outputs/maps/openaq_capitals_2025_h2_sensor_map.html`
+- Geometry check: each city center is inside its selected three-station triangle
+
+These are data-preparation and reproducibility checks only. They are not threat-model results, verification outputs, or scientific findings.
+
 ## Next Development Steps
 
 1. Run `pdm install` in the provided virtual environment.
 2. Add `OPENAQ_API_KEY` locally or provide an API key file outside version control.
-3. Re-download the frozen OpenAQ extract using capital-triangle selection and the 2025-07-01 to 2025-12-31 candidate window.
-4. Run the ingestion command and inspect the generated manifest and preprocessing report.
-5. Implement baseline event construction from canonical measurements.
-6. Implement Model A and Model B stores.
-7. Add hash-chain construction for Models C and D.
-8. Implement controlled tampering scenarios only after baseline artifacts are stable.
+3. Implement baseline event construction from canonical measurements.
+4. Implement Model A and Model B stores.
+5. Add hash-chain construction for Models C and D.
+6. Implement controlled tampering scenarios only after baseline artifacts are stable.
+7. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.

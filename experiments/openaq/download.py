@@ -522,51 +522,55 @@ def _select_triangle_locations(
         return []
     if count != 3:
         return _select_distance_filtered(candidates, count, min_distance_meters)
+    return _select_best_triangle(candidates, city, min_distance_meters)
 
-    sectors = [(0, 120), (120, 240), (240, 360)]
-    selected: list[dict[str, Any]] = []
-    selected_ids: set[Any] = set()
 
-    for start, end in sectors:
-        sector_candidates = [
-            item
-            for item in candidates
-            if start <= item["bearing_from_center_degrees"] < end
-        ]
-        if not sector_candidates:
-            continue
-        distance_filtered = [
-            item
-            for item in sector_candidates
-            if _is_far_enough(item, selected, min_distance_meters)
-        ]
-        best = max(
-            distance_filtered or sector_candidates,
-            key=lambda item: (
-                item["measurement_score"],
-                item["distance_from_center_m"],
-            ),
-        )
-        selected.append(best)
-        selected_ids.add(best["location"].get("id"))
+def _select_best_triangle(
+    candidates: list[dict[str, Any]],
+    city: dict[str, Any],
+    min_distance_meters: int,
+) -> list[dict[str, Any]]:
+    viable = [
+        item
+        for item in candidates
+        if _location_coordinates(item) is not None and item.get("measurement_score", 0) > 0
+    ]
+    if len(viable) < 3:
+        return _select_distance_filtered(candidates, 3, min_distance_meters)
 
-    for item in candidates:
-        if len(selected) >= count:
-            break
-        location_id = item["location"].get("id")
-        if location_id not in selected_ids and _is_far_enough(item, selected, min_distance_meters):
-            selected.append(item)
-            selected_ids.add(location_id)
+    max_measurement_score = max(1, sum(item.get("measurement_score", 0) for item in viable[:3]))
+    max_area = max(
+        1.0,
+        math.pi * max(item.get("distance_from_center_m", 0.0) for item in viable) ** 2,
+    )
+    best_combo: tuple[float, tuple[dict[str, Any], dict[str, Any], dict[str, Any]]] | None = None
 
-    for item in candidates:
-        if len(selected) >= count:
-            break
-        location_id = item["location"].get("id")
-        if location_id not in selected_ids:
-            selected.append(item)
-            selected_ids.add(location_id)
+    for first_index in range(len(viable) - 2):
+        first = viable[first_index]
+        for second_index in range(first_index + 1, len(viable) - 1):
+            second = viable[second_index]
+            if not _is_far_enough(second, [first], min_distance_meters):
+                continue
+            for third_index in range(second_index + 1, len(viable)):
+                third = viable[third_index]
+                combo = (first, second, third)
+                if not _is_far_enough(third, [first, second], min_distance_meters):
+                    continue
+                area = _triangle_area_m2(combo, city)
+                if area <= 0:
+                    continue
+                measurement_score = sum(item.get("measurement_score", 0) for item in combo)
+                center_bonus = 1.0 if _city_center_in_triangle(combo, city) else 0.0
+                area_score = min(1.0, area / max_area)
+                measurement_component = min(1.0, measurement_score / max_measurement_score)
+                # Favor a real enclosing triangle first, then preserve data density.
+                score = center_bonus * 10.0 + area_score * 3.0 + measurement_component
+                if best_combo is None or score > best_combo[0]:
+                    best_combo = (score, combo)
 
-    return selected[:count]
+    if best_combo is None:
+        return _select_distance_filtered(candidates, 3, min_distance_meters)
+    return list(best_combo[1])
 
 
 def _select_distance_filtered(
@@ -610,6 +614,58 @@ def _is_far_enough(
         if distance < min_distance_meters:
             return False
     return True
+
+
+def _location_coordinates(item: dict[str, Any]) -> tuple[float, float] | None:
+    coordinates = (item.get("location") or {}).get("coordinates") or {}
+    latitude = coordinates.get("latitude")
+    longitude = coordinates.get("longitude")
+    if latitude is None or longitude is None:
+        return None
+    return float(latitude), float(longitude)
+
+
+def _triangle_area_m2(combo: tuple[dict[str, Any], dict[str, Any], dict[str, Any]], city: dict[str, Any]) -> float:
+    points = [_project_city_xy(*_location_coordinates(item), city) for item in combo]
+    (x1, y1), (x2, y2), (x3, y3) = points
+    return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0)
+
+
+def _city_center_in_triangle(
+    combo: tuple[dict[str, Any], dict[str, Any], dict[str, Any]],
+    city: dict[str, Any],
+) -> bool:
+    point = (0.0, 0.0)
+    a, b, c = [_project_city_xy(*_location_coordinates(item), city) for item in combo]
+    area_total = _triangle_area_xy(a, b, c)
+    if area_total <= 0:
+        return False
+    area_parts = (
+        _triangle_area_xy(point, b, c)
+        + _triangle_area_xy(a, point, c)
+        + _triangle_area_xy(a, b, point)
+    )
+    return abs(area_total - area_parts) <= max(1.0, area_total * 0.001)
+
+
+def _triangle_area_xy(
+    a: tuple[float, float],
+    b: tuple[float, float],
+    c: tuple[float, float],
+) -> float:
+    return abs(
+        (a[0] * (b[1] - c[1]) + b[0] * (c[1] - a[1]) + c[0] * (a[1] - b[1]))
+        / 2.0
+    )
+
+
+def _project_city_xy(lat: float, lon: float, city: dict[str, Any]) -> tuple[float, float]:
+    radius = 6_371_000
+    center_lat = float(city["latitude"])
+    center_lon = float(city["longitude"])
+    x = math.radians(lon - center_lon) * math.cos(math.radians(center_lat)) * radius
+    y = math.radians(lat - center_lat) * radius
+    return x, y
 
 
 def _select_sensors(
@@ -662,13 +718,16 @@ def _download_measurements(
     retry_backoff_seconds: float = 2.0,
 ) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = _read_jsonl(output_file) if resume and output_file else []
-    completed_sensor_ids = _read_completed_sensor_ids(state_file) if resume and state_file else set()
+    can_resume_state = bool(resume and output_file and output_file.exists())
+    completed_sensor_ids = _read_completed_sensor_ids(state_file) if can_resume_state and state_file else set()
 
-    if output_file is not None and not resume:
+    if output_file is not None and (not resume or not output_file.exists()):
         output_file.parent.mkdir(parents=True, exist_ok=True)
-        output_file.write_text("", encoding="utf-8")
-    if state_file is not None and not resume:
+        if not records:
+            output_file.write_text("", encoding="utf-8")
+    if state_file is not None and (not resume or not can_resume_state):
         state_file.parent.mkdir(parents=True, exist_ok=True)
+        completed_sensor_ids = set()
         _write_state(state_file, completed_sensor_ids)
 
     total = len(sensors)
@@ -682,31 +741,21 @@ def _download_measurements(
             continue
 
         _progress(progress, f"Measurements {index}/{total}: downloading sensor {sensor_id}...")
-        params = {
-            "datetime_from": datetime_from,
-            "datetime_to": datetime_to,
-            "limit": limit,
-            "page": 1,
-        }
         try:
-            response = _api_get(
+            sensor_records = _download_sensor_measurements(
                 api_key,
-                f"/sensors/{sensor_id}/measurements",
-                params,
+                sensor_id=sensor_id,
+                sensor=sensor,
+                datetime_from=datetime_from,
+                datetime_to=datetime_to,
+                requested_limit=limit,
                 max_retries=max_retries,
                 retry_backoff_seconds=retry_backoff_seconds,
+                progress=progress,
             )
         except RuntimeError as error:
-            _progress(progress, f"Measurements {index}/{total}: sensor {sensor_id} failed, skipping: {error}")
-            completed_sensor_ids.add(sensor_key)
-            if state_file is not None:
-                _write_state(state_file, completed_sensor_ids)
+            _progress(progress, f"Measurements {index}/{total}: sensor {sensor_id} failed, not marked complete: {error}")
             continue
-        sensor_records = []
-        for measurement in response.get("results", []):
-            enriched = dict(measurement)
-            enriched["sensor"] = _trim_sensor(sensor)
-            sensor_records.append(enriched)
         records.extend(sensor_records)
         completed_sensor_ids.add(sensor_key)
         if output_file is not None:
@@ -717,6 +766,51 @@ def _download_measurements(
         if page_delay_seconds > 0:
             time.sleep(page_delay_seconds)
     return records
+
+
+def _download_sensor_measurements(
+    api_key: str,
+    *,
+    sensor_id: int,
+    sensor: dict[str, Any],
+    datetime_from: str,
+    datetime_to: str,
+    requested_limit: int,
+    max_retries: int,
+    retry_backoff_seconds: float,
+    progress: bool,
+) -> list[dict[str, Any]]:
+    page_size = min(1000, max(1, requested_limit))
+    remaining = max(1, requested_limit)
+    page = 1
+    sensor_records: list[dict[str, Any]] = []
+
+    while remaining > 0:
+        current_limit = min(page_size, remaining)
+        response = _api_get(
+            api_key,
+            f"/sensors/{sensor_id}/measurements",
+            {
+                "datetime_from": datetime_from,
+                "datetime_to": datetime_to,
+                "limit": current_limit,
+                "page": page,
+            },
+            max_retries=max_retries,
+            retry_backoff_seconds=retry_backoff_seconds,
+        )
+        results = response.get("results", [])
+        for measurement in results:
+            enriched = dict(measurement)
+            enriched["sensor"] = _trim_sensor(sensor)
+            sensor_records.append(enriched)
+        _progress(progress, f"    sensor {sensor_id}: page {page} records={len(results)}")
+        if len(results) < current_limit:
+            break
+        remaining -= len(results)
+        page += 1
+
+    return sensor_records
 
 
 def _api_get(
