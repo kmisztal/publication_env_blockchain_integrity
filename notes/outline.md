@@ -2,11 +2,11 @@
 
 ## Working Scientific Outline
 
-This outline is a planning structure only. It should guide manuscript development after the research scope is stable.
+This outline reflects the current manuscript direction after execution of the OpenAQ proof-of-concept experiments.
 
 Strategic positioning:
 
-This manuscript should be framed primarily as a computer science / information systems paper. Environmental monitoring is the application domain because it provides realistic distributed, time-series, multi-actor monitoring data with provenance and trust challenges. The paper should not be framed as a pure environmental engineering paper.
+This manuscript is primarily a computer science / information systems paper. Environmental monitoring is the application domain because it provides realistic distributed, time-series, multi-source data with provenance and trust challenges. The paper should not be framed as pure environmental engineering and should not report pollutant-specific or policy conclusions.
 
 ## 1. Introduction
 
@@ -15,7 +15,7 @@ Purpose:
 1. Introduce environmental monitoring as a realistic distributed data integrity domain.
 2. Explain why distributed sensor/time-series systems create provenance and trust challenges.
 3. Motivate audit trails, hash verification, threat modeling, and verification workflows.
-4. State the computer science / information systems research question and contribution.
+4. State the research question around comparative threat coverage for integrity models.
 
 Key claims needing support:
 
@@ -28,33 +28,38 @@ Key claims needing support:
 Planned subsections:
 
 1. Environmental monitoring as distributed time-series information infrastructure.
-2. Rural IoT and environmental sensor networks as application context.
-3. Data provenance, data integrity, and trustworthiness.
-4. Audit trails and tamper-evident logs.
-5. Hash verification and blockchain-inspired integrity architectures.
-6. Gap synthesis focused on threat coverage and model comparison.
+2. Distributed and rural IoT monitoring as application context.
+3. Environmental sensor networks.
+4. Data provenance, data integrity, and trustworthiness.
+5. Blockchain-inspired integrity architectures.
+6. Audit trails and hash verification.
+7. Literature gap focused on threat coverage and model comparison.
 
 Boundary:
 
 This section must not invent references. Unsupported statements should use TODO:CITATION_NEEDED.
 
-## 3. Conceptual Framework and Methodology
+## 3. Methodology
 
 Purpose:
 
-1. Define the information-systems threat model.
-2. Define environmental monitoring as the application dataset domain.
-3. Define four integrity models: conventional storage only, audit trail only, audit trail plus hash chain, and audit trail plus hash chain plus provenance/permission reconstruction.
-4. Define threat and failure cases: value modification, timestamp modification, deletion, fake insertion, replay, unauthorized correction, broken provenance, revoked actor key usage, missing correction reason, and delayed synchronization.
+1. Define the information-systems study design.
+2. Describe the OpenAQ API v3 dataset extract.
+3. Report preprocessing counts from executed artifacts.
+4. Define Models A-D.
+5. Define controlled tampering scenarios and evaluation semantics.
 
-Planned methodology:
+Current dataset:
 
-1. Threat model definition.
-2. Integrity model design and comparison.
-3. Controlled tampering design using public environmental time-series data. TODO:DATA_NEEDED
-4. Verification workflow and threat-coverage matrix generation. TODO:EXPERIMENT_NEEDED
+1. Dataset ID: `openaq_capitals_2025_h2`.
+2. Time window: 2025-07-01 to 2025-12-31.
+3. Cities: Warsaw, Berlin, Paris, Madrid.
+4. Monitoring locations: 12 total, 3 per city.
+5. Canonical records after preprocessing: 112,973.
+6. Dropped records: 3,388.
+7. Parameters after preprocessing: 9.
 
-## 4. Proposed System Architecture
+## 4. System Architecture
 
 Purpose:
 
@@ -75,31 +80,26 @@ Candidate components:
 8. Model-specific verifiers.
 9. Threat-coverage matrix generator.
 
-## 5. Evaluation Design
+## 5. Evaluation Results
 
 Purpose:
 
-Define how the four integrity models are evaluated against the same controlled threats without reporting results prematurely.
+Report executed proof-of-concept results without overclaiming statistical or environmental conclusions.
 
-Candidate evaluation questions:
+Primary outputs:
 
-1. Which threats are detected by conventional storage only? TODO:EXPERIMENT_NEEDED
-2. Which threats are detected by audit trail only? TODO:EXPERIMENT_NEEDED
-3. Which threats are detected by audit trail plus hash chain? TODO:EXPERIMENT_NEEDED
-4. Which threats require provenance/permission reconstruction? TODO:EXPERIMENT_NEEDED
-5. What is the measured detection behavior and overhead for each model? TODO:EXPERIMENT_NEEDED
+1. Scenario count: 25.
+2. Aggregate status counts: detected 20, expected_not_detected 5, missed 0, partial 0, unexpected_alert 0.
+3. Threat-coverage matrix for Models A-D.
+4. Model-level interpretation.
+5. Reproducibility artifact references.
 
-Candidate data sources:
+Do not report:
 
-1. Public air quality datasets. TODO:DATA_NEEDED
-2. Public water quality datasets. TODO:DATA_NEEDED
-3. Public climate station datasets if needed. TODO:DATA_NEEDED
-
-Primary output:
-
-1. Threat-coverage matrix for Models A-D.
-2. Measured verification results after execution. TODO:EXPERIMENT_NEEDED
-3. Reproducibility package.
+1. Precision, recall, F1, false-positive rate, or false-negative rate.
+2. Environmental air-quality conclusions.
+3. Real-world manipulation detection in OpenAQ.
+4. Production blockchain deployment readiness.
 
 ## 6. Discussion
 
@@ -118,8 +118,9 @@ Purpose:
 
 1. Restate the research problem.
 2. Summarize the information-systems contribution.
-3. Identify next steps: references, dataset selection, prototype execution, and threat-coverage evaluation.
+3. Summarize the executed threat-coverage evaluation.
+4. Identify next steps: references, scenario repetitions, negative cases, per-station chains, and extended synchronization experiments.
 
 ## Current Scope Boundary
 
-The first manuscript should remain focused on data integrity architecture, threat modeling, verification workflows, controlled tampering, and reproducible proof-of-concept evaluation. It should not report experimental findings until the data and experiments exist. It should not claim environmental engineering outcomes, pollutant-specific interpretation, or field deployment success.
+The manuscript should remain focused on data integrity architecture, threat modeling, verification workflows, controlled tampering, and reproducible proof-of-concept evaluation. It should not claim environmental engineering outcomes, pollutant-specific interpretation, field deployment success, or statistical generalization beyond the implemented controlled scenarios.

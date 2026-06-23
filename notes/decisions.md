@@ -12,13 +12,13 @@ Rationale:
 
 Clinical systems provide mature patterns for attributable records, timestamped changes, controlled corrections, source data verification, audit trail review, and regulatory-grade traceability. These patterns can guide environmental monitoring systems that need trustable records.
 
-### Decision 2: Focus on rural environmental monitoring
+### Decision 2: Focus on distributed environmental monitoring
 
-The target context is rural monitoring infrastructure, including air quality, water quality, and distributed environmental sensor networks.
+The target context is distributed environmental monitoring infrastructure, including public monitoring networks, multi-station sensor systems, rural deployments, and heterogeneous environmental data pipelines.
 
 Rationale:
 
-Rural systems create practical integrity challenges: distributed devices, intermittent connectivity, limited maintenance access, and fragmented organizational responsibility.
+Distributed monitoring systems create practical integrity challenges: geographically separated sources, intermittent synchronization, heterogeneous infrastructure, and fragmented organizational responsibility. Rural monitoring remains a motivating example, but the manuscript title and main framing should not imply that the executed OpenAQ multi-city experiment validates rural field deployment.
 
 ### Decision 3: Use a hybrid architecture assumption
 
@@ -26,15 +26,15 @@ The working architecture should store environmental measurements off-chain and s
 
 Rationale:
 
-Full on-chain storage is likely unsuitable for high-volume sensor data and rural infrastructure constraints. The paper should evaluate integrity anchoring rather than raw data storage on a blockchain. TODO:EXPERIMENT_NEEDED
+Full on-chain storage is likely unsuitable for high-volume sensor data and constrained monitoring infrastructure. The paper evaluates integrity anchoring rather than raw data storage on a blockchain.
 
-### Decision 4: Do not claim empirical findings yet
+### Decision 4: Report only executed empirical findings
 
-The manuscript must not report results until data and experiments exist.
+The manuscript may report only results that come from executed artifacts under `experiments/outputs/`.
 
 Rationale:
 
-Current work is at the scope and research-design stage. All future empirical needs should be marked with TODO:DATA_NEEDED or TODO:EXPERIMENT_NEEDED.
+The OpenAQ proof-of-concept has been executed. Remaining future empirical ideas still require TODO:DATA_NEEDED or TODO:EXPERIMENT_NEEDED until implemented.
 
 ### Decision 5: Use TODO markers instead of invented support
 
@@ -98,7 +98,7 @@ For each city, the downloader should:
 7. Generate an inspection map for each download so the selected locations can be visually reviewed before experiments are interpreted.
 8. For the default three-location case, select the best combination using triangle area and whether the city center is enclosed, not only directional sectors.
 
-The candidate MVP time window is 2025-07-01 to 2025-12-31. This range is not final until the downloader confirms that selected locations have sufficient measurement availability in that period.
+The executed MVP time window is 2025-07-01 to 2025-12-31.
 
 Rationale:
 
@@ -107,9 +107,9 @@ This creates a more intentional and reproducible dataset slice than arbitrary co
 ## Open Decisions
 
 1. Select the exact target venue and verify whether computer science / information systems framing fits its scope. TODO:CITATION_NEEDED
-2. Select candidate public environmental datasets. TODO:DATA_NEEDED
-3. Decide the exact public dataset slice for controlled tampering experiments. TODO:DATA_NEEDED
-4. Decide whether delayed synchronization is included in MVP or extended experiments.
-5. Decide whether signatures are represented as key identifiers or implemented cryptographically.
+2. Decide whether additional datasets beyond the executed OpenAQ extract are needed for a later extended study. TODO:DATA_NEEDED
+3. Decide whether scenario repetitions should be added before submission. TODO:EXPERIMENT_NEEDED
+4. Decide whether negative cases should be implemented to support precision, recall, F1, false-positive rate, and false-negative rate. TODO:EXPERIMENT_NEEDED
+5. Decide whether signatures should remain represented as key identifiers or be implemented cryptographically in an extended version.
 6. Decide which prior author works from `resources/krzysztof_misztal_citations.bib` are scientifically appropriate to cite.
-7. Decide whether AI/ML anomaly detection remains fully out of scope.
+7. Keep AI/ML anomaly detection out of scope unless a separate environmental plausibility layer is explicitly added.

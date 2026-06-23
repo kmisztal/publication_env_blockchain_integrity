@@ -1,3 +1,23 @@
 \section{Discussion}
 
-Discuss implications, limitations, and threats to validity.
+\subsection{Interpretation}
+
+The experiment shows a progressive increase in threat coverage as additional integrity mechanisms are introduced. Conventional storage provides only limited evidence for post-hoc verification. Adding an audit trail enables detection of local event payload changes, but without hash-chain continuity it remains limited for deletion and stream-order threats. Adding hash-chain linkage makes continuity violations visible. Adding provenance and permission reconstruction extends verification from structural tampering to actor-related and governance-related failures.
+
+The main implication is that blockchain-inspired design should be evaluated at the level of concrete integrity functions rather than as a general claim that blockchain improves environmental monitoring. In the proof-of-concept, the useful mechanisms are audit events, deterministic hashes, previous-hash linkage, explicit permission events, correction metadata, and verifier workflows.
+
+\subsection{Scope of Environmental Interpretation}
+
+The OpenAQ dataset provides a realistic distributed environmental monitoring substrate, but the experiment does not produce environmental-domain conclusions. The results do not compare air quality between Warsaw, Berlin, Paris, and Madrid, do not evaluate pollutant behavior, and do not assess sensor calibration or environmental anomaly detection. The selected monitoring locations support a multi-source dataset for information-systems evaluation.
+
+\subsection{Limitations}
+
+The scenario set is controlled and synthetic. Each scenario uses one deterministic injection per applicable model/threat pair. Therefore, the current evaluation should not be described as a statistical robustness study over many attack positions, stations, timestamps, or random seeds.
+
+The current experiment does not define negative cases. For this reason, precision, recall, F1 score, false-positive rate, and false-negative rate are not reported. The appropriate outputs are scenario status counts, model-level coverage, and the threat-coverage matrix.
+
+The proof-of-concept uses one OpenAQ extract and one global event stream per integrity model. It does not build independent chains per station, city, or gateway. It also does not implement cross-sensor plausibility checking, full intermittent-connectivity simulation, summary-block optimization, or production-grade key management.
+
+\subsection{Future Work}
+
+Future work can extend the benchmark with repeated injections across multiple records, stations, timestamps, and random seeds. A negative-case benchmark would make precision, recall, false-positive rate, and false-negative rate meaningful. Additional work could also evaluate per-station or per-gateway chains, delayed synchronization under offline queues, summary-block verification, and cross-sensor environmental consistency checks as a separate layer from blockchain-inspired integrity verification.

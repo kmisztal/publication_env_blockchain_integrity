@@ -1,3 +1,39 @@
 \section{Methodology}
 
-Describe data, methods, assumptions, and evaluation design.
+\subsection{Study Design}
+
+The study evaluates data integrity mechanisms for distributed environmental monitoring records. The environmental domain is used as a realistic information-systems substrate: monitoring data are time-series based, multi-source, provenance-sensitive, and often reused outside their original collection context. The study does not evaluate air-quality correctness, pollutant behavior, sensor calibration, or environmental policy effects.
+
+The experiment compares four increasingly expressive integrity models under controlled tampering scenarios. Each model is built from the same canonical dataset, and each applicable threat scenario is injected into the corresponding model artifact. A verifier then examines the tampered artifact and produces alert codes. The evaluation compares verifier alerts against scenario labels and aggregates the results into a threat-coverage matrix.
+
+\subsection{Dataset}
+
+The proof-of-concept uses a bounded extract from OpenAQ API v3. \texttt{TODO:CITATION\_NEEDED} The dataset identifier used in the experiment is \texttt{openaq\_capitals\_2025\_h2}. The selected time window is from 2025-07-01 to 2025-12-31. Four European capital cities were included: Warsaw, Berlin, Paris, and Madrid. For each city, three monitoring locations were selected, producing a total of 12 monitoring locations.
+
+The station selection creates a distributed, multi-source environmental monitoring dataset while keeping the experiment bounded and reproducible. The current experiment treats all selected stations as one combined canonical dataset and one global event stream per integrity model. It does not evaluate cities or stations independently, and it does not perform cross-sensor environmental plausibility checking.
+
+The preprocessing step normalized raw OpenAQ records into canonical measurements. The input contained 116,361 OpenAQ records. After preprocessing, 112,973 canonical records remained and 3,388 records were dropped because the measurement value was missing. The final canonical dataset contained nine measured parameters.
+
+\subsection{Integrity Models}
+
+Model A represents conventional storage only. It stores canonical measurement records without an audit trail, hash-chain linkage, provenance state, or permission state. Its verifier is limited to schema checks and duplicate record identifier checks.
+
+Model B represents an audit trail without hash-chain linkage. Measurements are represented as audit events with deterministic payload hashes and event identifiers. This enables local event-integrity checks, but the event stream is not linked by previous-hash references.
+
+Model C extends Model B with hash-chain linkage. Each event contains a payload hash, a previous hash, and a block hash. This model supports verification of event order and chain continuity.
+
+Model D extends Model C with provenance and permission reconstruction. It includes actor identifiers, key identifiers, permission events, revocation events, correction events, and active key-state reconstruction. This model supports additional checks for actor-related and governance-related integrity failures.
+
+\subsection{Threat Scenarios}
+
+The base scenario set covers five data and stream-integrity threats: value modification, timestamp modification, record deletion, fake record insertion, and replay. These scenarios are applied to Models A-D where the model representation supports the scenario.
+
+Five additional scenarios are specific to Model D: broken provenance, unauthorized correction, revoked actor key usage, missing correction reason, and delayed synchronization. These scenarios require provenance, permission, correction, or synchronization metadata and are therefore outside the implemented scope of Models A-C.
+
+Each implemented scenario uses one deterministic injection per applicable model/threat pair. The current design is a reproducible mechanism-comparison benchmark, not a statistical robustness evaluation over repeated random injections.
+
+\subsection{Evaluation Semantics}
+
+The verifier output is evaluated using scenario labels. A scenario receives the status \texttt{detected} when the expected alert code is present in the verifier output. A scenario receives \texttt{expected\_not\_detected} when the threat is intentionally outside the detection capability of the evaluated model. A \texttt{not\_applicable} cell indicates that the scenario is outside the implemented scope of a model.
+
+The current evaluation reports scenario status counts and a threat-coverage matrix. It does not report precision, recall, F1 score, false-positive rate, or false-negative rate because explicit negative cases were not defined in this experiment.

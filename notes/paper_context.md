@@ -73,18 +73,18 @@ Supporting questions:
 2. Define four comparable integrity models: conventional storage only, audit trail only, audit trail plus hash chain, and audit trail plus hash chain plus provenance/permission reconstruction.
 3. Specify verification workflows for value modification, timestamp modification, record deletion, fake insertion, replay, unauthorized correction, broken provenance, revoked actor key usage, missing correction reasons, and delayed synchronization.
 4. Build a lightweight reproducible proof-of-concept using Python, Pandas, and SQLite or JSON storage.
-5. Evaluate threat coverage using public environmental time-series data and controlled tampering scenarios. TODO:DATA_NEEDED TODO:EXPERIMENT_NEEDED
-6. Produce a threat-coverage matrix and measured verification outputs after experiments are executed. TODO:EXPERIMENT_NEEDED
+5. Evaluate threat coverage using the executed OpenAQ environmental time-series dataset and controlled tampering scenarios.
+6. Produce and report the executed threat-coverage matrix and measured verification outputs.
 
 ## Hypotheses
 
-H1: Audit trail plus hash-chain verification detects more integrity threats than conventional storage or audit trail alone. TODO:EXPERIMENT_NEEDED
+H1: Audit trail plus hash-chain verification detects more integrity threats than conventional storage or audit trail alone.
 
-H2: Adding provenance and permission reconstruction increases explanatory coverage for actor-related threats, including unauthorized correction and revoked key usage. TODO:EXPERIMENT_NEEDED
+H2: Adding provenance and permission reconstruction increases explanatory coverage for actor-related threats, including unauthorized correction and revoked key usage.
 
-H3: Threat-coverage matrices provide a clearer evaluation method for integrity architectures than architecture description alone. TODO:EXPERIMENT_NEEDED
+H3: Threat-coverage matrices provide a clearer evaluation method for integrity architectures than architecture description alone.
 
-H4: A lightweight reproducible PoC can evaluate integrity threats without requiring a production blockchain deployment or field sensor deployment. TODO:EXPERIMENT_NEEDED
+H4: A lightweight reproducible PoC can evaluate integrity threats without requiring a production blockchain deployment or field sensor deployment.
 
 ## Expected Contribution
 
@@ -96,7 +96,7 @@ Expected contributions:
 2. A comparison of four integrity models with increasing verification capability.
 3. A threat-coverage matrix covering data, audit, provenance, permission, and synchronization threats.
 4. A reproducible proof-of-concept implementation for controlled tampering experiments.
-5. Verification workflows and measured outputs once experiments are executed. TODO:EXPERIMENT_NEEDED
+5. Verification workflows and measured outputs from the executed OpenAQ proof-of-concept.
 
 ## Target Venue Suitability
 
@@ -129,8 +129,8 @@ In scope:
 
 Out of scope for the initial manuscript:
 
-1. Invented experimental results.
-2. Invented environmental datasets.
+1. Experimental results not produced by the executed proof-of-concept.
+2. Environmental datasets not documented in the repository artifacts.
 3. Cryptocurrency economics, token incentives, or market mechanisms.
 4. Full implementation of a production blockchain network.
 5. Claims of regulatory compliance for environmental systems without legal analysis.
@@ -147,5 +147,5 @@ Out of scope for the initial manuscript:
 2. Literature on audit trails, tamper-evident logs, and hash verification. TODO:CITATION_NEEDED
 3. Literature on blockchain-inspired data integrity architectures. TODO:CITATION_NEEDED
 4. Literature on environmental monitoring as distributed time-series data infrastructure. TODO:CITATION_NEEDED
-5. Candidate public air quality or water quality datasets. TODO:DATA_NEEDED
-6. Experiment execution for threat coverage and verification metrics. TODO:EXPERIMENT_NEEDED
+5. Additional public datasets beyond the executed OpenAQ extract, if the study is later extended. TODO:DATA_NEEDED
+6. Scenario repetitions, negative cases, or additional metrics beyond the current threat-coverage matrix. TODO:EXPERIMENT_NEEDED

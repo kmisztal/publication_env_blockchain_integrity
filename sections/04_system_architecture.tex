@@ -1,3 +1,31 @@
 \section{System Architecture}
 
-Describe the system, workflow, components, and implementation boundaries.
+\subsection{Proof-of-Concept Scope}
+
+The proof-of-concept is intentionally lightweight. Its purpose is to support the experimental comparison of integrity models rather than to implement a production blockchain platform. The implementation uses Python-based data processing, tabular preprocessing, JSON or JSONL artifacts, SQLite storage where useful, deterministic hashing, controlled tampering generation, model-specific verification, and metrics aggregation.
+
+The system keeps raw environmental measurements outside the integrity layer. Integrity evidence is represented through canonical records, audit events, payload hashes, hash-chain links, provenance metadata, permission events, and verification reports. This separation reflects the central design choice of the paper: the integrity layer should make record manipulation visible without requiring environmental measurements to be stored directly on-chain.
+
+\subsection{Data Flow}
+
+The data flow begins with a bounded OpenAQ extract. Raw records are normalized into canonical measurement records with stable identifiers and standardized fields. The same canonical records are then transformed into four model artifacts. Model A stores conventional measurement records. Model B stores audit events. Model C stores hash-linked audit events. Model D stores hash-linked events enriched with provenance and permission state.
+
+For each applicable threat scenario, a tampering generator creates a modified artifact and a scenario label. The verifier reads the tampered artifact, recalculates relevant hashes, reconstructs stream or permission state where required, and emits alerts. The evaluator compares these alerts against the expected scenario labels and exports per-scenario metrics, aggregate status counts, and the threat-coverage matrix.
+
+\subsection{Hashing Strategy}
+
+The proof-of-concept uses deterministic JSON serialization and SHA-256 hashing for the integrity artifacts. \texttt{TODO:CITATION\_NEEDED} Payload hashes are computed from canonicalized event payloads. In Models C and D, each event also contains a previous-hash reference and a block hash, allowing the verifier to detect disrupted chain continuity.
+
+The hash strategy is used for experimental reproducibility and tamper evidence. It is not presented as a final cryptographic standard selection for production environmental monitoring systems. Any production recommendation about algorithms, signatures, key sizes, or long-term cryptographic validity would require separate standards-based justification. \texttt{TODO:CITATION\_NEEDED}
+
+\subsection{Audit Trail and Provenance Model}
+
+The audit trail represents measurements and governance events as append-oriented events. Measurement events preserve a stable relationship between a canonical record and its hashed payload. Correction and permission events represent changes that should be visible to later verification rather than silently overwriting stored values.
+
+Model D adds provenance and permission reconstruction. Actor and key identifiers are included in events, permission grants and revocations are represented explicitly, and the verifier reconstructs active authorization state over the event stream. This enables checks for unauthorized correction, revoked actor key usage, missing correction reasons, broken provenance, and delayed synchronization.
+
+\subsection{Verification Workflow}
+
+The verification workflow is model-specific. Model A checks schema consistency and duplicate identifiers. Model B checks event payload integrity and event identifiers. Model C additionally checks previous-hash continuity and block hashes. Model D adds provenance, permission, correction, key-state, and synchronization checks.
+
+The verifier does not assess whether a measurement is environmentally plausible or scientifically correct. It only evaluates whether the stored artifact remains internally consistent with the integrity evidence and governance rules represented by the selected model.

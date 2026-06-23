@@ -336,3 +336,15 @@
 - Updated the manuscript working title from `Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems` to `Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems`.
 - Applied the title change in `main.tex`, `README.md`, and planning notes under `notes/`.
 - Rationale: align the manuscript title with the executed OpenAQ multi-city distributed monitoring experiment and avoid overclaiming rural field-deployment validation.
+# 2026-06-24 01:32:30 +02:00
+
+- Continued manuscript preparation after the title change to distributed monitoring systems.
+- Updated `sections/01_introduction.tex` to align the research question and objectives with the executed Models A-D threat-coverage experiment.
+- Updated `sections/02_related_work.tex` to frame rural monitoring as a motivating subset of distributed monitoring rather than the validated experimental scope.
+- Drafted `sections/03_methodology.tex` using the OpenAQ dataset, preprocessing counts, integrity models, threat scenarios, and evaluation semantics from the experiment artifacts.
+- Drafted `sections/04_system_architecture.tex` describing the lightweight Python/JSONL/SQLite proof-of-concept, hashing strategy, audit trail model, and verification workflow.
+- Added `sections/05_evaluation_results.tex` with the executed scenario count, aggregate status counts, threat-coverage matrix, model-level interpretation, and reproducibility artifact references.
+- Expanded `sections/05_discussion.tex` and `sections/06_conclusions.tex` with scoped interpretation, limitations, and future work.
+- Updated `main.tex` to include the new evaluation results section and replaced the abstract placeholder with a results-aware abstract.
+- Updated `notes/decisions.md`, `notes/outline.md`, and `notes/paper_context.md` so the planning notes reflect the executed OpenAQ proof-of-concept rather than pre-experiment planning.
+- Compiled `main.pdf` successfully with MiKTeX `pdflatex`.

@@ -14,13 +14,14 @@
 \maketitle
 
 \begin{abstract}
-TODO: Write a concise abstract for the manuscript.
+Distributed environmental monitoring systems produce time-series records that may pass through multiple sensors, gateways, storage systems, correction workflows, and publication channels. This creates an information-systems integrity problem: users need to determine whether records were modified, deleted, replayed, inserted, corrected without authorization, or disconnected from provenance evidence. This paper evaluates a lightweight blockchain-inspired proof-of-concept for environmental data integrity. Using a bounded OpenAQ API v3 dataset covering Warsaw, Berlin, Paris, and Madrid from 2025-07-01 to 2025-12-31, the study compares four integrity models: conventional storage, audit trail, audit trail with hash-chain linkage, and audit trail with hash-chain linkage plus provenance and permission reconstruction. The experiment uses 112,973 canonical records and 25 controlled tampering scenarios. The resulting threat-coverage matrix shows 20 detected scenarios and 5 expected non-detections, with no missed, partial, or unexpected-alert cases in the implemented scenario set. The contribution is not an environmental air-quality analysis or a production blockchain deployment, but a reproducible information-systems evaluation of how audit trails, hash chains, and provenance reconstruction affect verification coverage for distributed monitoring records.
 \end{abstract}
 
 \input{sections/01_introduction}
 \input{sections/02_related_work}
 \input{sections/03_methodology}
 \input{sections/04_system_architecture}
+\input{sections/05_evaluation_results}
 \input{sections/05_discussion}
 \input{sections/06_conclusions}
 
