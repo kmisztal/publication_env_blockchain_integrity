@@ -1,6 +1,6 @@
 # Experimental Plan
 
-Working title: Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems
+Working title: Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems
 
 This file defines executable experiments for the paper. It is not manuscript text. No results are reported here.
 

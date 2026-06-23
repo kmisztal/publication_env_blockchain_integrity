@@ -331,3 +331,8 @@
 - Created `notes/decisions.md` to capture scientific direction and open research-design decisions.
 - Updated `notes/outline.md` from a short section list into a detailed planning outline.
 - Established repository change tracking in this `changelog.md` file.
+# 2026-06-23 20:17:54 +02:00
+
+- Updated the manuscript working title from `Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems` to `Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems`.
+- Applied the title change in `main.tex`, `README.md`, and planning notes under `notes/`.
+- Rationale: align the manuscript title with the executed OpenAQ multi-city distributed monitoring experiment and avoid overclaiming rural field-deployment validation.

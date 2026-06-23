@@ -1,4 +1,4 @@
-# Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems
+# Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems
 
 ## Working Scientific Outline
 

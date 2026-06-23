@@ -1,6 +1,6 @@
 # Paper Context
 
-Working title: Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems
+Working title: Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems
 
 ## Scientific Direction
 

@@ -1,6 +1,6 @@
 # Proof-of-Concept Architecture
 
-Working title: Blockchain-Based Environmental Data Integrity for Rural Monitoring Systems
+Working title: Blockchain-Based Environmental Data Integrity for Distributed Monitoring Systems
 
 This document defines a lightweight proof-of-concept implementation to support the planned experiments. It is not a production architecture and it is not manuscript text.
 
