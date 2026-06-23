@@ -1,0 +1,65 @@
+\section{Evaluation Results}
+
+\subsection{Executed Scenario Matrix}
+
+The full implemented scenario matrix was executed for the dataset \texttt{openaq\_capitals\_2025\_h2}. The run compared four integrity models and generated 25 controlled tampering scenarios. For each scenario, the proof-of-concept produced a tampered artifact, a scenario label, a verification output, and a per-scenario evaluation output.
+
+The aggregate status counts are shown in Table~\ref{tab:status-counts}. The run produced 20 detected cases and 5 expected non-detections. No scenarios were marked as missed, partial, or unexpected-alert cases. These counts should be interpreted as scenario-level verification outcomes for the controlled benchmark, not as statistical detection rates.
+
+\begin{table}[htbp]
+\centering
+\caption{Aggregate scenario status counts.}
+\label{tab:status-counts}
+\begin{tabular}{lr}
+\toprule
+Status & Count \\
+\midrule
+\texttt{detected} & 20 \\
+\texttt{expected\_not\_detected} & 5 \\
+\texttt{missed} & 0 \\
+\texttt{partial} & 0 \\
+\texttt{unexpected\_alert} & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Threat-Coverage Matrix}
+
+Table~\ref{tab:threat-coverage} presents the threat-coverage matrix for Models A-D. The matrix uses three compact status codes: D for detected, END for expected non-detection, and NA for not applicable. A detected cell indicates that the expected alert code was present in the verifier output. An expected non-detection indicates an explicit model limitation rather than an implementation failure. A not-applicable cell indicates that the scenario was outside the implemented scope of the model.
+
+\begin{table}[htbp]
+\centering
+\caption{Threat-coverage matrix for integrity Models A-D.}
+\label{tab:threat-coverage}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Threat & A & B & C & D \\
+\midrule
+\texttt{value\_modification} & END & D & D & D \\
+\texttt{timestamp\_modification} & END & D & D & D \\
+\texttt{record\_deletion} & END & END & D & D \\
+\texttt{fake\_record\_insertion} & END & D & D & D \\
+\texttt{replay} & D & D & D & D \\
+\texttt{broken\_provenance} & NA & NA & NA & D \\
+\texttt{unauthorized\_correction} & NA & NA & NA & D \\
+\texttt{revoked\_actor\_key\_usage} & NA & NA & NA & D \\
+\texttt{missing\_correction\_reason} & NA & NA & NA & D \\
+\texttt{delayed\_synchronization} & NA & NA & NA & D \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Model-Level Interpretation}
+
+Model A detected only the replay scenario in the implemented matrix because replay introduced a duplicate record identifier. It did not contain independent audit or hash evidence for detecting direct value modification, timestamp modification, record deletion, or fake insertion.
+
+Model B detected value modification, timestamp modification, fake record insertion, and replay through audit-event integrity checks. It did not detect record deletion in this implementation because its audit events were not linked into a hash chain.
+
+Model C detected all five base scenarios. The addition of hash-chain linkage made stream-continuity disruption visible, including record deletion.
+
+Model D detected all Model C scenarios and the five additional provenance, permission, correction, revoked-key, and delayed-synchronization scenarios. This result supports the intended role of Model D as the most expressive model in the proof-of-concept, while remaining limited to the controlled scenarios implemented in this benchmark.
+
+\subsection{Reproducibility Artifacts}
+
+The primary machine-readable outputs are the scenario metrics CSV file, the threat-coverage matrix CSV file, the metrics summary JSON file, and the experiment-run manifest. The manifest records artifact paths, file sizes, hashes, scenario counts, and run metadata for the executed scenario matrix.
