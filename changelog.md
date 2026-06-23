@@ -348,3 +348,9 @@
 - Updated `main.tex` to include the new evaluation results section and replaced the abstract placeholder with a results-aware abstract.
 - Updated `notes/decisions.md`, `notes/outline.md`, and `notes/paper_context.md` so the planning notes reflect the executed OpenAQ proof-of-concept rather than pre-experiment planning.
 - Compiled `main.pdf` successfully with MiKTeX `pdflatex`.
+# 2026-06-24 01:48:07 +02:00
+
+- Performed a manuscript consistency review after adding the executed proof-of-concept results.
+- Confirmed that the current manuscript narrative is aligned around distributed monitoring, information-systems integrity, Models A-D, controlled tampering, and threat coverage.
+- Expanded `sections/05_evaluation_results.tex` with a dataset preparation table, integrity model summary table, aggregate scenario status table, compact threat-coverage matrix, and applicable scenario coverage table.
+- Preserved scope boundaries: no environmental air-quality conclusions, no precision/recall/F1 metrics, and no statistical robustness claims beyond the controlled scenario matrix.

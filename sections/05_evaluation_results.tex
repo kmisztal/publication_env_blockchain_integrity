@@ -1,10 +1,56 @@
 \section{Evaluation Results}
 
+\subsection{Evaluation Overview}
+
+This section reports the executed proof-of-concept evaluation for the dataset \texttt{openaq\_capitals\_2025\_h2}. The results should be read as a controlled threat-coverage evaluation of integrity mechanisms, not as an environmental analysis of the monitored locations. The experiment compares four integrity models against a fixed set of tampering scenarios and records whether the verifier produced the expected alert code for each applicable model/threat pair.
+
+Table~\ref{tab:dataset-summary} summarizes the dataset preparation used for the evaluation. The preprocessing stage converted raw OpenAQ records into canonical measurements and excluded records with missing measurement values.
+
+\begin{table}[htbp]
+\centering
+\caption{Dataset preparation summary for \texttt{openaq\_capitals\_2025\_h2}.}
+\label{tab:dataset-summary}
+\begin{tabular}{lr}
+\toprule
+Item & Value \\
+\midrule
+Input OpenAQ records & 116,361 \\
+Canonical records after preprocessing & 112,973 \\
+Dropped records & 3,388 \\
+Selected monitoring locations & 12 \\
+Cities & 4 \\
+Monitoring locations per city & 3 \\
+Parameters after preprocessing & 9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Compared Integrity Models}
+
+Table~\ref{tab:model-summary} summarizes the four compared integrity models. The model sequence is designed to isolate the effect of adding an audit trail, then hash-chain continuity, and finally provenance and permission reconstruction.
+
+\begin{table}[htbp]
+\centering
+\caption{Integrity models compared in the proof-of-concept.}
+\label{tab:model-summary}
+\small
+\begin{tabular}{lp{0.62\linewidth}}
+\toprule
+Model & Verification capability \\
+\midrule
+A & Conventional storage with schema and duplicate record identifier checks. \\
+B & Audit trail with event payload and event identifier checks, without hash-chain continuity. \\
+C & Audit trail plus hash chain, adding previous-hash and block-hash continuity checks. \\
+D & Hash chain plus provenance and permissions, adding actor/key, permission, correction, provenance, and delayed-synchronization checks. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Executed Scenario Matrix}
 
-The full implemented scenario matrix was executed for the dataset \texttt{openaq\_capitals\_2025\_h2}. The run compared four integrity models and generated 25 controlled tampering scenarios. For each scenario, the proof-of-concept produced a tampered artifact, a scenario label, a verification output, and a per-scenario evaluation output.
+The full implemented scenario matrix generated 25 controlled tampering scenarios. For each scenario, the proof-of-concept produced a tampered artifact, a scenario label, a verification output, and a per-scenario evaluation output. The aggregate status counts are shown in Table~\ref{tab:status-counts}.
 
-The aggregate status counts are shown in Table~\ref{tab:status-counts}. The run produced 20 detected cases and 5 expected non-detections. No scenarios were marked as missed, partial, or unexpected-alert cases. These counts should be interpreted as scenario-level verification outcomes for the controlled benchmark, not as statistical detection rates.
+The run produced 20 detected cases and 5 expected non-detections. No scenarios were marked as missed, partial, or unexpected-alert cases. These counts should be interpreted as scenario-level verification outcomes for the controlled benchmark, not as statistical detection rates.
 
 \begin{table}[htbp]
 \centering
@@ -32,7 +78,7 @@ Table~\ref{tab:threat-coverage} presents the threat-coverage matrix for Models A
 \caption{Threat-coverage matrix for integrity Models A-D.}
 \label{tab:threat-coverage}
 \small
-\begin{tabular}{lcccc}
+\begin{tabular}{p{0.42\linewidth}cccc}
 \toprule
 Threat & A & B & C & D \\
 \midrule
@@ -46,6 +92,24 @@ Threat & A & B & C & D \\
 \texttt{revoked\_actor\_key\_usage} & NA & NA & NA & D \\
 \texttt{missing\_correction\_reason} & NA & NA & NA & D \\
 \texttt{delayed\_synchronization} & NA & NA & NA & D \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The model-level coverage counts are summarized in Table~\ref{tab:applicable-coverage}. Not-applicable scenarios are excluded from the applicable-scenario denominator. Expected non-detections are retained as explicit model limitations.
+
+\begin{table}[htbp]
+\centering
+\caption{Applicable scenario coverage by model.}
+\label{tab:applicable-coverage}
+\begin{tabular}{lrrrr}
+\toprule
+Model & Applicable & Detected & Expected not detected & Other \\
+\midrule
+A & 5 & 1 & 4 & 0 \\
+B & 5 & 4 & 1 & 0 \\
+C & 5 & 5 & 0 & 0 \\
+D & 10 & 10 & 0 & 0 \\
 \bottomrule
 \end{tabular}
 \end{table}
