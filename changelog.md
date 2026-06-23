@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-06-23 19:39:53 +02:00
+
+- Added `experiments/integrity/run_manifest.py` for generating experiment-run reproducibility manifests.
+- Added `run-manifest` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-run-manifest`.
+- Added `experiments/outputs/manifests/` to the output structure and gitignore rules.
+- Generated `experiments/outputs/manifests/openaq_capitals_2025_h2_experiment_run_manifest.json`.
+- Generated `experiments/outputs/manifests/openaq_capitals_2025_h2_experiment_run_manifest.md`.
+- The manifest indexes dataset files, Model A-D artifacts, scenario artifacts, label files, verifier outputs, aggregate outputs, file sizes, and SHA-256 hashes.
+- The manifest also records SHA-256 hashes for key implementation files used by the current PoC workflow.
+- Captured the current MVP methodology decisions in the manifest: no scenario repetitions, older smoke summaries unchanged, and `delayed_synchronization` scoped to Model D only.
+
 ## 2026-06-23 19:25:16 +02:00
 
 - Implemented the Model D `delayed_synchronization` scenario using a synchronization event with an observed delay and configured maximum allowed delay.

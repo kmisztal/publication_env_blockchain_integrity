@@ -23,6 +23,8 @@ experiments/outputs/metrics/*
 !experiments/outputs/metrics/.gitkeep
 experiments/outputs/maps/*
 !experiments/outputs/maps/.gitkeep
+experiments/outputs/manifests/*
+!experiments/outputs/manifests/.gitkeep
 *.aux
 *.bbl
 *.blg

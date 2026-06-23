@@ -12,6 +12,7 @@ from experiments.common.paths import (
     CHAIN_OUTPUT_DIR,
     DEFAULT_DB_PATH,
     METRICS_OUTPUT_DIR,
+    MANIFEST_OUTPUT_DIR,
     TAMPERED_DATA_DIR,
     VERIFICATION_OUTPUT_DIR,
 )
@@ -101,6 +102,13 @@ def build_parser() -> argparse.ArgumentParser:
     aggregate.add_argument("--evaluation-dir", required=True, type=Path)
     aggregate.add_argument("--output-dir", type=Path, default=METRICS_OUTPUT_DIR)
     aggregate.add_argument("--dataset-id")
+
+    manifest = subparsers.add_parser(
+        "run-manifest",
+        help="Build a reproducibility manifest for a completed experiment run.",
+    )
+    manifest.add_argument("--dataset-id", required=True)
+    manifest.add_argument("--output-dir", type=Path, default=MANIFEST_OUTPUT_DIR)
     return parser
 
 
@@ -208,6 +216,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             evaluation_dir=args.evaluation_dir,
             output_dir=args.output_dir,
             dataset_id=args.dataset_id,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "run-manifest":
+        from experiments.integrity.run_manifest import build_experiment_run_manifest
+
+        summary = build_experiment_run_manifest(
+            dataset_id=args.dataset_id,
+            output_dir=args.output_dir,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0

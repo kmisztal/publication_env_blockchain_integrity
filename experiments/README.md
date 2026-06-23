@@ -272,3 +272,19 @@ The aggregator writes:
 - `<output-dir>/<dataset_id>_metrics_summary.json`
 
 The current aggregate tables include scenario status counts and label-level detection rates. Precision, recall, F1, and false-positive rates remain deferred until the experiment design includes an explicit definition of negative cases.
+
+## Experiment Run Manifest Example
+
+Build a reproducibility manifest for the completed experiment run:
+
+```powershell
+pdm run integrity-run-manifest `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+The manifest generator writes:
+
+- `experiments/outputs/manifests/<dataset_id>_experiment_run_manifest.json`
+- `experiments/outputs/manifests/<dataset_id>_experiment_run_manifest.md`
+
+The JSON manifest indexes dataset artifacts, Model A-D artifacts, tampered scenario files, labels, verifier outputs, aggregate metrics, file sizes, and SHA-256 hashes. The Markdown manifest is a compact review view of the same run.

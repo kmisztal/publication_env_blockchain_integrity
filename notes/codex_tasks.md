@@ -130,11 +130,11 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 10: Reporting
 
-- [ ] Generate machine-readable verification reports.
+- [x] Generate machine-readable verification reports.
 - [ ] Generate Markdown report templates without interpreting results.
 - [ ] Generate architecture diagram source if needed.
-- [ ] Generate experiment run manifest.
-- [ ] Document exact dataset extract used.
+- [x] Generate experiment run manifest.
+- [x] Document exact dataset extract used.
 
 ## Optional Phase 11: Dashboard
 

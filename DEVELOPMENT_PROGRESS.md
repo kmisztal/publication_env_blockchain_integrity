@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 19:25:16 +02:00
+Last updated: 2026-06-23 19:39:53 +02:00
 
 ### Completed
 
@@ -86,6 +86,10 @@ Last updated: 2026-06-23 19:25:16 +02:00
 - Generated tampered artifacts, verifier reports, alert CSV files, and evaluation JSON files for 25 scenarios.
 - Aggregated the full scenario evaluations into scenario metrics, a threat-coverage matrix, and a metrics summary under `experiments/outputs/metrics/`.
 - Updated the aggregate threat-coverage matrix to write `not_applicable` for model/scenario combinations that are outside the implemented capability set.
+- Added an experiment-run manifest generator under `experiments/integrity/run_manifest.py`.
+- Added `integrity-run-manifest` CLI/PDM support.
+- Generated JSON and Markdown experiment-run manifests for `openaq_capitals_2025_h2`.
+- Recorded current MVP methodology decisions: no scenario repetitions, older smoke summaries unchanged, and `delayed_synchronization` scoped to Model D only.
 
 ### Implemented Modules
 
@@ -103,6 +107,7 @@ Last updated: 2026-06-23 19:25:16 +02:00
 | `experiments/integrity/tampering.py` | Controlled tampering artifact and label generator. |
 | `experiments/integrity/scenarios.py` | Scenario matrix planner and optional batch runner. |
 | `experiments/integrity/evaluation.py` | Per-scenario comparison of tampering labels against verifier alerts and aggregate metrics table export. |
+| `experiments/integrity/run_manifest.py` | Experiment-run manifest builder with artifact paths, file sizes, SHA-256 hashes, and scenario index. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -409,6 +414,28 @@ Generated aggregate tables:
 
 The current aggregate tables include scenario statuses and label-level detection rates. Precision, recall, F1, and false-positive rates remain deferred until negative-case definitions are added to the experimental design.
 
+## Current Experiment Run Manifest Workflow
+
+Generate a reproducibility manifest for the completed run:
+
+```powershell
+pdm run integrity-run-manifest `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+Generated manifest artifacts:
+
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_experiment_run_manifest.json`
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_experiment_run_manifest.md`
+
+The manifest indexes dataset files, Model A-D artifacts, scenario artifacts, labels, verifier outputs, aggregate metrics, file sizes, and SHA-256 hashes.
+
+Current MVP methodology decisions captured in the manifest:
+
+- Scenario repetitions are not used for the current MVP.
+- Older smoke-test summaries are not being updated for consistency.
+- `delayed_synchronization` remains scoped to Model D only.
+
 ## Current Provenance And Permission Workflow
 
 Build the Model D audit trail plus hash chain and active key-state reconstruction:
@@ -504,4 +531,4 @@ The Model A, Model B, Model C, and Model D artifacts plus generated scenario out
 2. Add off-chain measurement hash verification where applicable.
 3. Add invalidation event support if record invalidation becomes part of the MVP.
 4. Review whether delayed synchronization should remain Model D only or whether weaker synchronization checks should be defined for Models B-C.
-5. Add a reproducible experiment-run manifest that ties together dataset, model artifact hashes, scenario outputs, and metrics files.
+5. Add negative-case definitions if precision, recall, F1, false-positive rate, or false-negative rate become necessary.
