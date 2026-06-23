@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 19:01:10 +02:00
+Last updated: 2026-06-23 19:25:16 +02:00
 
 ### Completed
 
@@ -66,7 +66,7 @@ Last updated: 2026-06-23 19:01:10 +02:00
 - Ran one smoke-test tampering generation for `C_audit_hash_chain` with `value_modification`; this was a generator check, not a full experiment run.
 - Added a scenario batch runner under `experiments/integrity/scenarios.py`.
 - Added `integrity-run-scenarios` CLI/PDM support with `--dry-run` and optional `--verify`.
-- Ran a dry run for `openaq_capitals_2025_h2`; it now plans 24 implemented scenarios across Models A-D without generating the full scenario matrix.
+- Ran a dry run for `openaq_capitals_2025_h2`; it now plans 25 implemented scenarios across Models A-D without generating the full scenario matrix.
 - Added a scenario evaluator under `experiments/integrity/evaluation.py`.
 - Added `integrity-evaluate` CLI/PDM support for comparing tampering labels with verifier alert CSV files.
 - Connected `run-scenarios --verify` to generate per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
@@ -77,13 +77,15 @@ Last updated: 2026-06-23 19:01:10 +02:00
 - Added Model D correction payload construction and correction permission support.
 - Extended Model D verification with correction target, correction reason, event authorization, and revoked-key usage checks.
 - Added controlled Model D scenarios for `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`.
+- Added a controlled Model D scenario for `delayed_synchronization`.
 - Updated scenario batch verification to write each scenario's verifier outputs to a separate subdirectory, avoiding report overwrites for repeated model IDs.
 - Rebuilt the local Model D artifact after adding `correct_measurement` to the baseline ingest key permission set.
 - Ran baseline verification for the rebuilt Model D artifact; this was a construction sanity check only.
 - Ran smoke-test generation, verification, evaluation, and aggregation for the three new Model D scenarios; these were tool-chain checks only, not the full experiment matrix.
 - Executed the full implemented `openaq_capitals_2025_h2` scenario matrix with verification enabled.
-- Generated tampered artifacts, verifier reports, alert CSV files, and evaluation JSON files for 24 scenarios.
+- Generated tampered artifacts, verifier reports, alert CSV files, and evaluation JSON files for 25 scenarios.
 - Aggregated the full scenario evaluations into scenario metrics, a threat-coverage matrix, and a metrics summary under `experiments/outputs/metrics/`.
+- Updated the aggregate threat-coverage matrix to write `not_applicable` for model/scenario combinations that are outside the implemented capability set.
 
 ### Implemented Modules
 
@@ -321,9 +323,10 @@ Implemented threat types:
 - `unauthorized_correction` for Model D
 - `revoked_actor_key_usage` for Model D
 - `missing_correction_reason` for Model D
+- `delayed_synchronization` for Model D
 
 Generated tampered artifacts and labels are written under `experiments/data/tampered/`.
-Correction-related scenarios currently use Model D permission and provenance checks. Delayed synchronization remains deferred.
+Correction-related scenarios currently use Model D permission and provenance checks. The delayed synchronization scenario currently uses a Model D synchronization event with a configured maximum delay threshold.
 
 ## Current Scenario Batch Workflow
 
@@ -345,12 +348,12 @@ pdm run integrity-run-scenarios `
 
 When `--verify` is used, the batch runner also writes per-scenario evaluation files to `experiments/outputs/metrics/tampered/`.
 
-The current dry-run matrix has 24 planned scenarios:
+The current dry-run matrix has 25 planned scenarios:
 
 - 5 scenarios for Model A
 - 5 scenarios for Model B
 - 5 scenarios for Model C
-- 9 scenarios for Model D, including `broken_provenance`, `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`
+- 10 scenarios for Model D, including `broken_provenance`, `unauthorized_correction`, `revoked_actor_key_usage`, `missing_correction_reason`, and `delayed_synchronization`
 
 The full implemented batch has been executed once with verification enabled for `openaq_capitals_2025_h2`.
 
@@ -362,7 +365,7 @@ Full-matrix aggregate outputs:
 
 Full-matrix status counts:
 
-- `detected`: 19
+- `detected`: 20
 - `expected_not_detected`: 5
 - `missed`: 0
 - `partial`: 0
@@ -500,5 +503,5 @@ The Model A, Model B, Model C, and Model D artifacts plus generated scenario out
 1. Review the generated scenario metrics and threat-coverage matrix for methodological consistency.
 2. Add off-chain measurement hash verification where applicable.
 3. Add invalidation event support if record invalidation becomes part of the MVP.
-4. Add delayed synchronization simulation.
+4. Review whether delayed synchronization should remain Model D only or whether weaker synchronization checks should be defined for Models B-C.
 5. Add a reproducible experiment-run manifest that ties together dataset, model artifact hashes, scenario outputs, and metrics files.

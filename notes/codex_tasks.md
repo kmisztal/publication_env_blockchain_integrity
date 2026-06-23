@@ -52,6 +52,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement measurement event creation.
 - [x] Implement permission event creation.
 - [x] Implement correction event creation.
+- [x] Implement synchronization event creation for the MVP delayed-synchronization scenario.
 - [ ] Implement invalidation event creation.
 - [x] Build ordered hash chain from cleaned measurements.
 - [x] Export chains as JSONL.
@@ -90,6 +91,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement unauthorized correction scenario.
 - [x] Implement revoked actor key usage scenario.
 - [x] Implement missing correction reason scenario.
+- [x] Implement delayed synchronization scenario.
 - [x] Generate ground-truth labels for every implemented scenario.
 - [x] Save tampered datasets and labels under `data/tampered/`.
 
@@ -117,6 +119,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 9: Intermittent Connectivity Simulation
 
+- [x] Implement MVP delayed-synchronization event verification.
 - [ ] Partition data by station or gateway.
 - [ ] Build local gateway chains.
 - [ ] Simulate offline windows.

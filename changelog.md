@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-06-23 19:25:16 +02:00
+
+- Implemented the Model D `delayed_synchronization` scenario using a synchronization event with an observed delay and configured maximum allowed delay.
+- Extended verification with the `delayed_synchronization` alert code.
+- Added `delayed_synchronization` to the implemented scenario batch for Model D.
+- Updated aggregate matrix export so non-applicable model/scenario combinations are written as `not_applicable`.
+- Re-ran the full implemented `openaq_capitals_2025_h2` scenario matrix with `run-scenarios --verify`.
+- Generated tampered artifacts, per-scenario verification reports, alert CSV files, and evaluation JSON files for 25 scenarios.
+- Re-aggregated the full scenario evaluations into `experiments/outputs/metrics/openaq_capitals_2025_h2_scenario_metrics.csv`.
+- Updated the threat-coverage matrix at `experiments/outputs/metrics/openaq_capitals_2025_h2_threat_coverage_matrix.csv`.
+- Updated the metrics summary at `experiments/outputs/metrics/openaq_capitals_2025_h2_metrics_summary.json`.
+- Full matrix status counts: 20 `detected`, 5 `expected_not_detected`, 0 `missed`, 0 `partial`, and 0 `unexpected_alert`.
+- Updated `experiments/outputs/full_matrix_summary_en.md` and `experiments/outputs/full_matrix_summary_pl.md` with expanded model descriptions, scenario descriptions, `not_applicable` cells, and the delayed-synchronization result.
+
 ## 2026-06-23 19:07:46 +02:00
 
 - Added `experiments/outputs/full_matrix_summary_en.md` as an English review summary of the executed full scenario matrix.

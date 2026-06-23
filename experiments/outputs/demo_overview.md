@@ -137,10 +137,10 @@ The current demo can show:
 - Basic construction sanity checks for Models C and D.
 - Baseline verification reports for the non-tampered Model A-D artifacts.
 - The controlled tampering generator interface and one smoke-test tampered artifact.
-- The scenario batch runner dry-run plan for the implemented 24-scenario matrix.
+- The scenario batch runner dry-run plan for the implemented 25-scenario matrix.
 - The per-scenario evaluator interface and one smoke-test evaluation artifact.
 - The metrics aggregator interface and one smoke-test aggregate table set.
-- The full generated 24-scenario metrics table and threat-coverage matrix.
+- The full generated 25-scenario metrics table and threat-coverage matrix.
 
 ## Baseline Verification Artifacts
 
@@ -190,7 +190,7 @@ These aggregate artifacts contain only three Model D smoke-test scenarios: `unau
 
 ## Full Matrix Artifacts
 
-The full implemented 24-scenario matrix has been executed once for `openaq_capitals_2025_h2` with verification enabled.
+The full implemented 25-scenario matrix has been executed once for `openaq_capitals_2025_h2` with verification enabled.
 
 Generated aggregate artifacts:
 
@@ -200,7 +200,7 @@ Generated aggregate artifacts:
 
 Aggregate status counts:
 
-- `detected`: 19
+- `detected`: 20
 - `expected_not_detected`: 5
 - `missed`: 0
 - `partial`: 0
