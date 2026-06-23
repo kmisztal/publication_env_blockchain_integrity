@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-23 20:03:14 +02:00
+
+- Added article-preparation source materials under `experiments/outputs/article_materials/`.
+- Added `methods_ready_notes.md` with structured dataset, model, scenario, workflow, and reproducibility notes for later Methods drafting.
+- Added `results_ready_tables.md` with dataset summary, model table, scenario table, aggregate status counts, threat-coverage matrix, and applicable scenario coverage.
+- Added `reviewer_limitations.md` with scope, dataset, scenario, metric, model, and reviewer-risk limitations.
+- Added `methodology_decisions.md` with current decisions on positioning, dataset choice, station use, model set, scenarios, metrics, delayed synchronization, and cross-sensor consistency.
+- Updated `DEVELOPMENT_PROGRESS.md` and `notes/codex_tasks.md` to include the article-preparation materials as review inputs, not manuscript text.
+
+## 2026-06-23 19:45:14 +02:00
+
+- Reworked `notes/codex_tasks.md` from a historical backlog into a current MVP status tracker.
+- Added a current MVP status section with implemented scope and accepted limitations.
+- Marked current MVP Phase 3-7 task-set status as complete where applicable.
+- Reclassified invalidation events, off-chain measurement hash verification, negative-case metrics, summary blocks, full intermittent-connectivity simulation, and dashboard work as deferred or optional.
+- Added remaining MVP review tasks for the summary files, experiment-run manifest, naming review, and possible architecture diagrams.
+
 ## 2026-06-23 19:39:53 +02:00
 
 - Added `experiments/integrity/run_manifest.py` for generating experiment-run reproducibility manifests.

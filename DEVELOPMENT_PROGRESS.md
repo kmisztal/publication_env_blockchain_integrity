@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 19:39:53 +02:00
+Last updated: 2026-06-23 20:03:14 +02:00
 
 ### Completed
 
@@ -90,6 +90,8 @@ Last updated: 2026-06-23 19:39:53 +02:00
 - Added `integrity-run-manifest` CLI/PDM support.
 - Generated JSON and Markdown experiment-run manifests for `openaq_capitals_2025_h2`.
 - Recorded current MVP methodology decisions: no scenario repetitions, older smoke summaries unchanged, and `delayed_synchronization` scoped to Model D only.
+- Added article-preparation source materials under `experiments/outputs/article_materials/`.
+- The article-preparation files collect methods-ready notes, results-ready tables, reviewer-facing limitations, and methodology decisions without drafting manuscript prose.
 
 ### Implemented Modules
 
@@ -435,6 +437,17 @@ Current MVP methodology decisions captured in the manifest:
 - Scenario repetitions are not used for the current MVP.
 - Older smoke-test summaries are not being updated for consistency.
 - `delayed_synchronization` remains scoped to Model D only.
+
+## Current Article-Preparation Materials
+
+The current article-preparation source files are:
+
+- `experiments/outputs/article_materials/methods_ready_notes.md`
+- `experiments/outputs/article_materials/results_ready_tables.md`
+- `experiments/outputs/article_materials/reviewer_limitations.md`
+- `experiments/outputs/article_materials/methodology_decisions.md`
+
+These files are structured source materials for a later writing step. They are not manuscript sections and should be reviewed before being used to draft Methods, Results, or Discussion text.
 
 ## Current Provenance And Permission Workflow
 

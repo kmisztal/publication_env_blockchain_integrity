@@ -1,6 +1,28 @@
 # Codex Tasks
 
-Implementation backlog for the proof-of-concept supporting the publication experiments.
+Implementation backlog and status tracker for the proof-of-concept supporting the publication experiments.
+
+## Current MVP Status
+
+The current MVP experiment set is implemented and has been executed once for `openaq_capitals_2025_h2`.
+
+Implemented MVP scope:
+
+- OpenAQ data ingestion and preprocessing.
+- Four integrity models: A, B, C, and D.
+- Controlled tampering scenarios for the current threat-coverage matrix.
+- Verification reports and alert CSV files.
+- Per-scenario evaluation and aggregate threat-coverage matrix.
+- JSON and Markdown experiment-run manifests.
+
+Accepted MVP limitations:
+
+- Scenario repetitions are not used in the current MVP.
+- Negative-case design is not implemented, so precision, recall, F1, false-positive rate, and false-negative rate are deferred.
+- `delayed_synchronization` is scoped to Model D only.
+- Summary-block optimization is deferred.
+- Full intermittent-connectivity simulation is deferred beyond the MVP delayed-synchronization scenario.
+- Dashboard work is optional and deferred.
 
 ## Scope Guardrails
 
@@ -53,7 +75,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement permission event creation.
 - [x] Implement correction event creation.
 - [x] Implement synchronization event creation for the MVP delayed-synchronization scenario.
-- [ ] Implement invalidation event creation.
+- [ ] Implement invalidation event creation. Deferred; not required for the current MVP threat matrix.
 - [x] Build ordered hash chain from cleaned measurements.
 - [x] Export chains as JSONL.
 
@@ -73,7 +95,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement payload hash recalculation.
 - [x] Implement block hash recalculation.
 - [x] Implement previous-hash link verification.
-- [ ] Implement off-chain measurement hash verification.
+- [ ] Implement off-chain measurement hash verification. Deferred; current MVP verifies generated artifacts directly.
 - [x] Implement actor key authorization checks.
 - [x] Implement correction lineage checks.
 - [x] Implement stable alert codes.
@@ -99,70 +121,87 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 - [x] Compare verifier alerts against tampering labels.
 - [x] Compute detection rate.
-- [ ] Compute false positive rate.
-- [ ] Compute false negative rate.
-- [ ] Compute precision.
-- [ ] Compute recall.
-- [ ] Compute F1 score.
-- [ ] Compute attack-type-specific metrics.
+- [ ] Compute false positive rate. Deferred until negative cases are defined.
+- [ ] Compute false negative rate. Deferred until negative cases are defined.
+- [ ] Compute precision. Deferred until negative cases are defined.
+- [ ] Compute recall. Deferred until negative cases are defined.
+- [ ] Compute F1 score. Deferred until negative cases are defined.
+- [ ] Compute attack-type-specific metrics beyond the current scenario matrix. Deferred.
 - [x] Export metrics tables to `outputs/metrics/`.
 
 ## Phase 8: Summary Blocks
 
-- [ ] Implement optional summary-block generation.
-- [ ] Implement summary hash calculation.
-- [ ] Include previous summary hash.
-- [ ] Include covered block hash list or digest.
-- [ ] Include active key-state digest.
-- [ ] Implement summary-block verification.
-- [ ] Add summary-block metrics hooks.
+- [ ] Implement optional summary-block generation. Deferred extension.
+- [ ] Implement summary hash calculation. Deferred extension.
+- [ ] Include previous summary hash. Deferred extension.
+- [ ] Include covered block hash list or digest. Deferred extension.
+- [ ] Include active key-state digest. Deferred extension.
+- [ ] Implement summary-block verification. Deferred extension.
+- [ ] Add summary-block metrics hooks. Deferred extension.
 
 ## Phase 9: Intermittent Connectivity Simulation
 
 - [x] Implement MVP delayed-synchronization event verification.
-- [ ] Partition data by station or gateway.
-- [ ] Build local gateway chains.
-- [ ] Simulate offline windows.
-- [ ] Queue local events during offline periods.
-- [ ] Synchronize summary hashes to central verifier.
-- [ ] Inject tampering during offline periods.
-- [ ] Verify delayed detection after synchronization.
+- [ ] Partition data by station or gateway. Deferred beyond current MVP.
+- [ ] Build local gateway chains. Deferred beyond current MVP.
+- [ ] Simulate offline windows. Deferred beyond current MVP.
+- [ ] Queue local events during offline periods. Deferred beyond current MVP.
+- [ ] Synchronize summary hashes to central verifier. Deferred beyond current MVP.
+- [ ] Inject tampering during offline periods. Deferred beyond current MVP.
+- [ ] Verify delayed detection after synchronization. Deferred beyond current MVP full-connectivity simulation.
 
 ## Phase 10: Reporting
 
 - [x] Generate machine-readable verification reports.
-- [ ] Generate Markdown report templates without interpreting results.
-- [ ] Generate architecture diagram source if needed.
+- [x] Generate Markdown experiment summaries without manuscript interpretation.
+- [x] Generate article-preparation source materials without drafting manuscript prose.
+- [ ] Generate architecture diagram source if needed. Optional.
 - [x] Generate experiment run manifest.
 - [x] Document exact dataset extract used.
 
 ## Optional Phase 11: Dashboard
 
-- [ ] Decide whether dashboard is needed.
-- [ ] If yes, choose Django, Streamlit, or static HTML.
-- [ ] Add measurement browser.
-- [ ] Add chain event browser.
-- [ ] Add verification alert browser.
-- [ ] Add correction lineage view.
-- [ ] Add filters for station, event type, and alert code.
+- [ ] Decide whether dashboard is needed. Optional after CLI workflow review.
+- [ ] If yes, choose Django, Streamlit, or static HTML. Optional.
+- [ ] Add measurement browser. Optional.
+- [ ] Add chain event browser. Optional.
+- [ ] Add verification alert browser. Optional.
+- [ ] Add correction lineage view. Optional.
+- [ ] Add filters for station, event type, and alert code. Optional.
 
-## MVP Task Set
+## MVP Task Set Status
 
-Minimum tasks before running publication experiments:
+Minimum implemented tasks before reviewing publication experiment outputs:
 
 - [x] Phase 0 repository setup.
 - [x] Phase 1 ingestion and preprocessing.
 - [x] Phase 2 SQLite storage.
-- [ ] Phase 3 event and hash-chain core.
-- [ ] Phase 4 basic audit trail.
-- [ ] Phase 5 verification engine.
-- [ ] Phase 6 tampering generator.
-- [ ] Phase 7 metrics export.
+- [x] Phase 3 event and hash-chain core for the current MVP.
+- [x] Phase 4 basic audit trail.
+- [x] Phase 5 verification engine for the current MVP.
+- [x] Phase 6 tampering generator.
+- [x] Phase 7 metrics export for scenario status and threat coverage.
+- [x] Phase 10 experiment-run manifest.
+
+Remaining MVP review tasks:
+
+- [ ] Review `experiments/outputs/full_matrix_summary_en.md`.
+- [ ] Review `experiments/outputs/full_matrix_summary_pl.md`.
+- [ ] Review `experiments/outputs/manifests/openaq_capitals_2025_h2_experiment_run_manifest.md`.
+- [ ] Review `experiments/outputs/article_materials/methods_ready_notes.md`.
+- [ ] Review `experiments/outputs/article_materials/results_ready_tables.md`.
+- [ ] Review `experiments/outputs/article_materials/reviewer_limitations.md`.
+- [ ] Review `experiments/outputs/article_materials/methodology_decisions.md`.
+- [ ] Decide whether current model and scenario names are final enough for manuscript preparation.
+- [ ] Decide whether architecture diagrams are needed before writing manuscript sections.
 
 ## Deferred Tasks
 
+- [ ] Invalidation event support, if invalidation becomes part of the experiment scope.
+- [ ] Off-chain measurement hash verification, if artifact/source separation becomes necessary.
+- [ ] Negative-case design for false positives, false negatives, precision, recall, and F1.
 - [ ] Summary-block optimization if MVP is stable.
-- [ ] Intermittent connectivity simulation if time remains.
+- [ ] Full intermittent-connectivity simulation beyond the current Model D delayed-synchronization scenario.
 - [ ] Water-quality replication if broader domain validation is needed.
 - [ ] Provenance graph export if audit visualization becomes important.
-- [ ] Dashboard only after CLI workflow is reliable.
+- [ ] Dashboard only after CLI workflow is reliable and a visual review tool is useful.
