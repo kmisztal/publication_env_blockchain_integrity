@@ -73,6 +73,16 @@ def build_parser() -> argparse.ArgumentParser:
     tamper.add_argument("--threat-type", required=True, choices=SUPPORTED_THREATS)
     tamper.add_argument("--artifact-file", required=True, type=Path)
     tamper.add_argument("--output-dir", type=Path, default=TAMPERED_DATA_DIR)
+
+    scenarios = subparsers.add_parser(
+        "run-scenarios",
+        help="Plan or run the implemented tampering scenarios across applicable models.",
+    )
+    scenarios.add_argument("--dataset-id", required=True)
+    scenarios.add_argument("--output-dir", type=Path, default=TAMPERED_DATA_DIR)
+    scenarios.add_argument("--verification-output-dir", type=Path, default=VERIFICATION_OUTPUT_DIR / "tampered")
+    scenarios.add_argument("--verify", action="store_true")
+    scenarios.add_argument("--dry-run", action="store_true")
     return parser
 
 
@@ -144,6 +154,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             threat_type=args.threat_type,
             artifact_file=args.artifact_file,
             output_dir=args.output_dir,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "run-scenarios":
+        from experiments.integrity.scenarios import run_scenarios
+
+        summary = run_scenarios(
+            dataset_id=args.dataset_id,
+            output_dir=args.output_dir,
+            verification_output_dir=args.verification_output_dir,
+            verify=args.verify,
+            dry_run=args.dry_run,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0

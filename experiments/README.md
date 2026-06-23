@@ -196,3 +196,37 @@ Currently implemented threat types:
 - `broken_provenance` for Model D
 
 Correction-related scenarios are deferred until correction and invalidation events are implemented.
+
+## Scenario Batch Runner
+
+Preview the implemented scenario matrix without generating artifacts:
+
+```powershell
+pdm run integrity-run-scenarios `
+  --dataset-id openaq_capitals_2025_h2 `
+  --dry-run
+```
+
+Run the implemented scenario matrix:
+
+```powershell
+pdm run integrity-run-scenarios `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+Run the implemented scenario matrix and verify each tampered artifact:
+
+```powershell
+pdm run integrity-run-scenarios `
+  --dataset-id openaq_capitals_2025_h2 `
+  --verify
+```
+
+The current dry-run matrix contains 21 scenarios:
+
+- 5 scenarios for Model A
+- 5 scenarios for Model B
+- 5 scenarios for Model C
+- 6 scenarios for Model D, including `broken_provenance`
+
+Do not treat a dry run as experiment execution. It only lists planned scenario/model combinations.

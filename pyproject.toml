@@ -22,3 +22,4 @@ integrity-build-hash-chain = "python -m experiments.integrity.cli build-hash-cha
 integrity-build-provenance-chain = "python -m experiments.integrity.cli build-provenance-chain"
 integrity-verify = "python -m experiments.integrity.cli verify"
 integrity-tamper = "python -m experiments.integrity.cli tamper"
+integrity-run-scenarios = "python -m experiments.integrity.cli run-scenarios"

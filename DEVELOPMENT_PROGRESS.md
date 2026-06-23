@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 18:23:16 +02:00
+Last updated: 2026-06-23 18:26:59 +02:00
 
 ### Completed
 
@@ -64,6 +64,9 @@ Last updated: 2026-06-23 18:23:16 +02:00
 - Added `integrity-tamper` CLI/PDM support for generating one tampered artifact and ground-truth label file.
 - Implemented value modification, timestamp modification, record deletion, fake record insertion, replay, and Model D broken provenance scenarios.
 - Ran one smoke-test tampering generation for `C_audit_hash_chain` with `value_modification`; this was a generator check, not a full experiment run.
+- Added a scenario batch runner under `experiments/integrity/scenarios.py`.
+- Added `integrity-run-scenarios` CLI/PDM support with `--dry-run` and optional `--verify`.
+- Ran a dry run for `openaq_capitals_2025_h2`; it planned 21 implemented scenarios across Models A-D without generating the full scenario matrix.
 
 ### Implemented Modules
 
@@ -79,6 +82,7 @@ Last updated: 2026-06-23 18:23:16 +02:00
 | `experiments/integrity/cli.py` | CLI for initializing storage and building baseline integrity artifacts. |
 | `experiments/integrity/verification.py` | Baseline verification engine for generated Model A-D artifacts. |
 | `experiments/integrity/tampering.py` | Controlled tampering artifact and label generator. |
+| `experiments/integrity/scenarios.py` | Scenario matrix planner and optional batch runner. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -300,6 +304,25 @@ Implemented threat types:
 Generated tampered artifacts and labels are written under `experiments/data/tampered/`.
 Correction-related scenarios remain deferred until correction and invalidation events exist.
 
+## Current Scenario Batch Workflow
+
+Preview the implemented scenario matrix:
+
+```powershell
+pdm run integrity-run-scenarios `
+  --dataset-id openaq_capitals_2025_h2 `
+  --dry-run
+```
+
+The current dry-run matrix has 21 planned scenarios:
+
+- 5 scenarios for Model A
+- 5 scenarios for Model B
+- 5 scenarios for Model C
+- 6 scenarios for Model D, including `broken_provenance`
+
+The full batch has not yet been executed in this step.
+
 ## Current Provenance And Permission Workflow
 
 Build the Model D audit trail plus hash chain and active key-state reconstruction:
@@ -391,7 +414,7 @@ The Model A, Model B, Model C, and Model D artifacts plus baseline verification 
 
 ## Next Development Steps
 
-1. Add a batch runner for applying implemented tampering scenarios across applicable Models A-D.
+1. Decide when to execute the full implemented scenario matrix and whether to include immediate verification.
 2. Add off-chain measurement hash verification where applicable.
 3. Add correction lineage checks after correction events are implemented.
-4. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.
+4. Generate threat-coverage summaries only after the full scenario matrix has been intentionally executed.

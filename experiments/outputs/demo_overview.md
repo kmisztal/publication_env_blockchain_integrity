@@ -137,6 +137,7 @@ The current demo can show:
 - Basic construction sanity checks for Models C and D.
 - Baseline verification reports for the non-tampered Model A-D artifacts.
 - The controlled tampering generator interface and one smoke-test tampered artifact.
+- The scenario batch runner dry-run plan for the implemented 21-scenario matrix.
 
 ## Baseline Verification Artifacts
 
@@ -170,3 +171,4 @@ The current PoC does not yet provide:
 - Scientific result claims.
 
 The tampering generator exists, but the full scenario matrix has not yet been executed or summarized.
+The scenario batch runner can preview or execute the implemented matrix, but only the dry-run plan has been checked so far.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-06-23 18:26:59 +02:00
+
+- Added `experiments/integrity/scenarios.py` as a scenario matrix planner and optional batch runner.
+- Added `run-scenarios` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-run-scenarios`.
+- Added `--dry-run` support for previewing planned model/threat combinations without generating full scenario artifacts.
+- Ran a dry run for `openaq_capitals_2025_h2`; it planned 21 implemented scenarios across Models A-D.
+- Did not execute the full scenario matrix or generate threat-coverage summaries in this step.
+
 ## 2026-06-23 18:23:16 +02:00
 
 - Added `experiments/integrity/tampering.py` as a controlled tampering artifact generator.
