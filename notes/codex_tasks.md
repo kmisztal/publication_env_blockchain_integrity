@@ -80,15 +80,15 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 6: Tampering Generator
 
-- [ ] Implement value modification scenario.
-- [ ] Implement timestamp modification scenario.
-- [ ] Implement record deletion scenario.
-- [ ] Implement fake record insertion scenario.
-- [ ] Implement replay scenario.
-- [ ] Implement broken provenance scenario.
+- [x] Implement value modification scenario.
+- [x] Implement timestamp modification scenario.
+- [x] Implement record deletion scenario.
+- [x] Implement fake record insertion scenario.
+- [x] Implement replay scenario.
+- [x] Implement broken provenance scenario.
 - [ ] Implement unauthorized correction scenario.
-- [ ] Generate ground-truth labels for every scenario.
-- [ ] Save tampered datasets and labels under `data/tampered/`.
+- [x] Generate ground-truth labels for every implemented scenario.
+- [x] Save tampered datasets and labels under `data/tampered/`.
 
 ## Phase 7: Metrics
 

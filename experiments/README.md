@@ -168,3 +168,31 @@ Current baseline verification supports:
 - active key checks for Model D
 
 Baseline verification of non-tampered artifacts is a technical sanity check. Controlled tampering and threat-coverage metrics are later steps.
+
+## Tampering Generator Example
+
+Generate one controlled tampered artifact and its ground-truth label file:
+
+```powershell
+pdm run integrity-tamper `
+  --dataset-id openaq_capitals_2025_h2 `
+  --model-id C_audit_hash_chain `
+  --threat-type value_modification `
+  --artifact-file experiments\outputs\chains\openaq_capitals_2025_h2_model_c_hash_chain.jsonl
+```
+
+The generator writes:
+
+- `experiments/data/tampered/<scenario_id>.jsonl`
+- `experiments/data/tampered/<scenario_id>_labels.json`
+
+Currently implemented threat types:
+
+- `value_modification`
+- `timestamp_modification`
+- `record_deletion`
+- `fake_record_insertion`
+- `replay`
+- `broken_provenance` for Model D
+
+Correction-related scenarios are deferred until correction and invalidation events are implemented.

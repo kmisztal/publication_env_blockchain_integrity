@@ -7,8 +7,15 @@ import json
 from pathlib import Path
 from typing import Sequence
 
-from experiments.common.paths import AUDIT_OUTPUT_DIR, CHAIN_OUTPUT_DIR, DEFAULT_DB_PATH, VERIFICATION_OUTPUT_DIR
+from experiments.common.paths import (
+    AUDIT_OUTPUT_DIR,
+    CHAIN_OUTPUT_DIR,
+    DEFAULT_DB_PATH,
+    TAMPERED_DATA_DIR,
+    VERIFICATION_OUTPUT_DIR,
+)
 from experiments.integrity.events import MODEL_A, MODEL_B, MODEL_C, MODEL_D
+from experiments.integrity.tampering import SUPPORTED_THREATS
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -56,6 +63,16 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("--model-id", required=True, choices=[MODEL_A, MODEL_B, MODEL_C, MODEL_D])
     verify.add_argument("--artifact-file", required=True, type=Path)
     verify.add_argument("--output-dir", type=Path, default=VERIFICATION_OUTPUT_DIR)
+
+    tamper = subparsers.add_parser(
+        "tamper",
+        help="Generate one controlled tampered artifact and ground-truth label file.",
+    )
+    tamper.add_argument("--dataset-id", required=True)
+    tamper.add_argument("--model-id", required=True, choices=[MODEL_A, MODEL_B, MODEL_C, MODEL_D])
+    tamper.add_argument("--threat-type", required=True, choices=SUPPORTED_THREATS)
+    tamper.add_argument("--artifact-file", required=True, type=Path)
+    tamper.add_argument("--output-dir", type=Path, default=TAMPERED_DATA_DIR)
     return parser
 
 
@@ -116,6 +133,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             output_dir=args.output_dir,
         )
         print(json.dumps(report, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "tamper":
+        from experiments.integrity.tampering import generate_tampered_artifact
+
+        summary = generate_tampered_artifact(
+            dataset_id=args.dataset_id,
+            model_id=args.model_id,
+            threat_type=args.threat_type,
+            artifact_file=args.artifact_file,
+            output_dir=args.output_dir,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
         return 0
 
     parser.error(f"Unsupported command: {args.command}")

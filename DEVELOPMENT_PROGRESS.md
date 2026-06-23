@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-22 05:45:24 +02:00
+Last updated: 2026-06-23 18:23:16 +02:00
 
 ### Completed
 
@@ -60,6 +60,10 @@ Last updated: 2026-06-22 05:45:24 +02:00
 - Added `integrity-verify` CLI/PDM support for verifying a single generated artifact.
 - Generated baseline verification reports and alert CSV files for Models A-D.
 - Baseline verification currently checks schema, duplicate IDs, payload hashes, block hashes, previous-hash links, and Model D active-key references.
+- Added a controlled tampering generator under `experiments/integrity/tampering.py`.
+- Added `integrity-tamper` CLI/PDM support for generating one tampered artifact and ground-truth label file.
+- Implemented value modification, timestamp modification, record deletion, fake record insertion, replay, and Model D broken provenance scenarios.
+- Ran one smoke-test tampering generation for `C_audit_hash_chain` with `value_modification`; this was a generator check, not a full experiment run.
 
 ### Implemented Modules
 
@@ -74,6 +78,7 @@ Last updated: 2026-06-22 05:45:24 +02:00
 | `experiments/integrity/models.py` | Model A, Model B, Model C, and Model D artifact builders. |
 | `experiments/integrity/cli.py` | CLI for initializing storage and building baseline integrity artifacts. |
 | `experiments/integrity/verification.py` | Baseline verification engine for generated Model A-D artifacts. |
+| `experiments/integrity/tampering.py` | Controlled tampering artifact and label generator. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -271,6 +276,30 @@ Generated verification artifacts:
 
 Baseline verification has been run for the current non-tampered Model A-D artifacts. This is a technical sanity check of generated artifacts, not a tampering experiment or threat-coverage result.
 
+## Current Tampering Generator Workflow
+
+Generate one controlled tampered artifact and label file:
+
+```powershell
+pdm run integrity-tamper `
+  --dataset-id openaq_capitals_2025_h2 `
+  --model-id C_audit_hash_chain `
+  --threat-type value_modification `
+  --artifact-file experiments\outputs\chains\openaq_capitals_2025_h2_model_c_hash_chain.jsonl
+```
+
+Implemented threat types:
+
+- `value_modification`
+- `timestamp_modification`
+- `record_deletion`
+- `fake_record_insertion`
+- `replay`
+- `broken_provenance` for Model D
+
+Generated tampered artifacts and labels are written under `experiments/data/tampered/`.
+Correction-related scenarios remain deferred until correction and invalidation events exist.
+
 ## Current Provenance And Permission Workflow
 
 Build the Model D audit trail plus hash chain and active key-state reconstruction:
@@ -362,7 +391,7 @@ The Model A, Model B, Model C, and Model D artifacts plus baseline verification 
 
 ## Next Development Steps
 
-1. Add off-chain measurement hash verification where applicable.
-2. Add correction lineage checks after correction events are implemented.
-3. Implement controlled tampering scenarios only after baseline artifacts are stable.
+1. Add a batch runner for applying implemented tampering scenarios across applicable Models A-D.
+2. Add off-chain measurement hash verification where applicable.
+3. Add correction lineage checks after correction events are implemented.
 4. Generate threat-coverage and verification outputs only after the model implementations and tampering scripts are in place.

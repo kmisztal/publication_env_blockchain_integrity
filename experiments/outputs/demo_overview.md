@@ -136,6 +136,7 @@ The current demo can show:
 - The difference between conventional storage, audit trail, hash-chain linkage, and provenance/permission state.
 - Basic construction sanity checks for Models C and D.
 - Baseline verification reports for the non-tampered Model A-D artifacts.
+- The controlled tampering generator interface and one smoke-test tampered artifact.
 
 ## Baseline Verification Artifacts
 
@@ -162,10 +163,10 @@ These baseline reports are technical sanity checks of generated artifacts. They 
 The current PoC does not yet provide:
 
 - Threat-coverage matrix.
-- Tampering scenario outputs.
-- Verification reports.
+- Full batch tampering scenario outputs across all applicable models.
+- Tampered-scenario verification reports.
 - Detection rates.
 - False positive or false negative metrics.
 - Scientific result claims.
 
-These will be generated only after the verification engine and controlled tampering scenarios are implemented and run.
+The tampering generator exists, but the full scenario matrix has not yet been executed or summarized.

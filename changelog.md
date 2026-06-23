@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-23 18:23:16 +02:00
+
+- Added `experiments/integrity/tampering.py` as a controlled tampering artifact generator.
+- Added `tamper` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-tamper`.
+- Implemented value modification, timestamp modification, record deletion, fake record insertion, replay, and Model D broken provenance scenarios.
+- Added ground-truth label JSON generation for implemented tampering scenarios.
+- Ran one smoke-test tampering generation for `openaq_capitals_2025_h2`, Model C, `value_modification`; this was a generator check only, not a full experiment run or threat-coverage result.
+- Documented the tampering generator workflow in `experiments/README.md` and updated `DEVELOPMENT_PROGRESS.md` and `notes/codex_tasks.md`.
+
 ## 2026-06-22 05:45:24 +02:00
 
 - Added `experiments/integrity/verification.py` as a baseline verifier for generated Model A-D artifacts.
