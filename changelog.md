@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-23 19:07:46 +02:00
+
+- Added `experiments/outputs/full_matrix_summary_en.md` as an English review summary of the executed full scenario matrix.
+- Added `experiments/outputs/full_matrix_summary_pl.md` as a Polish review summary of the executed full scenario matrix.
+- Both summaries describe scope, output files, models, aggregate status counts, the threat-coverage matrix, model-level reading, limitations, and review questions.
+- The summaries are experiment review artifacts, not manuscript sections.
+
+## 2026-06-23 19:01:10 +02:00
+
+- Executed the full implemented `openaq_capitals_2025_h2` scenario matrix with `run-scenarios --verify`.
+- Generated tampered artifacts, per-scenario verification reports, alert CSV files, and evaluation JSON files for 24 scenarios.
+- Aggregated the full scenario evaluations into `experiments/outputs/metrics/openaq_capitals_2025_h2_scenario_metrics.csv`.
+- Generated the threat-coverage matrix at `experiments/outputs/metrics/openaq_capitals_2025_h2_threat_coverage_matrix.csv`.
+- Generated the metrics summary at `experiments/outputs/metrics/openaq_capitals_2025_h2_metrics_summary.json`.
+- Full matrix status counts: 19 `detected`, 5 `expected_not_detected`, 0 `missed`, 0 `partial`, and 0 `unexpected_alert`.
+- These are measured PoC verification outputs from the implemented scenarios; manuscript interpretation remains a later step.
+
+## 2026-06-23 18:49:24 +02:00
+
+- Added Model D correction payload construction and `correct_measurement` permission support.
+- Extended Model D verification with correction target checks, required correction reason checks, event authorization checks, and revoked-key usage checks.
+- Added controlled Model D tampering scenarios for `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`.
+- Updated scenario batch verification so each scenario writes verifier outputs to a separate subdirectory, avoiding alert/report overwrites for repeated model IDs.
+- Rebuilt the local Model D artifact so the baseline ingest key includes `correct_measurement`.
+- Ran baseline verification for the rebuilt Model D artifact as a construction sanity check.
+- Ran smoke-test generation, verification, evaluation, and aggregation for the three new Model D scenarios; these were tool-chain checks only, not a full experiment run or final threat-coverage matrix.
+- Updated `experiments/README.md`, `DEVELOPMENT_PROGRESS.md`, `experiments/outputs/demo_overview.md`, and `notes/codex_tasks.md`.
+
 ## 2026-06-23 18:38:08 +02:00
 
 - Extended `experiments/integrity/evaluation.py` with aggregate metrics table export from per-scenario evaluation JSON files.

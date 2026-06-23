@@ -194,8 +194,11 @@ Currently implemented threat types:
 - `fake_record_insertion`
 - `replay`
 - `broken_provenance` for Model D
+- `unauthorized_correction` for Model D
+- `revoked_actor_key_usage` for Model D
+- `missing_correction_reason` for Model D
 
-Correction-related scenarios are deferred until correction and invalidation events are implemented.
+Correction-related scenarios currently use Model D permission and provenance checks. Delayed synchronization remains deferred.
 
 ## Scenario Batch Runner
 
@@ -224,12 +227,12 @@ pdm run integrity-run-scenarios `
 
 When `--verify` is used, the batch runner also compares each generated label file with the verifier alerts and writes per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
 
-The current dry-run matrix contains 21 scenarios:
+The current dry-run matrix contains 24 scenarios:
 
 - 5 scenarios for Model A
 - 5 scenarios for Model B
 - 5 scenarios for Model C
-- 6 scenarios for Model D, including `broken_provenance`
+- 9 scenarios for Model D, including `broken_provenance`, `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`
 
 Do not treat a dry run as experiment execution. It only lists planned scenario/model combinations.
 

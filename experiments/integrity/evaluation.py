@@ -224,7 +224,7 @@ def _matrix_rows(scenario_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     rows = []
     for threat in sorted(by_threat):
         row = by_threat[threat]
-        rows.append({"threat_type": threat, **{model_id: row.get(model_id, "") for model_id in MODEL_ORDER}})
+        rows.append({"threat_type": threat, **{model_id: row.get(model_id, "not_applicable") for model_id in MODEL_ORDER}})
     return rows
 
 

@@ -116,9 +116,9 @@ Current construction summary:
 - Permission events: 1
 - Genesis events: 1
 - Active reconstructed keys: 1
-- Active key-state SHA-256: `0ffe99b8fc6b4e3b60645128edbb7310870abfc0233089ca4f6a6e31bf9bd399`
-- Terminal block hash: `e07dd1c4ec6802edf8b93948da7994617a5c315ef711001218c01b4f1add5d11`
-- Artifact SHA-256: `47204d8362eb581cf1271c8d174e4bacb18b4f4ce68d786b53330f516a4f9b2b`
+- Active key-state SHA-256: `10ddaa84b631d8e37e98f8a805d9ccf7b3f0348754a3c3dd4f51a2dfc0b0a453`
+- Terminal block hash: `92d8a1153af4c9869ef5e043b31cb44f3e8d696ce247cba9f825d0a77e51aab6`
+- Artifact SHA-256: `0e003d2775753ca248bc878e700f764f47dfcf6956772e64ee2c3cff012d0cf3`
 
 Construction sanity check:
 
@@ -137,9 +137,10 @@ The current demo can show:
 - Basic construction sanity checks for Models C and D.
 - Baseline verification reports for the non-tampered Model A-D artifacts.
 - The controlled tampering generator interface and one smoke-test tampered artifact.
-- The scenario batch runner dry-run plan for the implemented 21-scenario matrix.
+- The scenario batch runner dry-run plan for the implemented 24-scenario matrix.
 - The per-scenario evaluator interface and one smoke-test evaluation artifact.
 - The metrics aggregator interface and one smoke-test aggregate table set.
+- The full generated 24-scenario metrics table and threat-coverage matrix.
 
 ## Baseline Verification Artifacts
 
@@ -179,16 +180,39 @@ Smoke-test aggregate artifacts:
 
 These aggregate artifacts contain only the smoke-test scenario and are a format check, not the final threat-coverage matrix.
 
+Model D correction/provenance smoke-test aggregate artifacts:
+
+- `experiments/outputs/metrics/smoke_model_d_aggregate/openaq_capitals_2025_h2_scenario_metrics.csv`
+- `experiments/outputs/metrics/smoke_model_d_aggregate/openaq_capitals_2025_h2_threat_coverage_matrix.csv`
+- `experiments/outputs/metrics/smoke_model_d_aggregate/openaq_capitals_2025_h2_metrics_summary.json`
+
+These aggregate artifacts contain only three Model D smoke-test scenarios: `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`.
+
+## Full Matrix Artifacts
+
+The full implemented 24-scenario matrix has been executed once for `openaq_capitals_2025_h2` with verification enabled.
+
+Generated aggregate artifacts:
+
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_scenario_metrics.csv`
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_threat_coverage_matrix.csv`
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_metrics_summary.json`
+
+Aggregate status counts:
+
+- `detected`: 19
+- `expected_not_detected`: 5
+- `missed`: 0
+- `partial`: 0
+- `unexpected_alert`: 0
+
+These files are measured PoC verification outputs for the implemented scenario set. They are not manuscript prose and should still be reviewed before scientific interpretation.
+
 ## What Is Not Available Yet
 
 The current PoC does not yet provide:
 
-- Threat-coverage matrix.
-- Full batch tampering scenario outputs across all applicable models.
-- Tampered-scenario verification reports.
-- Detection rates.
 - False positive or false negative metrics.
 - Scientific result claims.
 
-The tampering generator, verifier, evaluator, and metrics aggregator exist, but the full scenario matrix has not yet been executed or summarized.
-The scenario batch runner can preview or execute the implemented matrix, but only the dry-run plan and one smoke-test scenario have been checked so far.
+The tampering generator, verifier, evaluator, metrics aggregator, and full implemented scenario matrix outputs exist. Scientific result claims and broader interpretation remain future work.

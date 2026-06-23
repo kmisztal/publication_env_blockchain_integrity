@@ -17,10 +17,14 @@ from experiments.integrity.events import MODEL_A, MODEL_B, MODEL_C, MODEL_D
 from experiments.integrity.evaluation import evaluate_scenario
 from experiments.integrity.tampering import (
     THREAT_BROKEN_PROVENANCE,
+    THREAT_DELAYED_SYNCHRONIZATION,
     THREAT_FAKE_RECORD_INSERTION,
+    THREAT_MISSING_CORRECTION_REASON,
     THREAT_RECORD_DELETION,
+    THREAT_REVOKED_ACTOR_KEY_USAGE,
     THREAT_REPLAY,
     THREAT_TIMESTAMP_MODIFICATION,
+    THREAT_UNAUTHORIZED_CORRECTION,
     THREAT_VALUE_MODIFICATION,
     generate_tampered_artifact,
 )
@@ -48,7 +52,15 @@ def plan_scenarios(dataset_id: str) -> list[dict[str, Any]]:
     for model_id in (MODEL_A, MODEL_B, MODEL_C, MODEL_D):
         threats = list(BASE_THREATS)
         if model_id == MODEL_D:
-            threats.append(THREAT_BROKEN_PROVENANCE)
+            threats.extend(
+                [
+                    THREAT_BROKEN_PROVENANCE,
+                    THREAT_UNAUTHORIZED_CORRECTION,
+                    THREAT_REVOKED_ACTOR_KEY_USAGE,
+                    THREAT_MISSING_CORRECTION_REASON,
+                    THREAT_DELAYED_SYNCHRONIZATION,
+                ]
+            )
         for threat_type in threats:
             artifact_file = Path(str(MODEL_ARTIFACTS[model_id]).format(dataset_id=dataset_id))
             scenarios.append(
@@ -97,11 +109,12 @@ def run_scenarios(
         )
         item: dict[str, Any] = {"tampering": tamper_summary}
         if verify:
+            scenario_verification_dir = verification_output_dir / scenario["scenario_id"]
             verification = verify_model_artifact(
                 model_id=scenario["model_id"],
                 artifact_file=Path(tamper_summary["tampered_artifact_file"]),
                 dataset_id=dataset_id,
-                output_dir=verification_output_dir,
+                output_dir=scenario_verification_dir,
             )
             item["verification"] = verification
             item["evaluation"] = evaluate_scenario(

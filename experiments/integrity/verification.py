@@ -13,13 +13,17 @@ from experiments.common.hashing import canonical_json, sha256_file, sha256_json
 from experiments.common.paths import VERIFICATION_OUTPUT_DIR, ensure_experiment_dirs
 from experiments.common.schema import CANONICAL_MEASUREMENT_COLUMNS
 from experiments.integrity.events import (
+    EVENT_CORRECTION_RECORDED,
     EVENT_KEY_REVOKED,
     EVENT_MEASUREMENT_RECORDED,
     EVENT_PERMISSION_GRANTED,
+    EVENT_SYNCHRONIZATION_RECORDED,
     MODEL_A,
     MODEL_B,
     MODEL_C,
     MODEL_D,
+    PERMISSION_CORRECT_MEASUREMENT,
+    PERMISSION_INGEST_MEASUREMENT,
     reconstruct_active_keys,
 )
 
@@ -34,6 +38,10 @@ ALERT_UNEXPECTED_BLOCK_HASH = "unexpected_block_hash"
 ALERT_MISSING_BLOCK_HASH = "missing_block_hash"
 ALERT_PERMISSION_STATE_MISMATCH = "permission_state_mismatch"
 ALERT_INACTIVE_SIGNATURE_KEY = "inactive_signature_key"
+ALERT_UNAUTHORIZED_EVENT_TYPE = "unauthorized_event_type"
+ALERT_CORRECTION_TARGET_MISSING = "correction_target_missing"
+ALERT_CORRECTION_REASON_MISSING = "correction_reason_missing"
+ALERT_DELAYED_SYNCHRONIZATION = "delayed_synchronization"
 
 EVENT_FIELDS = [
     "event_id",
@@ -137,6 +145,7 @@ def verify_event_model(
     checked_events = 0
     records: list[dict[str, Any]] = []
     active_keys: dict[str, dict[str, Any]] = {}
+    known_record_ids: set[str] = set()
 
     for line_number, event in _iter_jsonl(artifact_file):
         checked_events += 1
@@ -208,7 +217,7 @@ def verify_event_model(
             )
 
         if model_id == MODEL_D:
-            alerts.extend(_validate_model_d_key_state(line_number, event, active_keys))
+            alerts.extend(_validate_model_d_event_state(line_number, event, active_keys, known_record_ids))
 
     if model_id == MODEL_D:
         reconstructed = reconstruct_active_keys(records)
@@ -248,10 +257,11 @@ def _validate_event_schema(model_id: str, line_number: int, event: dict[str, Any
     return alerts
 
 
-def _validate_model_d_key_state(
+def _validate_model_d_event_state(
     line_number: int,
     event: dict[str, Any],
     active_keys: dict[str, dict[str, Any]],
+    known_record_ids: set[str],
 ) -> list[VerificationAlert]:
     alerts: list[VerificationAlert] = []
     payload = event.get("payload_json") or {}
@@ -272,18 +282,110 @@ def _validate_model_d_key_state(
         if key_id in active_keys:
             del active_keys[key_id]
     elif event_type == EVENT_MEASUREMENT_RECORDED:
-        signature_id = event.get("signature_id")
-        if signature_id not in active_keys:
+        alerts.extend(
+            _validate_signature_permission(
+                line_number,
+                event,
+                active_keys,
+                required_permission=PERMISSION_INGEST_MEASUREMENT,
+            )
+        )
+        record_id = payload.get("record_id") or event.get("source_record_id")
+        if record_id:
+            known_record_ids.add(record_id)
+    elif event_type == EVENT_CORRECTION_RECORDED:
+        alerts.extend(
+            _validate_signature_permission(
+                line_number,
+                event,
+                active_keys,
+                required_permission=PERMISSION_CORRECT_MEASUREMENT,
+            )
+        )
+        target_record_id = payload.get("target_record_id")
+        if target_record_id not in known_record_ids:
             alerts.append(
                 _alert(
                     MODEL_D,
                     line_number,
                     event.get("event_id"),
-                    ALERT_INACTIVE_SIGNATURE_KEY,
-                    {"signature_id": signature_id},
+                    ALERT_CORRECTION_TARGET_MISSING,
+                    {"target_record_id": target_record_id},
                 )
             )
+        if not str(payload.get("reason") or "").strip():
+            alerts.append(
+                _alert(
+                    MODEL_D,
+                    line_number,
+                    event.get("event_id"),
+                    ALERT_CORRECTION_REASON_MISSING,
+                    {"target_record_id": target_record_id},
+                )
+            )
+    elif event_type == EVENT_SYNCHRONIZATION_RECORDED:
+        alerts.extend(_validate_synchronization_delay(line_number, event))
     return alerts
+
+
+def _validate_synchronization_delay(line_number: int, event: dict[str, Any]) -> list[VerificationAlert]:
+    payload = event.get("payload_json") or {}
+    local_timestamp = payload.get("local_event_timestamp")
+    synchronized_at = payload.get("synchronized_at")
+    max_delay_hours = float(payload.get("max_delay_hours", 0))
+    if not local_timestamp or not synchronized_at:
+        return []
+    observed_delay_hours = (
+        pd_datetime_utc(synchronized_at) - pd_datetime_utc(local_timestamp)
+    ).total_seconds() / 3600
+    if observed_delay_hours > max_delay_hours:
+        return [
+            _alert(
+                MODEL_D,
+                line_number,
+                event.get("event_id"),
+                ALERT_DELAYED_SYNCHRONIZATION,
+                {
+                    "gateway_id": payload.get("gateway_id"),
+                    "covered_event_id": payload.get("covered_event_id"),
+                    "observed_delay_hours": round(observed_delay_hours, 6),
+                    "max_delay_hours": max_delay_hours,
+                },
+            )
+        ]
+    return []
+
+
+def _validate_signature_permission(
+    line_number: int,
+    event: dict[str, Any],
+    active_keys: dict[str, dict[str, Any]],
+    *,
+    required_permission: str,
+) -> list[VerificationAlert]:
+    signature_id = event.get("signature_id")
+    key_state = active_keys.get(signature_id)
+    if key_state is None:
+        return [
+            _alert(
+                MODEL_D,
+                line_number,
+                event.get("event_id"),
+                ALERT_INACTIVE_SIGNATURE_KEY,
+                {"signature_id": signature_id, "required_permission": required_permission},
+            )
+        ]
+    if required_permission not in set(key_state.get("permissions", [])):
+        return [
+            _alert(
+                MODEL_D,
+                line_number,
+                event.get("event_id"),
+                ALERT_UNAUTHORIZED_EVENT_TYPE,
+                {"signature_id": signature_id, "required_permission": required_permission},
+            )
+        ]
+    return []
 
 
 def _expected_block_hash(event: dict[str, Any]) -> str:
@@ -375,3 +477,10 @@ def _alert(
 
 def _utc_now() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat()
+
+
+def pd_datetime_utc(value: str) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC)

@@ -22,10 +22,12 @@ EVENT_PERMISSION_GRANTED = "permission_granted"
 EVENT_KEY_REVOKED = "key_revoked"
 EVENT_CORRECTION_RECORDED = "correction_recorded"
 EVENT_RECORD_INVALIDATED = "record_invalidated"
+EVENT_SYNCHRONIZATION_RECORDED = "synchronization_recorded"
 
 DEFAULT_INGEST_ACTOR_ID = "actor:openaq_ingest"
 DEFAULT_INGEST_KEY_ID = "key:openaq_ingest:baseline"
 PERMISSION_INGEST_MEASUREMENT = "ingest_measurement"
+PERMISSION_CORRECT_MEASUREMENT = "correct_measurement"
 
 
 @dataclass(frozen=True)
@@ -135,6 +137,40 @@ def key_revocation_payload(
         "key_id": key_id,
         "revoked_at": revoked_at,
         "reason": reason,
+    }
+
+
+def correction_payload(
+    *,
+    target_record_id: str,
+    corrected_fields: list[str],
+    previous_value_hash: str,
+    corrected_value_hash: str,
+    reason: str | None,
+) -> dict[str, Any]:
+    return {
+        "target_record_id": target_record_id,
+        "corrected_fields": sorted(corrected_fields),
+        "previous_value_hash": previous_value_hash,
+        "corrected_value_hash": corrected_value_hash,
+        "reason": reason,
+    }
+
+
+def synchronization_payload(
+    *,
+    gateway_id: str,
+    covered_event_id: str,
+    local_event_timestamp: str,
+    synchronized_at: str,
+    max_delay_hours: float,
+) -> dict[str, Any]:
+    return {
+        "gateway_id": gateway_id,
+        "covered_event_id": covered_event_id,
+        "local_event_timestamp": local_event_timestamp,
+        "synchronized_at": synchronized_at,
+        "max_delay_hours": float(max_delay_hours),
     }
 
 
@@ -302,7 +338,7 @@ def build_model_d_events(
         payload=permission_payload(
             actor_id=actor_id,
             key_id=key_id,
-            permissions=[PERMISSION_INGEST_MEASUREMENT],
+            permissions=[PERMISSION_CORRECT_MEASUREMENT, PERMISSION_INGEST_MEASUREMENT],
             valid_from=event_created_at,
         ),
         previous_hash=previous_hash,

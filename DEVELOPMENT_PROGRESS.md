@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 18:38:08 +02:00
+Last updated: 2026-06-23 19:01:10 +02:00
 
 ### Completed
 
@@ -66,7 +66,7 @@ Last updated: 2026-06-23 18:38:08 +02:00
 - Ran one smoke-test tampering generation for `C_audit_hash_chain` with `value_modification`; this was a generator check, not a full experiment run.
 - Added a scenario batch runner under `experiments/integrity/scenarios.py`.
 - Added `integrity-run-scenarios` CLI/PDM support with `--dry-run` and optional `--verify`.
-- Ran a dry run for `openaq_capitals_2025_h2`; it planned 21 implemented scenarios across Models A-D without generating the full scenario matrix.
+- Ran a dry run for `openaq_capitals_2025_h2`; it now plans 24 implemented scenarios across Models A-D without generating the full scenario matrix.
 - Added a scenario evaluator under `experiments/integrity/evaluation.py`.
 - Added `integrity-evaluate` CLI/PDM support for comparing tampering labels with verifier alert CSV files.
 - Connected `run-scenarios --verify` to generate per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
@@ -74,6 +74,16 @@ Last updated: 2026-06-23 18:38:08 +02:00
 - Added aggregate metrics export for per-scenario evaluation JSON files.
 - Added `integrity-aggregate-metrics` CLI/PDM support.
 - Ran one smoke-test metrics aggregation from the existing smoke evaluation file; this was a format check only, not a full threat-coverage matrix.
+- Added Model D correction payload construction and correction permission support.
+- Extended Model D verification with correction target, correction reason, event authorization, and revoked-key usage checks.
+- Added controlled Model D scenarios for `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`.
+- Updated scenario batch verification to write each scenario's verifier outputs to a separate subdirectory, avoiding report overwrites for repeated model IDs.
+- Rebuilt the local Model D artifact after adding `correct_measurement` to the baseline ingest key permission set.
+- Ran baseline verification for the rebuilt Model D artifact; this was a construction sanity check only.
+- Ran smoke-test generation, verification, evaluation, and aggregation for the three new Model D scenarios; these were tool-chain checks only, not the full experiment matrix.
+- Executed the full implemented `openaq_capitals_2025_h2` scenario matrix with verification enabled.
+- Generated tampered artifacts, verifier reports, alert CSV files, and evaluation JSON files for 24 scenarios.
+- Aggregated the full scenario evaluations into scenario metrics, a threat-coverage matrix, and a metrics summary under `experiments/outputs/metrics/`.
 
 ### Implemented Modules
 
@@ -87,7 +97,7 @@ Last updated: 2026-06-23 18:38:08 +02:00
 | `experiments/integrity/events.py` | Deterministic event constants, payload hashes, genesis events, and measurement audit events. |
 | `experiments/integrity/models.py` | Model A, Model B, Model C, and Model D artifact builders. |
 | `experiments/integrity/cli.py` | CLI for initializing storage and building baseline integrity artifacts. |
-| `experiments/integrity/verification.py` | Baseline verification engine for generated Model A-D artifacts. |
+| `experiments/integrity/verification.py` | Verification engine for generated and tampered Model A-D artifacts. |
 | `experiments/integrity/tampering.py` | Controlled tampering artifact and label generator. |
 | `experiments/integrity/scenarios.py` | Scenario matrix planner and optional batch runner. |
 | `experiments/integrity/evaluation.py` | Per-scenario comparison of tampering labels against verifier alerts and aggregate metrics table export. |
@@ -308,9 +318,12 @@ Implemented threat types:
 - `fake_record_insertion`
 - `replay`
 - `broken_provenance` for Model D
+- `unauthorized_correction` for Model D
+- `revoked_actor_key_usage` for Model D
+- `missing_correction_reason` for Model D
 
 Generated tampered artifacts and labels are written under `experiments/data/tampered/`.
-Correction-related scenarios remain deferred until correction and invalidation events exist.
+Correction-related scenarios currently use Model D permission and provenance checks. Delayed synchronization remains deferred.
 
 ## Current Scenario Batch Workflow
 
@@ -332,14 +345,28 @@ pdm run integrity-run-scenarios `
 
 When `--verify` is used, the batch runner also writes per-scenario evaluation files to `experiments/outputs/metrics/tampered/`.
 
-The current dry-run matrix has 21 planned scenarios:
+The current dry-run matrix has 24 planned scenarios:
 
 - 5 scenarios for Model A
 - 5 scenarios for Model B
 - 5 scenarios for Model C
-- 6 scenarios for Model D, including `broken_provenance`
+- 9 scenarios for Model D, including `broken_provenance`, `unauthorized_correction`, `revoked_actor_key_usage`, and `missing_correction_reason`
 
-The full batch has not yet been executed in this step.
+The full implemented batch has been executed once with verification enabled for `openaq_capitals_2025_h2`.
+
+Full-matrix aggregate outputs:
+
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_scenario_metrics.csv`
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_threat_coverage_matrix.csv`
+- `experiments/outputs/metrics/openaq_capitals_2025_h2_metrics_summary.json`
+
+Full-matrix status counts:
+
+- `detected`: 19
+- `expected_not_detected`: 5
+- `missed`: 0
+- `partial`: 0
+- `unexpected_alert`: 0
 
 ## Current Scenario Evaluation Workflow
 
@@ -426,11 +453,11 @@ The initial canonical schema contains:
 
 ## Explicit Non-Results
 
-No threat-coverage matrix has been generated yet.
+The implemented threat-coverage matrix has now been generated for `openaq_capitals_2025_h2` from the current PoC scenario set.
 
-Baseline model verification outputs exist for non-tampered artifacts, and one smoke-test tampered artifact has been verified and evaluated. These are tool-chain sanity checks only, not scientific threat-coverage results.
+Baseline model verification outputs, tampered-scenario verification outputs, per-scenario evaluations, and aggregate metrics now exist as reproducible PoC artifacts.
 
-No scientific results should be reported from the current implementation alone.
+Scientific interpretation, manuscript result text, and claims about broader environmental monitoring systems should not be written from the implementation alone without explicit review of the generated artifacts and experiment limitations.
 
 Current previously downloaded data-preparation artifacts are local reproducibility inputs only and may be replaced after final city/time-window selection:
 
@@ -464,13 +491,14 @@ The full four-capital extract `openaq_capitals_2025_h2` has now been generated w
 - Generated map: `experiments/outputs/maps/openaq_capitals_2025_h2_sensor_map.html`
 - Geometry check: each city center is inside its selected three-station triangle
 
-These are data-preparation and reproducibility checks only. They are not threat-model results, verification outputs, or scientific findings.
+These are data-preparation and reproducibility checks only. They are not environmental-domain findings.
 
-The Model A, Model B, Model C, and Model D artifacts plus baseline verification reports are reproducibility inputs only. They do not contain tampering scenarios, detection rates, or threat-coverage outputs.
+The Model A, Model B, Model C, and Model D artifacts plus generated scenario outputs are reproducibility inputs for later manuscript interpretation.
 
 ## Next Development Steps
 
-1. Decide when to execute the full implemented scenario matrix and whether to include immediate verification.
+1. Review the generated scenario metrics and threat-coverage matrix for methodological consistency.
 2. Add off-chain measurement hash verification where applicable.
-3. Add correction lineage checks after correction events are implemented.
-4. Generate threat-coverage summaries only after the full scenario matrix has been intentionally executed.
+3. Add invalidation event support if record invalidation becomes part of the MVP.
+4. Add delayed synchronization simulation.
+5. Add a reproducible experiment-run manifest that ties together dataset, model artifact hashes, scenario outputs, and metrics files.

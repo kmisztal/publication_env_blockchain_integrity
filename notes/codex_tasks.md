@@ -51,18 +51,19 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement genesis event creation.
 - [x] Implement measurement event creation.
 - [x] Implement permission event creation.
-- [ ] Implement correction and invalidation event creation.
+- [x] Implement correction event creation.
+- [ ] Implement invalidation event creation.
 - [x] Build ordered hash chain from cleaned measurements.
 - [x] Export chains as JSONL.
 
 ## Phase 4: Audit Trail Model
 
 - [x] Implement key insertion events.
-- [ ] Implement key revocation events.
+- [x] Implement key revocation events.
 - [x] Implement active key-state reconstruction.
-- [ ] Implement correction lineage fields.
-- [ ] Implement validation for correction target existence.
-- [ ] Implement validation for required correction reason.
+- [x] Implement correction lineage fields.
+- [x] Implement validation for correction target existence.
+- [x] Implement validation for required correction reason.
 - [x] Implement audit event export.
 
 ## Phase 5: Verification Engine
@@ -73,7 +74,7 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement previous-hash link verification.
 - [ ] Implement off-chain measurement hash verification.
 - [x] Implement actor key authorization checks.
-- [ ] Implement correction lineage checks.
+- [x] Implement correction lineage checks.
 - [x] Implement stable alert codes.
 - [x] Export `verification_report.json`.
 - [x] Export `alerts.csv`.
@@ -86,7 +87,9 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 - [x] Implement fake record insertion scenario.
 - [x] Implement replay scenario.
 - [x] Implement broken provenance scenario.
-- [ ] Implement unauthorized correction scenario.
+- [x] Implement unauthorized correction scenario.
+- [x] Implement revoked actor key usage scenario.
+- [x] Implement missing correction reason scenario.
 - [x] Generate ground-truth labels for every implemented scenario.
 - [x] Save tampered datasets and labels under `data/tampered/`.
 
