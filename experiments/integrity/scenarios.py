@@ -6,8 +6,15 @@ import json
 from pathlib import Path
 from typing import Any
 
-from experiments.common.paths import AUDIT_OUTPUT_DIR, CHAIN_OUTPUT_DIR, TAMPERED_DATA_DIR, VERIFICATION_OUTPUT_DIR
+from experiments.common.paths import (
+    AUDIT_OUTPUT_DIR,
+    CHAIN_OUTPUT_DIR,
+    METRICS_OUTPUT_DIR,
+    TAMPERED_DATA_DIR,
+    VERIFICATION_OUTPUT_DIR,
+)
 from experiments.integrity.events import MODEL_A, MODEL_B, MODEL_C, MODEL_D
+from experiments.integrity.evaluation import evaluate_scenario
 from experiments.integrity.tampering import (
     THREAT_BROKEN_PROVENANCE,
     THREAT_FAKE_RECORD_INSERTION,
@@ -61,6 +68,7 @@ def run_scenarios(
     dataset_id: str,
     output_dir: Path = TAMPERED_DATA_DIR,
     verification_output_dir: Path = VERIFICATION_OUTPUT_DIR / "tampered",
+    metrics_output_dir: Path = METRICS_OUTPUT_DIR / "tampered",
     verify: bool = False,
     dry_run: bool = False,
 ) -> dict[str, Any]:
@@ -76,6 +84,7 @@ def run_scenarios(
     output_dir.mkdir(parents=True, exist_ok=True)
     if verify:
         verification_output_dir.mkdir(parents=True, exist_ok=True)
+        metrics_output_dir.mkdir(parents=True, exist_ok=True)
 
     generated = []
     for scenario in scenarios:
@@ -88,11 +97,17 @@ def run_scenarios(
         )
         item: dict[str, Any] = {"tampering": tamper_summary}
         if verify:
-            item["verification"] = verify_model_artifact(
+            verification = verify_model_artifact(
                 model_id=scenario["model_id"],
                 artifact_file=Path(tamper_summary["tampered_artifact_file"]),
                 dataset_id=dataset_id,
                 output_dir=verification_output_dir,
+            )
+            item["verification"] = verification
+            item["evaluation"] = evaluate_scenario(
+                labels_file=Path(tamper_summary["labels_file"]),
+                alerts_file=Path(verification["alerts_file"]),
+                output_dir=metrics_output_dir,
             )
         generated.append(item)
 
@@ -103,6 +118,7 @@ def run_scenarios(
         "scenario_count": len(generated),
         "output_dir": str(output_dir),
         "verification_output_dir": str(verification_output_dir) if verify else None,
+        "metrics_output_dir": str(metrics_output_dir) if verify else None,
         "scenarios": generated,
     }
     summary_file = output_dir / f"{dataset_id}_scenario_batch_summary.json"

@@ -11,6 +11,7 @@ from experiments.common.paths import (
     AUDIT_OUTPUT_DIR,
     CHAIN_OUTPUT_DIR,
     DEFAULT_DB_PATH,
+    METRICS_OUTPUT_DIR,
     TAMPERED_DATA_DIR,
     VERIFICATION_OUTPUT_DIR,
 )
@@ -81,8 +82,25 @@ def build_parser() -> argparse.ArgumentParser:
     scenarios.add_argument("--dataset-id", required=True)
     scenarios.add_argument("--output-dir", type=Path, default=TAMPERED_DATA_DIR)
     scenarios.add_argument("--verification-output-dir", type=Path, default=VERIFICATION_OUTPUT_DIR / "tampered")
+    scenarios.add_argument("--metrics-output-dir", type=Path, default=METRICS_OUTPUT_DIR / "tampered")
     scenarios.add_argument("--verify", action="store_true")
     scenarios.add_argument("--dry-run", action="store_true")
+
+    evaluate = subparsers.add_parser(
+        "evaluate",
+        help="Compare one tampering label file with one verifier alerts CSV.",
+    )
+    evaluate.add_argument("--labels-file", required=True, type=Path)
+    evaluate.add_argument("--alerts-file", required=True, type=Path)
+    evaluate.add_argument("--output-dir", type=Path, default=METRICS_OUTPUT_DIR)
+
+    aggregate = subparsers.add_parser(
+        "aggregate-metrics",
+        help="Aggregate per-scenario evaluation JSON files into metrics tables.",
+    )
+    aggregate.add_argument("--evaluation-dir", required=True, type=Path)
+    aggregate.add_argument("--output-dir", type=Path, default=METRICS_OUTPUT_DIR)
+    aggregate.add_argument("--dataset-id")
     return parser
 
 
@@ -165,8 +183,31 @@ def main(argv: Sequence[str] | None = None) -> int:
             dataset_id=args.dataset_id,
             output_dir=args.output_dir,
             verification_output_dir=args.verification_output_dir,
+            metrics_output_dir=args.metrics_output_dir,
             verify=args.verify,
             dry_run=args.dry_run,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "evaluate":
+        from experiments.integrity.evaluation import evaluate_scenario
+
+        summary = evaluate_scenario(
+            labels_file=args.labels_file,
+            alerts_file=args.alerts_file,
+            output_dir=args.output_dir,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "aggregate-metrics":
+        from experiments.integrity.evaluation import aggregate_evaluations
+
+        summary = aggregate_evaluations(
+            evaluation_dir=args.evaluation_dir,
+            output_dir=args.output_dir,
+            dataset_id=args.dataset_id,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0

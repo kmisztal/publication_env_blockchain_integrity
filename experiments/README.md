@@ -222,6 +222,8 @@ pdm run integrity-run-scenarios `
   --verify
 ```
 
+When `--verify` is used, the batch runner also compares each generated label file with the verifier alerts and writes per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
+
 The current dry-run matrix contains 21 scenarios:
 
 - 5 scenarios for Model A
@@ -230,3 +232,39 @@ The current dry-run matrix contains 21 scenarios:
 - 6 scenarios for Model D, including `broken_provenance`
 
 Do not treat a dry run as experiment execution. It only lists planned scenario/model combinations.
+
+## Scenario Evaluation Example
+
+Compare one tampering label file with one verifier alerts CSV:
+
+```powershell
+pdm run integrity-evaluate `
+  --labels-file experiments\data\tampered\smoke\openaq_capitals_2025_h2_C_audit_hash_chain_value_modification_labels.json `
+  --alerts-file experiments\outputs\verification\smoke\openaq_capitals_2025_h2_C_audit_hash_chain_alerts.csv `
+  --output-dir experiments\outputs\metrics\smoke
+```
+
+The evaluator writes:
+
+- `<output-dir>/<scenario_id>_evaluation.json`
+
+The evaluator currently reports per-scenario status counts such as `detected`, `partial`, `missed`, `expected_not_detected`, and `unexpected_alert`. Aggregate detection-rate, precision, recall, and F1 exports are later metrics steps.
+
+## Metrics Aggregation Example
+
+Aggregate per-scenario evaluation files into CSV tables:
+
+```powershell
+pdm run integrity-aggregate-metrics `
+  --evaluation-dir experiments\outputs\metrics\tampered `
+  --output-dir experiments\outputs\metrics `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+The aggregator writes:
+
+- `<output-dir>/<dataset_id>_scenario_metrics.csv`
+- `<output-dir>/<dataset_id>_threat_coverage_matrix.csv`
+- `<output-dir>/<dataset_id>_metrics_summary.json`
+
+The current aggregate tables include scenario status counts and label-level detection rates. Precision, recall, F1, and false-positive rates remain deferred until the experiment design includes an explicit definition of negative cases.

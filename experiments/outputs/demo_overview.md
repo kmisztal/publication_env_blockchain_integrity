@@ -138,6 +138,8 @@ The current demo can show:
 - Baseline verification reports for the non-tampered Model A-D artifacts.
 - The controlled tampering generator interface and one smoke-test tampered artifact.
 - The scenario batch runner dry-run plan for the implemented 21-scenario matrix.
+- The per-scenario evaluator interface and one smoke-test evaluation artifact.
+- The metrics aggregator interface and one smoke-test aggregate table set.
 
 ## Baseline Verification Artifacts
 
@@ -159,6 +161,24 @@ Alert CSV files:
 
 These baseline reports are technical sanity checks of generated artifacts. They are not controlled tampering experiments and should not be interpreted as detection-rate results.
 
+## Scenario Evaluation Artifacts
+
+The evaluator can compare a tampering label file with a verifier alert CSV file.
+
+Smoke-test evaluation artifact:
+
+- `experiments/outputs/metrics/smoke/openaq_capitals_2025_h2_C_audit_hash_chain_value_modification_evaluation.json`
+
+The smoke-test evaluation checks the tool chain on one Model C `value_modification` artifact. It is not a full scenario matrix and should not be interpreted as a threat-coverage result.
+
+Smoke-test aggregate artifacts:
+
+- `experiments/outputs/metrics/smoke_aggregate/openaq_capitals_2025_h2_scenario_metrics.csv`
+- `experiments/outputs/metrics/smoke_aggregate/openaq_capitals_2025_h2_threat_coverage_matrix.csv`
+- `experiments/outputs/metrics/smoke_aggregate/openaq_capitals_2025_h2_metrics_summary.json`
+
+These aggregate artifacts contain only the smoke-test scenario and are a format check, not the final threat-coverage matrix.
+
 ## What Is Not Available Yet
 
 The current PoC does not yet provide:
@@ -170,5 +190,5 @@ The current PoC does not yet provide:
 - False positive or false negative metrics.
 - Scientific result claims.
 
-The tampering generator exists, but the full scenario matrix has not yet been executed or summarized.
-The scenario batch runner can preview or execute the implemented matrix, but only the dry-run plan has been checked so far.
+The tampering generator, verifier, evaluator, and metrics aggregator exist, but the full scenario matrix has not yet been executed or summarized.
+The scenario batch runner can preview or execute the implemented matrix, but only the dry-run plan and one smoke-test scenario have been checked so far.

@@ -92,15 +92,15 @@ Implementation backlog for the proof-of-concept supporting the publication exper
 
 ## Phase 7: Metrics
 
-- [ ] Compare verifier alerts against tampering labels.
-- [ ] Compute detection rate.
+- [x] Compare verifier alerts against tampering labels.
+- [x] Compute detection rate.
 - [ ] Compute false positive rate.
 - [ ] Compute false negative rate.
 - [ ] Compute precision.
 - [ ] Compute recall.
 - [ ] Compute F1 score.
 - [ ] Compute attack-type-specific metrics.
-- [ ] Export metrics tables to `outputs/metrics/`.
+- [x] Export metrics tables to `outputs/metrics/`.
 
 ## Phase 8: Summary Blocks
 

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-06-23 18:38:08 +02:00
+
+- Extended `experiments/integrity/evaluation.py` with aggregate metrics table export from per-scenario evaluation JSON files.
+- Added `aggregate-metrics` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-aggregate-metrics`.
+- The aggregator writes scenario metrics CSV, threat coverage matrix CSV, and metrics summary JSON files.
+- Ran one smoke-test aggregation from the existing Model C `value_modification` smoke evaluation file; this was a format check only, not a full experiment run or final threat-coverage matrix.
+- Updated `experiments/README.md`, `DEVELOPMENT_PROGRESS.md`, `experiments/outputs/demo_overview.md`, and `notes/codex_tasks.md`.
+
+## 2026-06-23 18:33:16 +02:00
+
+- Added `experiments/integrity/evaluation.py` for comparing tampering label files against verifier alert CSV files.
+- Added `evaluate` to `experiments.integrity.cli`.
+- Added the PDM script `integrity-evaluate`.
+- Connected `run-scenarios --verify` to produce per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
+- Ran one smoke-test verification and evaluation for the existing Model C `value_modification` tampered artifact; this was a tool-chain check only, not a full experiment run or threat-coverage result.
+- Updated `experiments/README.md`, `DEVELOPMENT_PROGRESS.md`, `experiments/outputs/demo_overview.md`, and `notes/codex_tasks.md`.
+
 ## 2026-06-23 18:26:59 +02:00
 
 - Added `experiments/integrity/scenarios.py` as a scenario matrix planner and optional batch runner.

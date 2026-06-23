@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 18:26:59 +02:00
+Last updated: 2026-06-23 18:38:08 +02:00
 
 ### Completed
 
@@ -67,6 +67,13 @@ Last updated: 2026-06-23 18:26:59 +02:00
 - Added a scenario batch runner under `experiments/integrity/scenarios.py`.
 - Added `integrity-run-scenarios` CLI/PDM support with `--dry-run` and optional `--verify`.
 - Ran a dry run for `openaq_capitals_2025_h2`; it planned 21 implemented scenarios across Models A-D without generating the full scenario matrix.
+- Added a scenario evaluator under `experiments/integrity/evaluation.py`.
+- Added `integrity-evaluate` CLI/PDM support for comparing tampering labels with verifier alert CSV files.
+- Connected `run-scenarios --verify` to generate per-scenario evaluation JSON files under `experiments/outputs/metrics/tampered/`.
+- Ran one smoke-test verification and evaluation for the previously generated Model C `value_modification` tampered artifact; this was a tool check only, not a full experiment run.
+- Added aggregate metrics export for per-scenario evaluation JSON files.
+- Added `integrity-aggregate-metrics` CLI/PDM support.
+- Ran one smoke-test metrics aggregation from the existing smoke evaluation file; this was a format check only, not a full threat-coverage matrix.
 
 ### Implemented Modules
 
@@ -83,6 +90,7 @@ Last updated: 2026-06-23 18:26:59 +02:00
 | `experiments/integrity/verification.py` | Baseline verification engine for generated Model A-D artifacts. |
 | `experiments/integrity/tampering.py` | Controlled tampering artifact and label generator. |
 | `experiments/integrity/scenarios.py` | Scenario matrix planner and optional batch runner. |
+| `experiments/integrity/evaluation.py` | Per-scenario comparison of tampering labels against verifier alerts and aggregate metrics table export. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -314,6 +322,16 @@ pdm run integrity-run-scenarios `
   --dry-run
 ```
 
+Run the implemented scenario matrix and verify each tampered artifact:
+
+```powershell
+pdm run integrity-run-scenarios `
+  --dataset-id openaq_capitals_2025_h2 `
+  --verify
+```
+
+When `--verify` is used, the batch runner also writes per-scenario evaluation files to `experiments/outputs/metrics/tampered/`.
+
 The current dry-run matrix has 21 planned scenarios:
 
 - 5 scenarios for Model A
@@ -322,6 +340,44 @@ The current dry-run matrix has 21 planned scenarios:
 - 6 scenarios for Model D, including `broken_provenance`
 
 The full batch has not yet been executed in this step.
+
+## Current Scenario Evaluation Workflow
+
+Compare one tampering label file with one verifier alert CSV file:
+
+```powershell
+pdm run integrity-evaluate `
+  --labels-file experiments\data\tampered\smoke\openaq_capitals_2025_h2_C_audit_hash_chain_value_modification_labels.json `
+  --alerts-file experiments\outputs\verification\smoke\openaq_capitals_2025_h2_C_audit_hash_chain_alerts.csv `
+  --output-dir experiments\outputs\metrics\smoke
+```
+
+The evaluator currently emits per-scenario status counts:
+
+- `detected`
+- `partial`
+- `missed`
+- `expected_not_detected`
+- `unexpected_alert`
+
+A smoke-test evaluation of the previously generated Model C `value_modification` artifact classified the expected payload-hash alert as `detected`. This is a tool-chain sanity check only, not a threat-coverage result.
+
+Aggregate per-scenario evaluation files into metrics tables:
+
+```powershell
+pdm run integrity-aggregate-metrics `
+  --evaluation-dir experiments\outputs\metrics\tampered `
+  --output-dir experiments\outputs\metrics `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+Generated aggregate tables:
+
+- `<output-dir>/<dataset_id>_scenario_metrics.csv`
+- `<output-dir>/<dataset_id>_threat_coverage_matrix.csv`
+- `<output-dir>/<dataset_id>_metrics_summary.json`
+
+The current aggregate tables include scenario statuses and label-level detection rates. Precision, recall, F1, and false-positive rates remain deferred until negative-case definitions are added to the experimental design.
 
 ## Current Provenance And Permission Workflow
 
@@ -372,7 +428,7 @@ The initial canonical schema contains:
 
 No threat-coverage matrix has been generated yet.
 
-No model verification outputs have been generated yet.
+Baseline model verification outputs exist for non-tampered artifacts, and one smoke-test tampered artifact has been verified and evaluated. These are tool-chain sanity checks only, not scientific threat-coverage results.
 
 No scientific results should be reported from the current implementation alone.
 
