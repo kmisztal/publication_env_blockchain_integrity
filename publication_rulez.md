@@ -1,6 +1,6 @@
 # Publication Writing Rules
 
-This file defines reusable rules for preparing scientific publications with Codex or another AI assistant. It is intended to be imported or pasted into a new chat before starting work on a different article.
+This file defines reusable rules for preparing scientific publications with an AI assistant. It is intended to be imported or pasted into a new chat before starting work on a different article.
 
 ## Core Principle
 
@@ -14,6 +14,7 @@ The assistant must support scientific writing without inventing evidence. Manusc
 4. Do not invent experimental results.
 5. Do not invent statistical validation.
 6. Do not invent implementation details that are not present in the repository or explicitly requested as a proposed future design.
+7. Do not state that a phenomenon, method, or tool is "well-documented" or "widely accepted" without immediately providing at least one specific citation or a `TODO:CITATION_NEEDED` marker.
 
 Use these markers when evidence is missing:
 
@@ -22,6 +23,13 @@ Use these markers when evidence is missing:
 - `TODO:EXPERIMENT_NEEDED` for missing experiments or unexecuted validation.
 
 If a claim is based on inference from project files, say so clearly.
+
+## Academic Tone and Style Rules
+
+1. **Be Concise and Direct:** Avoid fluff, overly complex sentence structures, and predictable AI transition phrases (e.g., *"Furthermore," "It is important to bear in mind," "In conclusion, it is clear that," "Crucial to note"*).
+2. **Prefer Active Voice:** Use active voice when describing author actions (e.g., *"We implemented"* instead of *"It was implemented by the authors"*), unless the target venue strictly demands passive voice.
+3. **Eliminate Emotional Qualifiers:** Avoid subjective or booster words like *"revolutionary," "groundbreaking," "drastically," "perfectly"* unless backed by objective, quantifiable metrics.
+4. **Precision Over Generality:** Write specific technical metrics instead of vague descriptions (e.g., use *"the execution time decreased by 15%"* instead of *"the system became significantly faster"*).
 
 ## Workflow Discipline
 
@@ -38,12 +46,10 @@ Separate the work into phases:
 9. Final polish and compilation.
 
 Do not write manuscript sections before the scope, research question, objectives, contribution, and boundaries are stable.
-
 Do not report results before experiments have been executed and reviewed.
-
 Do not turn planning notes into manuscript claims without checking whether the corresponding data, references, or experiments exist.
 
-## Repository Hygiene
+## Repository and Chat Hygiene
 
 Prefer structured project files:
 
@@ -53,11 +59,9 @@ Prefer structured project files:
 - `notes/poc_architecture.md` for implementation design.
 - `notes/codex_tasks.md` for implementation task breakdown.
 - `experiments/outputs/article_materials/` for methods-ready and results-ready writing inputs.
-- `changelog.md` for dated change tracking.
+- `changelog.md` for change tracking.
 
-When making changes, update `changelog.md` with date, time, and a concise description of the change.
-
-Use precise file references when summarizing what changed.
+When making changes, update `changelog.md` with a concise, dated description of the modification. Use precise file references when summarizing what changed.
 
 ## Manuscript Positioning
 
@@ -65,15 +69,13 @@ Before drafting, define the article's primary discipline and contribution type, 
 
 - computer science / information systems,
 - environmental engineering,
-- clinical informatics,
+- clinical informatics / healthcare IT (requires explicit mentions of IRB/bioethics approvals, data governance, and clinical validation standards where applicable),
 - AI/ML methods,
 - software systems,
 - regulatory or data governance,
 - empirical domain study.
 
-The manuscript must not drift into claims outside its declared contribution type.
-
-If a domain is used mainly as an application setting, say so explicitly. Do not draw domain-specific conclusions unless the study actually supports them.
+The manuscript must not drift into claims outside its declared contribution type. If a domain is used mainly as an application setting, say so explicitly. Do not draw domain-specific conclusions unless the study actually supports them.
 
 ## Scope Boundaries
 
@@ -86,7 +88,6 @@ Every manuscript should clearly state:
 5. What should be treated as future work.
 
 Avoid overclaiming:
-
 - Do not claim production readiness from a proof-of-concept.
 - Do not claim regulatory compliance without legal/regulatory analysis.
 - Do not claim real-world deployment success without deployment evidence.
@@ -125,15 +126,12 @@ For each experiment, define:
 8. Risks and limitations.
 
 Separate:
-
 - MVP experiment set,
 - extended experiment set,
 - future work.
 
 If no negative cases exist, do not report precision, recall, F1 score, false-positive rate, or false-negative rate.
-
 If scenarios are deterministic and not repeated, do not describe the evaluation as statistical robustness validation.
-
 If a model detects what it was designed to detect, describe the result as mechanism validation or threat-coverage evaluation, not as a broad empirical discovery.
 
 ## Results Rules
@@ -141,7 +139,6 @@ If a model detects what it was designed to detect, describe the result as mechan
 Results must come from executed artifacts, not expectations.
 
 Preferred result artifacts:
-
 - CSV metrics tables,
 - JSON summaries,
 - run manifests,
@@ -150,7 +147,6 @@ Preferred result artifacts:
 - plots or tables generated from machine-readable outputs.
 
 When reporting results, distinguish:
-
 - detected,
 - missed,
 - partial,
@@ -159,7 +155,6 @@ When reporting results, distinguish:
 - not applicable.
 
 Use cautious interpretation:
-
 - A detected scenario means the expected verifier alert was present.
 - A known limitation means the scenario is outside the model's capability.
 - A not-applicable cell means the scenario was not implemented for that model.
@@ -178,9 +173,7 @@ For security, integrity, audit, provenance, or blockchain-inspired papers, defin
 6. Threat-to-verifier mapping.
 7. Assumptions about keys, timestamps, logs, anchors, or external services.
 
-Explicitly discuss admin-level or privileged rewrite attacks when using hash chains or append-only logs.
-
-If there is no consensus or external anchoring, do not claim immutability against an administrator who can rewrite and recompute all local artifacts.
+Explicitly discuss admin-level or privileged rewrite attacks when using hash chains or append-only logs. If there is no consensus or external anchoring, do not claim immutability against an administrator who can rewrite and recompute all local artifacts.
 
 ## Architecture Rules
 
@@ -201,14 +194,12 @@ Do not describe optional or future components as implemented.
 Use real sources only.
 
 When references are needed:
-
 1. Search for primary or authoritative sources where possible.
 2. Prefer standards, official documentation, peer-reviewed papers, or well-established technical reports.
 3. Add BibTeX entries only for sources that were actually checked.
 4. Do not use unrelated citations merely to remove TODO markers.
 
 Related Work should not be a list of unsupported claims. It should synthesize:
-
 - what existing work addresses,
 - what it does not address,
 - how the present study differs,
@@ -216,11 +207,7 @@ Related Work should not be a list of unsupported claims. It should synthesize:
 
 ## Author Background Rules
 
-Author background may inform positioning, but it is not automatic evidence.
-
-Prior author publications can be used only when scientifically relevant and cited deliberately.
-
-Do not use self-citations as substitutes for necessary external literature.
+Author background may inform positioning, but it is not automatic evidence. Prior author publications can be used only when scientifically relevant and cited deliberately. Do not use self-citations as substitutes for necessary external literature.
 
 ## Reviewer-Risk Checklist
 
@@ -245,11 +232,10 @@ When helping with a manuscript, the assistant should:
 2. Identify inconsistencies before rewriting.
 3. Ask questions only when a decision cannot be safely inferred.
 4. Make conservative, scoped edits.
-5. Preserve scientific caution.
+5. Preserve scientific caution and maintain a rigorous academic tone.
 6. Keep planning notes separate from manuscript prose.
-7. Update changelog entries when files are changed.
-8. Compile or validate outputs when feasible.
-9. Report what was changed and what remains unresolved.
+7. Update changelog entries when files or key concepts are changed.
+8. Report what was changed and what remains unresolved.
 
 ## Useful Opening Prompt For A New Article
 
@@ -259,27 +245,16 @@ Use or adapt this prompt when starting a new publication project:
 You are helping me prepare a scientific publication.
 
 Important constraints:
-- Do not invent references.
-- Do not invent datasets.
-- Do not invent experiments.
-- Do not invent results.
+- Do not invent references, datasets, experiments, or results.
+- Use academic tone: concise, direct, active voice, zero fluff, no subjective qualifiers.
 - Use TODO:CITATION_NEEDED where literature support is missing.
 - Use TODO:DATA_NEEDED where data is missing or undecided.
 - Use TODO:EXPERIMENT_NEEDED where experiments are missing or unexecuted.
 
 Before writing manuscript sections, help me establish:
-- research problem,
-- research gap,
-- research question,
-- objectives,
-- hypotheses or propositions,
-- expected contribution,
-- target venue suitability,
-- scope and out-of-scope items,
-- experimental plan,
-- proof-of-concept architecture if needed.
+- research problem, research gap, research question, objectives, expected contribution, scope boundaries, and experimental plan.
 
-Keep a changelog with date and time for all changes.
+Keep a dated changelog for all architectural and scope changes.
 Do not write manuscript prose until the scientific direction is stable.
-```
 
+Acknowledge that you understand these rules by briefly stating your core constraint regarding evidence and academic style.
