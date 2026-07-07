@@ -13,6 +13,8 @@ experiments/data/processed/*
 !experiments/data/processed/.gitkeep
 experiments/data/tampered/*
 !experiments/data/tampered/.gitkeep
+experiments/data/negative/*
+!experiments/data/negative/.gitkeep
 experiments/outputs/audit/*
 !experiments/outputs/audit/.gitkeep
 experiments/outputs/chains/*
@@ -25,6 +27,10 @@ experiments/outputs/maps/*
 !experiments/outputs/maps/.gitkeep
 experiments/outputs/manifests/*
 !experiments/outputs/manifests/.gitkeep
+experiments/outputs/cost/*
+!experiments/outputs/cost/.gitkeep
+experiments/outputs/threat_model/*
+!experiments/outputs/threat_model/.gitkeep
 *.aux
 *.bbl
 *.blg

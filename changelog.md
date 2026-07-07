@@ -354,3 +354,7 @@
 - Confirmed that the current manuscript narrative is aligned around distributed monitoring, information-systems integrity, Models A-D, controlled tampering, and threat coverage.
 - Expanded `sections/05_evaluation_results.tex` with a dataset preparation table, integrity model summary table, aggregate scenario status table, compact threat-coverage matrix, and applicable scenario coverage table.
 - Preserved scope boundaries: no environmental air-quality conclusions, no precision/recall/F1 metrics, and no statistical robustness claims beyond the controlled scenario matrix.
+# 2026-07-07 22:25:15 +02:00
+
+- Added `publication_rulez.md` as a reusable publication-writing instruction file for future article projects.
+- Captured agreed working rules: no invented references, datasets, experiments, or results; explicit TODO markers; phase separation; scope boundaries; experiment/result reporting discipline; threat-model expectations; literature rules; reviewer-risk checklist; and changelog hygiene.

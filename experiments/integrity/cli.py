@@ -13,6 +13,9 @@ from experiments.common.paths import (
     DEFAULT_DB_PATH,
     METRICS_OUTPUT_DIR,
     MANIFEST_OUTPUT_DIR,
+    NEGATIVE_DATA_DIR,
+    COST_OUTPUT_DIR,
+    THREAT_MODEL_OUTPUT_DIR,
     TAMPERED_DATA_DIR,
     VERIFICATION_OUTPUT_DIR,
 )
@@ -109,6 +112,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     manifest.add_argument("--dataset-id", required=True)
     manifest.add_argument("--output-dir", type=Path, default=MANIFEST_OUTPUT_DIR)
+
+    negative = subparsers.add_parser(
+        "negative-cases",
+        help="Generate and evaluate non-tampering negative cases.",
+    )
+    negative.add_argument("--dataset-id", required=True)
+    negative.add_argument("--output-dir", type=Path, default=NEGATIVE_DATA_DIR)
+    negative.add_argument("--metrics-output-dir", type=Path, default=METRICS_OUTPUT_DIR / "negative")
+    negative.add_argument("--verification-output-dir", type=Path, default=VERIFICATION_OUTPUT_DIR / "negative")
+
+    cost = subparsers.add_parser(
+        "cost-analysis",
+        help="Measure artifact size, build time, and verification time for Models A-D.",
+    )
+    cost.add_argument("--dataset-id", required=True)
+    cost.add_argument("--measurements-file", type=Path)
+    cost.add_argument("--output-dir", type=Path, default=COST_OUTPUT_DIR)
+
+    threat_model = subparsers.add_parser(
+        "threat-model",
+        help="Generate machine-readable and Markdown threat-model artifacts.",
+    )
+    threat_model.add_argument("--output-dir", type=Path, default=THREAT_MODEL_OUTPUT_DIR)
     return parser
 
 
@@ -227,6 +253,36 @@ def main(argv: Sequence[str] | None = None) -> int:
             dataset_id=args.dataset_id,
             output_dir=args.output_dir,
         )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "negative-cases":
+        from experiments.integrity.negative_cases import run_negative_cases
+
+        summary = run_negative_cases(
+            dataset_id=args.dataset_id,
+            output_dir=args.output_dir,
+            metrics_output_dir=args.metrics_output_dir,
+            verification_output_dir=args.verification_output_dir,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "cost-analysis":
+        from experiments.integrity.cost_analysis import run_cost_analysis
+
+        summary = run_cost_analysis(
+            dataset_id=args.dataset_id,
+            measurements_file=args.measurements_file,
+            output_dir=args.output_dir,
+        )
+        print(json.dumps(summary, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "threat-model":
+        from experiments.integrity.threat_model import write_threat_model
+
+        summary = write_threat_model(output_dir=args.output_dir)
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0
 
