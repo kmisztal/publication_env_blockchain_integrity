@@ -14,6 +14,7 @@ Implemented MVP scope:
 - Verification reports and alert CSV files.
 - Per-scenario evaluation and aggregate threat-coverage matrix.
 - JSON and Markdown experiment-run manifests.
+- Extended negative-case, cost-analysis, and threat-model artifacts.
 
 Accepted MVP limitations:
 
@@ -23,6 +24,7 @@ Accepted MVP limitations:
 - Summary-block optimization is deferred.
 - Full intermittent-connectivity simulation is deferred beyond the MVP delayed-synchronization scenario.
 - Dashboard work is optional and deferred.
+- Repeated injections and Model E anchoring are not yet implemented.
 
 ## Scope Guardrails
 
@@ -121,13 +123,15 @@ Accepted MVP limitations:
 
 - [x] Compare verifier alerts against tampering labels.
 - [x] Compute detection rate.
-- [ ] Compute false positive rate. Deferred until negative cases are defined.
+- [x] Compute limited false positive rate for the implemented negative-case set.
 - [ ] Compute false negative rate. Deferred until negative cases are defined.
 - [ ] Compute precision. Deferred until negative cases are defined.
 - [ ] Compute recall. Deferred until negative cases are defined.
 - [ ] Compute F1 score. Deferred until negative cases are defined.
 - [ ] Compute attack-type-specific metrics beyond the current scenario matrix. Deferred.
 - [x] Export metrics tables to `outputs/metrics/`.
+- [x] Export negative-case metrics to `outputs/metrics/negative/`.
+- [x] Export cost metrics to `outputs/cost/`.
 
 ## Phase 8: Summary Blocks
 
@@ -155,9 +159,29 @@ Accepted MVP limitations:
 - [x] Generate machine-readable verification reports.
 - [x] Generate Markdown experiment summaries without manuscript interpretation.
 - [x] Generate article-preparation source materials without drafting manuscript prose.
+- [x] Generate extended article-preparation source materials.
+- [x] Generate machine-readable and Markdown threat-model artifacts.
 - [ ] Generate architecture diagram source if needed. Optional.
 - [x] Generate experiment run manifest.
+- [x] Generate extended experiment run manifest.
 - [x] Document exact dataset extract used.
+
+## Phase 12: Reviewer-Oriented Extensions
+
+- [x] Implement negative cases for clean baseline artifacts.
+- [x] Implement valid Model D correction negative case.
+- [x] Implement valid Model D synchronization negative case.
+- [x] Implement valid Model D permission grant/revocation negative case.
+- [x] Export negative-case metrics and summary.
+- [x] Implement storage/build/verification cost analysis.
+- [x] Export cost-analysis CSV and JSON artifacts.
+- [x] Implement threat-model artifact generation.
+- [ ] Implement repeated injections with deterministic seeds.
+- [ ] Implement Model E anchored hash-chain artifact construction.
+- [ ] Implement external checkpoint anchor manifest.
+- [ ] Implement Model E anchor verification.
+- [ ] Implement `admin_chain_rewrite` scenario.
+- [ ] Export extended threat-coverage matrix including measured Model E outputs.
 
 ## Optional Phase 11: Dashboard
 
@@ -182,6 +206,7 @@ Minimum implemented tasks before reviewing publication experiment outputs:
 - [x] Phase 6 tampering generator.
 - [x] Phase 7 metrics export for scenario status and threat coverage.
 - [x] Phase 10 experiment-run manifest.
+- [x] Reviewer-oriented negative-case, cost-analysis, and threat-model extension.
 
 Remaining MVP review tasks:
 
@@ -192,6 +217,10 @@ Remaining MVP review tasks:
 - [ ] Review `experiments/outputs/article_materials/results_ready_tables.md`.
 - [ ] Review `experiments/outputs/article_materials/reviewer_limitations.md`.
 - [ ] Review `experiments/outputs/article_materials/methodology_decisions.md`.
+- [ ] Review `experiments/outputs/article_materials/extended_methods_ready_notes.md`.
+- [ ] Review `experiments/outputs/article_materials/extended_results_ready_tables.md`.
+- [ ] Review `experiments/outputs/threat_model/integrity_threat_model.md`.
+- [ ] Review `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.md`.
 - [ ] Decide whether current model and scenario names are final enough for manuscript preparation.
 - [ ] Decide whether architecture diagrams are needed before writing manuscript sections.
 
@@ -199,7 +228,9 @@ Remaining MVP review tasks:
 
 - [ ] Invalidation event support, if invalidation becomes part of the experiment scope.
 - [ ] Off-chain measurement hash verification, if artifact/source separation becomes necessary.
-- [ ] Negative-case design for false positives, false negatives, precision, recall, and F1.
+- [ ] Broader negative-case design for false negatives, precision, recall, and F1.
+- [ ] Repeated injections for robust scenario sampling.
+- [ ] Model E anchored hash-chain implementation and `admin_chain_rewrite` evaluation.
 - [ ] Summary-block optimization if MVP is stable.
 - [ ] Full intermittent-connectivity simulation beyond the current Model D delayed-synchronization scenario.
 - [ ] Water-quality replication if broader domain validation is needed.

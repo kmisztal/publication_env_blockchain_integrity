@@ -6,7 +6,7 @@ This file tracks implementation progress for the proof-of-concept experiments. I
 
 ## Current Implementation Status
 
-Last updated: 2026-06-23 20:03:14 +02:00
+Last updated: 2026-07-07 22:52:54 +02:00
 
 ### Completed
 
@@ -92,6 +92,15 @@ Last updated: 2026-06-23 20:03:14 +02:00
 - Recorded current MVP methodology decisions: no scenario repetitions, older smoke summaries unchanged, and `delayed_synchronization` scoped to Model D only.
 - Added article-preparation source materials under `experiments/outputs/article_materials/`.
 - The article-preparation files collect methods-ready notes, results-ready tables, reviewer-facing limitations, and methodology decisions without drafting manuscript prose.
+- Added negative-case generation and evaluation under `experiments/integrity/negative_cases.py`.
+- Added cost-analysis measurement under `experiments/integrity/cost_analysis.py`.
+- Added threat-model artifact generation under `experiments/integrity/threat_model.py`.
+- Added CLI/PDM support for `integrity-negative-cases`, `integrity-cost-analysis`, and `integrity-threat-model`.
+- Generated seven negative cases for `openaq_capitals_2025_h2`; all seven were classified as `true_negative`.
+- Generated cost metrics for Models A-D, including artifact size, build time, clean verification time, and mean tampered verification time.
+- Generated machine-readable and Markdown threat-model artifacts.
+- Added extended article-preparation materials under `experiments/outputs/article_materials/`.
+- Generated an extended experiment-run manifest with `--run-label extended`.
 
 ### Implemented Modules
 
@@ -110,6 +119,9 @@ Last updated: 2026-06-23 20:03:14 +02:00
 | `experiments/integrity/scenarios.py` | Scenario matrix planner and optional batch runner. |
 | `experiments/integrity/evaluation.py` | Per-scenario comparison of tampering labels against verifier alerts and aggregate metrics table export. |
 | `experiments/integrity/run_manifest.py` | Experiment-run manifest builder with artifact paths, file sizes, SHA-256 hashes, and scenario index. |
+| `experiments/integrity/negative_cases.py` | Negative-case artifact generation, verification, and limited false-positive-rate export. |
+| `experiments/integrity/cost_analysis.py` | Storage, build-time, and verification-time measurement for Models A-D. |
+| `experiments/integrity/threat_model.py` | Machine-readable and Markdown threat-model artifact generation. |
 | `experiments/openaq/download.py` | Bounded OpenAQ API v3 downloader using `OPENAQ_API_KEY`. |
 | `experiments/openaq/ingest.py` | OpenAQ CSV, JSON, and JSONL ingestion plus canonical normalization. |
 | `experiments/openaq/map.py` | Static HTML map generation from OpenAQ selection metadata. |
@@ -448,6 +460,54 @@ The current article-preparation source files are:
 - `experiments/outputs/article_materials/methodology_decisions.md`
 
 These files are structured source materials for a later writing step. They are not manuscript sections and should be reviewed before being used to draft Methods, Results, or Discussion text.
+
+Extended article-preparation files added after the reviewer-oriented extension:
+
+- `experiments/outputs/article_materials/extended_methods_ready_notes.md`
+- `experiments/outputs/article_materials/extended_results_ready_tables.md`
+
+The reviewer limitations file was updated to distinguish the original MVP metrics from the limited negative-case false-positive-rate output.
+
+## Current Extended Experiment Artifacts
+
+Negative-case outputs:
+
+- `experiments/outputs/metrics/negative/openaq_capitals_2025_h2_negative_case_metrics.csv`
+- `experiments/outputs/metrics/negative/openaq_capitals_2025_h2_negative_case_summary.json`
+- `experiments/data/negative/`
+- `experiments/outputs/verification/negative/`
+
+Negative-case summary:
+
+- Negative cases: 7
+- True negatives: 7
+- False positives: 0
+- Limited false-positive rate: 0.000000
+
+Cost-analysis outputs:
+
+- `experiments/outputs/cost/openaq_capitals_2025_h2_cost_metrics.csv`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_cost_summary.json`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_build_costs.csv`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_clean_verification_costs.csv`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_tampered_verification_costs.csv`
+
+Threat-model outputs:
+
+- `experiments/outputs/threat_model/integrity_threat_model.json`
+- `experiments/outputs/threat_model/integrity_threat_model.md`
+
+Extended manifest outputs:
+
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.json`
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.md`
+
+Pending extended work:
+
+- repeated injections,
+- Model E anchored hash chain,
+- `admin_chain_rewrite` scenario,
+- measured extended threat-coverage matrix including Model E.
 
 ## Current Provenance And Permission Workflow
 

@@ -288,3 +288,46 @@ The manifest generator writes:
 - `experiments/outputs/manifests/<dataset_id>_experiment_run_manifest.md`
 
 The JSON manifest indexes dataset artifacts, Model A-D artifacts, tampered scenario files, labels, verifier outputs, aggregate metrics, file sizes, and SHA-256 hashes. The Markdown manifest is a compact review view of the same run.
+
+## Reviewer-Oriented Extension Examples
+
+Generate the threat-model artifacts:
+
+```powershell
+pdm run integrity-threat-model
+```
+
+Generate and verify negative cases:
+
+```powershell
+pdm run integrity-negative-cases `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+Measure artifact size, build time, clean verification time, and tampered verification time:
+
+```powershell
+pdm run integrity-cost-analysis `
+  --dataset-id openaq_capitals_2025_h2
+```
+
+Generate a separate extended run manifest:
+
+```powershell
+pdm run integrity-run-manifest `
+  --dataset-id openaq_capitals_2025_h2 `
+  --run-label extended
+```
+
+Current extended outputs include:
+
+- `experiments/outputs/threat_model/integrity_threat_model.json`
+- `experiments/outputs/threat_model/integrity_threat_model.md`
+- `experiments/outputs/metrics/negative/openaq_capitals_2025_h2_negative_case_metrics.csv`
+- `experiments/outputs/metrics/negative/openaq_capitals_2025_h2_negative_case_summary.json`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_cost_metrics.csv`
+- `experiments/outputs/cost/openaq_capitals_2025_h2_cost_summary.json`
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.json`
+- `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.md`
+
+The current extension does not yet implement repeated injections, Model E anchored hash chains, or the `admin_chain_rewrite` scenario.

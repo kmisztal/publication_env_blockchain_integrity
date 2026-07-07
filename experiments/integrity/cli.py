@@ -112,6 +112,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     manifest.add_argument("--dataset-id", required=True)
     manifest.add_argument("--output-dir", type=Path, default=MANIFEST_OUTPUT_DIR)
+    manifest.add_argument("--run-label")
 
     negative = subparsers.add_parser(
         "negative-cases",
@@ -252,6 +253,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         summary = build_experiment_run_manifest(
             dataset_id=args.dataset_id,
             output_dir=args.output_dir,
+            run_label=args.run_label,
         )
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0

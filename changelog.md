@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-07 22:52:54 +02:00
+
+- Added reviewer-oriented experiment extensions without overwriting the historical MVP run.
+- Added `experiments/integrity/negative_cases.py` for clean and valid-operation negative cases.
+- Added `experiments/integrity/cost_analysis.py` for artifact-size, build-time, clean-verification-time, and tampered-verification-time measurements.
+- Added `experiments/integrity/threat_model.py` for machine-readable and Markdown threat-model artifacts.
+- Added PDM scripts `integrity-negative-cases`, `integrity-cost-analysis`, and `integrity-threat-model`.
+- Added generated-output directories for negative cases, cost metrics, and threat-model artifacts.
+- Generated `experiments/outputs/threat_model/integrity_threat_model.json` and `experiments/outputs/threat_model/integrity_threat_model.md`.
+- Generated seven negative cases for `openaq_capitals_2025_h2`; all seven were classified as `true_negative`, with limited false-positive rate `0.000000`.
+- Generated cost-analysis artifacts under `experiments/outputs/cost/`.
+- Added `experiments/outputs/article_materials/extended_methods_ready_notes.md`.
+- Added `experiments/outputs/article_materials/extended_results_ready_tables.md`.
+- Updated `experiments/outputs/article_materials/reviewer_limitations.md` with the limited negative-case/FPR distinction and Model E pending status.
+- Extended the experiment-run manifest generator with `--run-label`.
+- Generated `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.json`.
+- Generated `experiments/outputs/manifests/openaq_capitals_2025_h2_extended_experiment_run_manifest.md`.
+- Repeated injections, Model E anchored hash chains, and `admin_chain_rewrite` remain pending and are marked as not yet implemented.
+
 ## 2026-06-23 20:03:14 +02:00
 
 - Added article-preparation source materials under `experiments/outputs/article_materials/`.

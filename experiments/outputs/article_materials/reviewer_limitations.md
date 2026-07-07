@@ -26,9 +26,11 @@ The current scenario set is suitable for a reproducible mechanism-comparison ben
 
 ## Metric Limits
 
-The current metrics support scenario status counts and threat coverage.
+The MVP metrics support scenario status counts and threat coverage.
 
-Precision, recall, F1, false-positive rate, and false-negative rate should not be reported from the current run because explicit negative cases have not been defined.
+The extended run adds a limited negative-case set. It supports reporting a limited false-positive rate for seven known-valid negative cases. This should not be generalized to broad real-world specificity.
+
+Precision, recall, F1, and false-negative rate should still not be reported as final accuracy metrics unless the positive and negative evaluation design is explicitly expanded.
 
 `expected_not_detected` cells indicate expected model limitations, not implementation failure.
 
@@ -41,6 +43,8 @@ Model A-D compare increasingly expressive integrity mechanisms. They do not incl
 `delayed_synchronization` is implemented only for Model D, because the current event representation uses Model D provenance/permission state and synchronization metadata.
 
 Summary-block optimization, gateway-level chains, offline queues, and central synchronization of summary hashes are deferred beyond the MVP.
+
+Model E anchored hash-chain verification is currently planned but not implemented. Any claims about `admin_chain_rewrite` detection should remain `TODO:EXPERIMENT_NEEDED` until Model E is built and executed.
 
 ## Reviewer Risks To Avoid
 
@@ -71,4 +75,3 @@ Suggested answer direction: station diversity is used to construct a realistic d
 Why is delayed synchronization Model D only?
 
 Suggested answer direction: the current delayed-synchronization check depends on synchronization events and reconstructed event context, which are part of the Model D governance/provenance layer.
-

@@ -26,6 +26,7 @@ def build_experiment_run_manifest(
     *,
     dataset_id: str,
     output_dir: Path = MANIFEST_OUTPUT_DIR,
+    run_label: str | None = None,
 ) -> dict[str, Any]:
     """Create JSON and Markdown manifests for the current local run artifacts."""
 
@@ -56,11 +57,13 @@ def build_experiment_run_manifest(
             "scenarios": evaluations,
         },
         "aggregate_outputs": _aggregate_outputs(dataset_id),
+        "extended_outputs": _extended_outputs(dataset_id),
     }
 
+    filename_prefix = f"{dataset_id}_{run_label}" if run_label else dataset_id
     manifest["manifest_files"] = {
-        "json": _relative(output_dir / f"{dataset_id}_experiment_run_manifest.json"),
-        "markdown": _relative(output_dir / f"{dataset_id}_experiment_run_manifest.md"),
+        "json": _relative(output_dir / f"{filename_prefix}_experiment_run_manifest.json"),
+        "markdown": _relative(output_dir / f"{filename_prefix}_experiment_run_manifest.md"),
     }
 
     if len(evaluations) != scenario_count:
@@ -70,13 +73,14 @@ def build_experiment_run_manifest(
     else:
         manifest["warnings"] = []
 
-    json_path = output_dir / f"{dataset_id}_experiment_run_manifest.json"
-    md_path = output_dir / f"{dataset_id}_experiment_run_manifest.md"
+    json_path = output_dir / f"{filename_prefix}_experiment_run_manifest.json"
+    md_path = output_dir / f"{filename_prefix}_experiment_run_manifest.md"
     json_path.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
     md_path.write_text(_markdown(manifest), encoding="utf-8")
 
     return {
         "dataset_id": dataset_id,
+        "run_label": run_label,
         "scenario_count": scenario_count,
         "status_counts": metrics_summary["status_counts"],
         "manifest_json": str(json_path),
@@ -194,6 +198,27 @@ def _aggregate_outputs(dataset_id: str) -> dict[str, Any]:
     }
 
 
+def _extended_outputs(dataset_id: str) -> dict[str, Any]:
+    return {
+        "negative_case_metrics": _file_entry(
+            METRICS_OUTPUT_DIR / "negative" / f"{dataset_id}_negative_case_metrics.csv"
+        ),
+        "negative_case_summary": _file_entry(
+            METRICS_OUTPUT_DIR / "negative" / f"{dataset_id}_negative_case_summary.json"
+        ),
+        "cost_metrics": _file_entry(Path("experiments/outputs/cost") / f"{dataset_id}_cost_metrics.csv"),
+        "cost_summary": _file_entry(Path("experiments/outputs/cost") / f"{dataset_id}_cost_summary.json"),
+        "threat_model_json": _file_entry(Path("experiments/outputs/threat_model/integrity_threat_model.json")),
+        "threat_model_markdown": _file_entry(Path("experiments/outputs/threat_model/integrity_threat_model.md")),
+        "extended_methods_ready_notes": _file_entry(
+            Path("experiments/outputs/article_materials/extended_methods_ready_notes.md")
+        ),
+        "extended_results_ready_tables": _file_entry(
+            Path("experiments/outputs/article_materials/extended_results_ready_tables.md")
+        ),
+    }
+
+
 def _implementation_files() -> dict[str, Any]:
     paths = [
         Path("pyproject.toml"),
@@ -286,6 +311,9 @@ def _markdown(manifest: dict[str, Any]) -> str:
         "",
     ]
     for name, entry in manifest["aggregate_outputs"].items():
+        lines.append(f"- `{name}`: `{entry['path']}` (`sha256={entry.get('sha256', 'missing')}`)")
+    lines.extend(["", "## Extended Outputs", ""])
+    for name, entry in manifest["extended_outputs"].items():
         lines.append(f"- `{name}`: `{entry['path']}` (`sha256={entry.get('sha256', 'missing')}`)")
     lines.extend(["", "## Implementation Files", ""])
     for name, entry in manifest["implementation_files"].items():
